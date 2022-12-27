@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">UNOMobile</string>
-    <string name="content_title">Conteúdos</string>
-    <string name="home_title">Olá Ana!</string>
-    <string name="notifications_title">Notificações</string>
-    <string name="profile_title">Perfil</string>
-    <string name="app_logo">App logo</string>
-</resources>
