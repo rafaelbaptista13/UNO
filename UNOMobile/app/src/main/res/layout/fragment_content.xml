@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginHorizontal="30dp"
-    tools:context=".fragments.ContentFragment">
+    tools:context=".fragments.content.ContentFragment">
 
     <ImageView
         android:id="@+id/uno_logo"
@@ -33,10 +33,18 @@
         android:textColor="@color/primary_text"/>
 
     <View
+        android:id="@+id/line_break"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/primary_text"
         android:layout_below="@+id/title"
         android:layout_marginTop="10dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/line_break"
+        android:layout_marginTop="10dp"/>
 
 </RelativeLayout>
