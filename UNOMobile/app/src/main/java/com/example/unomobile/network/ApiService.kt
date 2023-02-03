@@ -15,7 +15,7 @@ private val retrofit = Retrofit.Builder().addConverterFactory(MoshiConverterFact
 
 interface ApiService {
 
-    @GET("contents")
+    @GET("contents/weeks")
     fun getContents(): Call<List<Content>>
 
 }
