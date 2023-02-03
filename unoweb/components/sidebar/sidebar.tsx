@@ -23,11 +23,16 @@ const SideBarWrapper = styled.div`
 `;
 
 const SideBarHeader = styled.div`
-  background-image: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(252,253,235,1) 100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(252, 253, 235, 1) 100%
+  );
 `;
 
 export default function SideBar() {
   const router = useRouter();
+  const main_path = router.pathname.split("/")[1];
 
   return (
     <SideBarWrapper className={`bg-white`} id="sidebar-wrapper">
@@ -43,13 +48,13 @@ export default function SideBar() {
         />
       </SideBarHeader>
       <div className="list-group list-group-flush my-3">
-        <SideBarItem item="home" active={router.pathname === "/"} />
-        <SideBarItem item="contents" active={router.pathname === "/contents"} />
-        <SideBarItem item="click" active={router.pathname === "/click"} />
-        <SideBarItem item="videos" active={router.pathname === "/videos"} />
-        <SideBarItem item="progress" active={router.pathname === "/progress"} />
-        <SideBarItem item="messages" active={router.pathname === "/messages"} />
-        <SideBarItem item="notes" active={router.pathname === "/notes"} />
+        <SideBarItem item="home" active={main_path === ""} />
+        <SideBarItem item="contents" active={main_path === "contents"} />
+        <SideBarItem item="click" active={main_path === "click"} />
+        <SideBarItem item="videos" active={main_path === "videos"} />
+        <SideBarItem item="progress" active={main_path === "progress"} />
+        <SideBarItem item="messages" active={main_path === "messages"} />
+        <SideBarItem item="notes" active={main_path === "notes"} />
       </div>
     </SideBarWrapper>
   );

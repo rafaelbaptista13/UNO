@@ -10,7 +10,7 @@ import {
   faUsers,
   faMessage,
   faNoteSticky,
-  faCircleInfo
+  faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
 
 import styled from "styled-components";
