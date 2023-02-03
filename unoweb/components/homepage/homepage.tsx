@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import styled from "styled-components";
 
-import PageCard from "./page_card";
+import PageCard from "../utils/page_card";
 
 const ImageResponsiveDiv = styled.div`
   height: 100px;

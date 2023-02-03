@@ -3,11 +3,14 @@ module.exports = app => {
   
     let router = require("express").Router();
   
-    // Create a new Content
-    router.post("/", contents.create);
+    // Create a new week of contents
+    router.post("/weeks", contents.create);
   
-    // Retrieve all Contents
-    router.get("/", contents.findAll);
+    // Retrieve all weeks of contents
+    router.get("/weeks", contents.findAll);
+
+    // Delete a week of contents
+    router.delete("/weeks/:id", contents.delete)
   
     app.use('/api/contents', router);
   };

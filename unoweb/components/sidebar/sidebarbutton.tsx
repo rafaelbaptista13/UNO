@@ -13,12 +13,12 @@ const CloseIcon = styled(FontAwesomeIcon)`
 `;
 
 const page_headers = new Map<string, string>([
-  ["/contents", "Conteúdos"],
-  ["/click", "Click"],
-  ["/videos", "Vídeos"],
-  ["/progress", "Progresso"],
-  ["/messages", "Mensagens"],
-  ["/notes", "Notas"],
+  ["contents", "Conteúdos"],
+  ["click", "Click"],
+  ["videos", "Vídeos"],
+  ["progress", "Progresso"],
+  ["messages", "Mensagens"],
+  ["notes", "Notas"],
 ]);
 
 export default function SideBarButton({
@@ -36,7 +36,9 @@ export default function SideBarButton({
         id="menu-toggle"
         onClick={handleSideBar}
       ></CloseIcon>
-      <h2 className="fs-2 m-0">{page_headers.get(router.pathname)}&nbsp;</h2>
+      <h2 className="primary-text fs-2 m-0">
+        {page_headers.get(router.pathname.split("/")[1])}&nbsp;
+      </h2>
     </div>
   );
 }

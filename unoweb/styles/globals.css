@@ -22,10 +22,11 @@ a {
 }
 
 :root {
-  --main-bg-color: #5B3F29;
-  --main-text-color: #5B3F29;
+  --main-bg-color: #5b3f29;
+  --main-text-color: #5b3f29;
   --second-text-color: #bbbec5;
   --second-bg-color: #eebe83;
+  --third-bg-color: #d98723;
 }
 
 .primary-text {
@@ -42,4 +43,13 @@ a {
 
 .secondary-bg {
   background-color: var(--second-bg-color);
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

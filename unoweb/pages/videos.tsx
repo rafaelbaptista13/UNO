@@ -9,9 +9,7 @@ export default function Videos() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="container px-4">
-        Em desenvolvimento...
-      </div>
+      <div className="container px-4">Em desenvolvimento...</div>
     </>
   );
 }
