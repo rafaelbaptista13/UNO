@@ -1,9 +1,11 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import ActivityCard from "../../../../../components/contents/activity_card";
 import ErrorCard from "../../../../../components/utils/error_card";
 import PageHeaderWithLinkCard from "../../../../../components/utils/page_header_with_link_card";
 import { api_server } from "../../../../../config";
+import { ButtonPrimary } from "../../../../../utils/buttons";
 
 export type ActivitiesType = {
   id: number;
@@ -64,8 +66,9 @@ export default function EditWeek({
 
         <div className="row g-3 my-2">
           <div className="col gap-3 d-flex justify-content-end">
-            <button className="btn btn-success">Concluir</button>
-            <button className="btn btn-danger">Cancelar</button>
+            <Link href={`/contents/weeks`} >
+              <ButtonPrimary>Voltar para o plano de aulas</ButtonPrimary>
+            </Link>
           </div>
         </div>
       </div>
@@ -80,12 +83,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let weekcontent_request;
   let activities_request;
   try {
-    weekcontent_request = await fetch(`${api_server}/contents/weeks/${weekcontent_id}`, {
-      method: "GET",
-    });
-    activities_request = await fetch(`${api_server}/activities?week_content_id=${weekcontent_id}`, {
-      method: "GET",
-    });
+    weekcontent_request = await fetch(
+      `${api_server}/contents/weeks/${weekcontent_id}`,
+      {
+        method: "GET",
+      }
+    );
+    activities_request = await fetch(
+      `${api_server}/activities?weekcontent_id=${weekcontent_id}`,
+      {
+        method: "GET",
+      }
+    );
   } catch (e) {
     console.log(e);
     return {

@@ -4,7 +4,7 @@ import Link from "next/link";
 import NewActivityForm from "../../../../../../components/contents/activityform/new_activity_form";
 import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { activitiesState } from "../../../../../../redux/features/activitiesSlice";
 import { useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
@@ -16,7 +16,6 @@ interface ContentWeekProps {
 }
 
 export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
-  const dispatch = useDispatch();
   const activities_state = useSelector(activitiesState);
 
   const [show_confirm_action_modal, setShowConfirmActionModal] =
@@ -49,7 +48,7 @@ export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
       );
     } else {
       // Activity created successfully
-      let results = await new_activity_response.json();
+      //let results = await new_activity_response.json();
       setSuccessMessage(
         "A atividade do tipo " + payload.type + " foi criada com sucesso!"
       );
@@ -92,6 +91,7 @@ export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
         show={successMessage !== ""}
         onHide={() => setSuccessMessage("")}
         message={successMessage}
+        button_link_path={`/contents/weeks/edit/${weekcontent_id}`}
       />
       {isLoading && <LoadingModal />}
       <ConfirmActionModal

@@ -39,7 +39,6 @@ export default function ContentsWeek({
     setIsLoading(true);
 
     const payload = {
-      week_number: contents_weeks.length + 1,
       number_of_videos: 0,
       number_of_exercises: 0,
     };
@@ -62,7 +61,7 @@ export default function ContentsWeek({
       contents_weeks.push(results.data);
       setSuccessMessage(
         "A semana de conteúdos " +
-          payload.week_number +
+          results.data.week_number +
           " foi criada com sucesso!"
       );
     }

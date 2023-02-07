@@ -3,18 +3,32 @@ const WeekContent = db.weekcontents;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Content
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate request
-  if (!req.body.week_number) {
+  if (req.body.number_of_videos === undefined || req.body.number_of_exercises === undefined) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
     return;
   }
 
+  // Get number of weekContent
+  let weekcontent_data;
+  try {
+    weekcontent_data = await WeekContent.findAll({
+      order: [['week_number', 'DESC']]
+    });
+  } catch (e) {
+    console.log(e);
+  }
+
+  let week_number = 1;
+  if (weekcontent_data.length !== 0)
+  week_number = weekcontent_data[0].dataValues.week_number + 1;
+
   // Create a WeekContent
   const weekcontent = {
-    week_number: req.body.week_number,
+    week_number: week_number,
     number_of_videos: req.body.number_of_videos,
     number_of_exercises: req.body.number_of_exercises,
   };

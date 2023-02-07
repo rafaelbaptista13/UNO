@@ -4,7 +4,6 @@ const createWeek = async (req, res) => {
   const body = JSON.parse(req.body);
 
   const payload = {
-    week_number: body.week_number,
     number_of_videos: body.number_of_videos,
     number_of_exercises: body.number_of_exercises,
   };
@@ -19,6 +18,7 @@ const createWeek = async (req, res) => {
     body: JSON.stringify(payload),
   });
 
+  console.log(response);
   if (response.status !== 200) {
     return res.status(response.status);
   }
