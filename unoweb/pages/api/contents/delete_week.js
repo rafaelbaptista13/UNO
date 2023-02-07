@@ -14,7 +14,9 @@ const deleteWeek = async (req, res) => {
   });
 
   if (response.status !== 200) {
-    return res.status(response.status);
+    return res.status(response.status).json({
+      error: true
+    });
   }
 
   const results = await response.json();

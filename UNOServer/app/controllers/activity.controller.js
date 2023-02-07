@@ -6,7 +6,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Activity
 exports.create = async (req, res) => {
   // Validate request
-  if (!req.body.weekcontent_id || !req.body.type || !req.body.title) {
+  if (!req.body.weekcontent_id || !req.body.type || (!req.body.title && !["game", "question"].includes(req.body.type))) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
@@ -100,6 +100,32 @@ exports.findAll = (req, res) => {
     });
 };
 
+// Update a Activity by the id in the request
+exports.update = (req, res) => {
+  const id = req.params.id;
+
+  Activity.update(req.body, {
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.send({
+          message: "Activity was updated successfully."
+        });
+      } else {
+        res.send({
+          message: `Cannot update Activity with id=${id}. Maybe Activity was not found or req.body is empty!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Activity with id=" + id
+      });
+    });
+};
+
+
 // Delete a activity from the database.
 exports.delete = async (req, res) => {
   const id = req.params.id;
@@ -116,6 +142,7 @@ exports.delete = async (req, res) => {
         {where: { id: id} },
         {transaction: t}
       );
+      
       if (num_of_deleted_activities !== 1) {
         throw new Error(`Cannot delete Activity with id=${id}. Maybe Activity was not found!`);
       }

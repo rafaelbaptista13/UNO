@@ -29,7 +29,7 @@ interface ContentWeekProps {
   error?: boolean;
 }
 
-const activities_type: { [type: string]: string } = {
+export const activities_type: { [type: string]: string } = {
   video: "Vídeo",
   exercise: "Exercício",
   game: "Jogo",

@@ -18,9 +18,10 @@ const createWeek = async (req, res) => {
     body: JSON.stringify(payload),
   });
 
-  console.log(response);
   if (response.status !== 200) {
-    return res.status(response.status);
+    return res.status(response.status).json({
+      error: true
+    });
   }
 
   const results = await response.json();

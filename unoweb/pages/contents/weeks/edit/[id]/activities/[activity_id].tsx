@@ -4,57 +4,78 @@ import Link from "next/link";
 import NewActivityForm from "../../../../../../components/contents/activityform/new_activity_form";
 import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
-import { useSelector } from "react-redux";
-import { activitiesState } from "../../../../../../redux/features/activitiesSlice";
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { activitiesState, setType, setTitle } from "../../../../../../redux/features/activitiesSlice";
+import { useEffect, useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
 import SuccessModal from "../../../../../../components/utils/success_modal";
 import LoadingModal from "../../../../../../components/utils/loading_modal";
+import { api_server } from "../../../../../../config";
 import { activities_type } from "../index";
 
-interface ContentWeekProps {
+export type ActivityType = {
+  id: number;
+  type: string;
+  activity_number: number;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
   weekcontent_id: number;
+};
+
+interface EditActivityProps {
+  activity: ActivityType;
+  error?: boolean;
 }
 
-export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
+export default function EditActivity({ activity, error }: EditActivityProps) {
   const activities_state = useSelector(activitiesState);
+  const dispatch = useDispatch();
 
   const [show_confirm_action_modal, setShowConfirmActionModal] =
     useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const createNewActivity = async () => {
+  
+  const updateActivity = async () => {
     setShowConfirmActionModal(false);
     setIsLoading(true);
 
     const payload = {
+      activity_id: activity.id,
       type: activities_state.type,
-      weekcontent_id: weekcontent_id,
       title: activities_state.title,
     };
 
-    let new_activity_response = await fetch("/api/contents/activities/create_activity", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
+    let update_activity_response = await fetch(
+      "/api/contents/activities/update_activity",
+      {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      }
+    );
 
     setIsLoading(false);
 
-    if (new_activity_response.status !== 200) {
+    if (update_activity_response.status !== 200) {
       // An error occured
       setErrorMessage(
-        "Aconteceu um erro ao criar a nova atividade. Por favor tente novamente."
+        "Aconteceu um erro ao atualizar a atividade. Por favor tente novamente."
       );
     } else {
-      // Activity created successfully
+      // Activity updated successfully
       //let results = await new_activity_response.json();
       setSuccessMessage(
-        "A atividade do tipo " + activities_type[payload.type] + " foi criada com sucesso!"
+        "A atividade do tipo " + activities_type[payload.type] + " foi atualizada com sucesso!"
       );
     }
   };
+
+  useEffect(() => {
+    dispatch(setType(activity.type))
+    dispatch(setTitle(activity.title))
+  }, [activity.title, activity.type, dispatch])
 
   return (
     <>
@@ -66,7 +87,7 @@ export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeader header_text={"Nova Atividade"} />
+          <PageHeader header_text={`${activity.activity_number}. Atividade - Editar`} />
         </div>
 
         <div className="row g-3 mt-2 mb-4">
@@ -75,8 +96,13 @@ export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
 
         <div className="row g-3 my-2">
           <div className="col gap-3 d-flex justify-content-end">
-            <button className="btn btn-success" onClick={() => setShowConfirmActionModal(true)}>Concluir</button>
-            <Link href={`/contents/weeks/edit/${weekcontent_id}`}>
+            <button
+              className="btn btn-success"
+              onClick={() => setShowConfirmActionModal(true)}
+            >
+              Concluir
+            </button>
+            <Link href={`/contents/weeks/edit/${activity.weekcontent_id}`}>
               <button className="btn btn-danger">Cancelar</button>
             </Link>
           </div>
@@ -92,25 +118,52 @@ export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
         show={successMessage !== ""}
         onHide={() => setSuccessMessage("")}
         message={successMessage}
-        button_link_path={`/contents/weeks/edit/${weekcontent_id}`}
+        button_link_path={`/contents/weeks/edit/${activity.weekcontent_id}`}
       />
       {isLoading && <LoadingModal />}
       <ConfirmActionModal
-        message={`Tem a certeza que pretende criar uma atividade do tipo ${activities_type[activities_state.type]}?`}
+        message={`Tem a certeza que pretende atualizar a atividade?`}
         onHide={() => setShowConfirmActionModal(false)}
         show={show_confirm_action_modal}
-        confirmAction={() => createNewActivity()}
+        confirmAction={() => updateActivity()}
       />
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const weekcontent_id = context.query.id;
+  const activity_id = context.query.activity_id;
+
+  let activity_request;
+  try {
+    activity_request = await fetch(`${api_server}/activities/` + activity_id, {
+      method: "GET",
+    });
+  } catch (e) {
+    console.log(e);
+    return {
+      props: {
+        activity: {},
+        error: true,
+      },
+    };
+  }
+
+  // Handle error
+  if (activity_request.status !== 200) {
+    return {
+      props: {
+        activity: {},
+        error: true,
+      },
+    };
+  }
+
+  const activity_response = await activity_request.json();
 
   return {
     props: {
-      weekcontent_id: weekcontent_id,
+      activity: activity_response,
     },
   };
 };
