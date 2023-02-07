@@ -1,26 +1,29 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import ActivityCard from "../../../../components/contents/activity_card";
-import ErrorCard from "../../../../components/utils/error_card";
-import PageHeaderButtonCard from "../../../../components/utils/page_header_button_card";
-import { api_server } from "../../../../config";
+import ActivityCard from "../../../../../components/contents/activity_card";
+import ErrorCard from "../../../../../components/utils/error_card";
+import PageHeaderWithLinkCard from "../../../../../components/utils/page_header_with_link_card";
+import { api_server } from "../../../../../config";
 
 export type ActivitiesType = {
   id: number;
-  week_number: number;
-  number_of_videos: number;
-  number_of_exercises: number;
+  type: string;
+  activity_number: number;
+  weekcontent_id: number;
+  title: string;
   createdAt: string;
   updatedAt: string;
 };
 
 interface ContentWeekProps {
+  weekcontent_id: number;
   week_number: number;
   activities: Array<ActivitiesType>;
   error?: boolean;
 }
 
 export default function EditWeek({
+  weekcontent_id,
   week_number,
   activities,
   error,
@@ -35,10 +38,10 @@ export default function EditWeek({
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeaderButtonCard
+          <PageHeaderWithLinkCard
             header_text={"Semana " + week_number + " - Editar atividades"}
             button_text="Nova atividade"
-            button_action={() => {}}
+            link_path={`/contents/weeks/edit/${weekcontent_id}/activities/new`}
           />
         </div>
         {error && (
@@ -48,11 +51,11 @@ export default function EditWeek({
         )}
         {activities.map(function (activity: ActivitiesType, index) {
           return (
-            <div className="row g-3 my-1" key={activity.week_number}>
+            <div className="row g-3 my-1" key={activity.activity_number}>
               <ActivityCard
-                num={"1."}
-                title={"Como se deve respirar?"}
-                type={"video"}
+                num={activity.activity_number + "."}
+                title={activity.title}
+                type={activity.type}
                 description={"Vídeo - 1m 24s"}
               />
             </div>
@@ -71,19 +74,23 @@ export default function EditWeek({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const week_number = context.query.id;
+  const weekcontent_id = context.query.id;
 
-  // TODO: Get Activities
-
+  // Get week content details and activities
+  let weekcontent_request;
   let activities_request;
   try {
-    activities_request = await fetch(`${api_server}/contents/weeks`, {
+    weekcontent_request = await fetch(`${api_server}/contents/weeks/${weekcontent_id}`, {
+      method: "GET",
+    });
+    activities_request = await fetch(`${api_server}/activities?week_content_id=${weekcontent_id}`, {
       method: "GET",
     });
   } catch (e) {
     console.log(e);
     return {
       props: {
+        weekcontent_id: weekcontent_id,
         activities: [],
         error: true,
       },
@@ -91,21 +98,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   // Handle error
-  if (activities_request.status !== 200) {
+  if (weekcontent_request.status !== 200 || activities_request.status !== 200) {
     return {
       props: {
+        weekcontent_id: weekcontent_id,
         activities: [],
         error: true,
       },
     };
   }
 
+  const weekcontent_response = await weekcontent_request.json();
   const activities_response = await activities_request.json();
 
   return {
     props: {
-      week_number: week_number,
-      activities: [],
+      weekcontent_id: weekcontent_id,
+      week_number: weekcontent_response.week_number,
+      activities: activities_response,
     },
   };
 };

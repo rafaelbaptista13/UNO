@@ -1,24 +1,24 @@
 module.exports = (sequelize, Sequelize) => {
-    const Content = sequelize.define("Contents", {
+    const Activity = sequelize.define("Activities", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
             allowNull: false,
             primaryKey: true
         },
-        week_number: {
+        type: {
+            type: Sequelize.STRING(30),
+            allowNull: false
+        },
+        activity_number: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        number_of_videos: {
-            type: Sequelize.INTEGER,
+        title: {
+            type: Sequelize.STRING(70),
             allowNull: false
         },
-        number_of_exercises: {
-            type: Sequelize.INTEGER,
-            allowNull: false
-        }
     });
 
-    return Content;
+    return Activity;
 };

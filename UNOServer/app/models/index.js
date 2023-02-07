@@ -19,6 +19,9 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.contents = require("./content.model.js")(sequelize, Sequelize);
+db.weekcontents = require("./weekcontent.model.js")(sequelize, Sequelize);
+db.activities = require("./activities.model.js")(sequelize, Sequelize);
+
+db.activities.belongsTo(db.weekcontents, {through: "weekcontent", foreignKey: "weekcontent_id", as: "weekcontent"});
 
 module.exports = db;

@@ -1,5 +1,5 @@
 const db = require("../models");
-const Content = db.contents;
+const WeekContent = db.weekcontents;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Content
@@ -12,41 +12,62 @@ exports.create = (req, res) => {
     return;
   }
 
-  // Create a Content
-  const content = {
+  // Create a WeekContent
+  const weekcontent = {
     week_number: req.body.week_number,
     number_of_videos: req.body.number_of_videos,
     number_of_exercises: req.body.number_of_exercises,
   };
 
-  // Save Content in the database
-  Content.create(content)
+  // Save WeekContent in the database
+  WeekContent.create(weekcontent)
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Content.",
+          err.message || "Some error occurred while creating the Week Content.",
       });
     });
 };
 
-// Retrieve all contents from the database.
+// Find a single WeekContent with an id
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+
+  WeekContent.findByPk(id)
+    .then(data => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find WeekContent with id=${id}.`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving WeekContent with id=" + id
+      });
+    });
+};
+
+// Retrieve all week contents from the database.
 exports.findAll = (req, res) => {
   const week_number = req.query.week_number;
   let condition = week_number
     ? { week_number: { [Op.eq]: `${week_number}` } }
     : null;
 
-  Content.findAll({ where: condition })
+  WeekContent.findAll({ where: condition })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving contents.",
+          err.message || "Some error occurred while retrieving week contents.",
       });
     });
 };
@@ -55,7 +76,7 @@ exports.findAll = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Content.destroy({ where: { id: id } })
+  WeekContent.destroy({ where: { id: id } })
     .then((num) => {
       if (num == 1) {
         res.send({

@@ -49,7 +49,7 @@ export default function ActivityCard({
                   fill
                   sizes="100"
                   className="activity_logo"
-                  src={"/img/icons/video.png"}
+                  src={`/img/icons/${type}.png`}
                   alt={"activity logo"}
                   style={{ objectFit: "contain" }}
                 />
