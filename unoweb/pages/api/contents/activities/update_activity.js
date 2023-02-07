@@ -1,17 +1,17 @@
-import { api_server } from "../../../config";
+import { api_server } from "../../../../config";
 
-const createWeek = async (req, res) => {
+const updateActivity = async (req, res) => {
   const body = JSON.parse(req.body);
 
   const payload = {
-    number_of_videos: body.number_of_videos,
-    number_of_exercises: body.number_of_exercises,
+    type: body.type,
+    title: body.title,
   };
 
-  const url = `${api_server}/contents/weeks`;
+  const url = `${api_server}/activities/` + body.activity_id;
 
   const response = await fetch(url, {
-    method: "POST",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
@@ -20,7 +20,7 @@ const createWeek = async (req, res) => {
 
   if (response.status !== 200) {
     return res.status(response.status).json({
-      error: true
+      error: true,
     });
   }
 
@@ -31,4 +31,4 @@ const createWeek = async (req, res) => {
   });
 };
 
-export default createWeek;
+export default updateActivity;

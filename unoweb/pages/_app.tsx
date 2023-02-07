@@ -10,6 +10,8 @@ import SideBar from "../components/sidebar/sidebar";
 import SideBarButton from "../components/sidebar/sidebarbutton";
 import Loading from "../components/utils/loading";
 import { Router } from "next/router";
+import { Provider } from "react-redux";
+import { store } from "../redux/store";
 
 const Wrapper = styled.div`
   overflow-x: hidden;
@@ -67,12 +69,14 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <Wrapper className={`d-flex`} ref={wrapper_div}>
-      <SideBar />
-      <PageContentWrapper id="page-content-wrapper">
-        <SideBarButton handleSideBar={useCallback(handleSideBarStatus, [])} />
-        {isLoading ? <Loading /> : <Component {...pageProps} />}
-      </PageContentWrapper>
-    </Wrapper>
+    <Provider store={store}>
+      <Wrapper className={`d-flex`} ref={wrapper_div}>
+        <SideBar />
+        <PageContentWrapper id="page-content-wrapper">
+          <SideBarButton handleSideBar={useCallback(handleSideBarStatus, [])} />
+          {isLoading ? <Loading /> : <Component {...pageProps} />}
+        </PageContentWrapper>
+      </Wrapper>
+    </Provider>
   );
 }

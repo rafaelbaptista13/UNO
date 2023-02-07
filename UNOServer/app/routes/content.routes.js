@@ -5,7 +5,10 @@ module.exports = app => {
   
     // Create a new week of contents
     router.post("/weeks", contents.create);
-  
+
+    // Retrieve a specific week of contents by id
+    router.get("/weeks/:id", contents.findOne);
+
     // Retrieve all weeks of contents
     router.get("/weeks", contents.findAll);
 
