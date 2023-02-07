@@ -1,4 +1,5 @@
 import { GetServerSideProps } from "next";
+import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import ActivityCard from "../../../../../components/contents/activity_card";
@@ -6,6 +7,10 @@ import ErrorCard from "../../../../../components/utils/error_card";
 import PageHeaderWithLinkCard from "../../../../../components/utils/page_header_with_link_card";
 import { api_server } from "../../../../../config";
 import { ButtonPrimary } from "../../../../../utils/buttons";
+import ErrorModal from "../../../../../components/utils/error_modal";
+import LoadingModal from "../../../../../components/utils/loading_modal";
+import SuccessModal from "../../../../../components/utils/success_modal";
+import ConfirmActionModal from "../../../../../components/utils/confirm_action_modal";
 
 export type ActivitiesType = {
   id: number;
@@ -24,12 +29,69 @@ interface ContentWeekProps {
   error?: boolean;
 }
 
+const activities_type: { [type: string]: string } = {
+  video: "Vídeo",
+  exercise: "Exercício",
+  game: "Jogo",
+  audio: "Áudio",
+  question: "Pergunta",
+};
+
 export default function EditWeek({
   weekcontent_id,
   week_number,
   activities,
   error,
 }: ContentWeekProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [confirmActionActivity, setConfirmActionActivity] = useState({
+    activity_id: -1,
+    activity_number: -1,
+  });
+
+  const deleteActivity = async ({
+    activity_id,
+    activity_number,
+  }: {
+    activity_id: number;
+    activity_number: number;
+  }) => {
+    setIsLoading(true);
+
+    const payload = {
+      activity_id: activity_id,
+      weekcontent_id: weekcontent_id,
+    };
+    const delete_activity_response = await fetch(
+      "/api/contents/activities/delete_activity",
+      {
+        method: "DELETE",
+        body: JSON.stringify(payload),
+      }
+    );
+
+    setIsLoading(false);
+
+    if (delete_activity_response.status !== 200) {
+      // An error occured
+      setErrorMessage(
+        "Aconteceu um erro ao apagar a atividade. Por favor tente novamente."
+      );
+    } else {
+      // Activity deleted successfully
+      setSuccessMessage(
+        "A atividade " + activity_number + " foi eliminada com sucesso!"
+      );
+      activities.splice(activity_number - 1, 1);
+      for (let idx = activity_number - 1; idx < activities.length; idx++) {
+        activities[idx].activity_number -= 1;
+      }
+    }
+    setConfirmActionActivity({ activity_id: -1, activity_number: -1 });
+  };
+
   return (
     <>
       <Head>
@@ -55,10 +117,13 @@ export default function EditWeek({
           return (
             <div className="row g-3 my-1" key={activity.activity_number}>
               <ActivityCard
-                num={activity.activity_number + "."}
+                weekcontent_id={weekcontent_id}
+                activity_id={activity.id}
+                num={activity.activity_number}
                 title={activity.title}
                 type={activity.type}
-                description={"Vídeo - 1m 24s"}
+                description={activities_type[activity.type]}
+                setConfirmActionActivity={setConfirmActionActivity}
               />
             </div>
           );
@@ -66,12 +131,36 @@ export default function EditWeek({
 
         <div className="row g-3 my-2">
           <div className="col gap-3 d-flex justify-content-end">
-            <Link href={`/contents/weeks`} >
+            <Link href={`/contents/weeks`}>
               <ButtonPrimary>Voltar para o plano de aulas</ButtonPrimary>
             </Link>
           </div>
         </div>
       </div>
+
+      <ErrorModal
+        show={errorMessage !== ""}
+        onHide={() => setErrorMessage("")}
+        message={errorMessage}
+      />
+      <SuccessModal
+        show={successMessage !== ""}
+        onHide={() => setSuccessMessage("")}
+        message={successMessage}
+      />
+      {isLoading && <LoadingModal />}
+      <ConfirmActionModal
+        show={confirmActionActivity.activity_id !== -1}
+        onHide={() =>
+          setConfirmActionActivity({ activity_id: -1, activity_number: -1 })
+        }
+        confirmAction={() => deleteActivity(confirmActionActivity)}
+        message={
+          "Tem a certeza que pretende eliminar a atividade " +
+          confirmActionActivity.activity_number +
+          "?"
+        }
+      />
     </>
   );
 }

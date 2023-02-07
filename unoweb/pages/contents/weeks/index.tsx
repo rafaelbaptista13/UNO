@@ -77,7 +77,7 @@ export default function ContentsWeek({
     setIsLoading(true);
 
     const payload = { week_id: week_id };
-    let delete_week_response = await fetch("/api/contents/delete_week", {
+    const delete_week_response = await fetch("/api/contents/delete_week", {
       method: "DELETE",
       body: JSON.stringify(payload),
     });
@@ -87,14 +87,17 @@ export default function ContentsWeek({
     if (delete_week_response.status !== 200) {
       // An error occured
       setErrorMessage(
-        "Aconteceu um erro ao criar apagar uma semana de conteúdos. Por favor tente novamente."
+        "Aconteceu um erro ao apagar uma semana de conteúdos. Por favor tente novamente."
       );
     } else {
-      // Week created successfully
+      // Week deleted successfully
       setSuccessMessage(
         "A semana de conteúdos " + week_number + " foi eliminada com sucesso!"
       );
       contents_weeks.splice(week_number - 1, 1);
+      for (let idx = week_number - 1; idx < contents_weeks.length; idx++) {
+        contents_weeks[idx].week_number -= 1;
+      }
     }
     setConfirmActionWeek({ week_id: -1, week_number: -1 });
   };

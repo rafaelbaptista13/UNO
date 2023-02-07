@@ -1,6 +1,18 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  activitiesState,
+  setTitle,
+} from "../../../redux/features/activitiesSlice";
 
 export default function AudioForm() {
+  const dispatch = useDispatch();
+  const activities_state = useSelector(activitiesState);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setTitle(event.target.value));
+  };
+
   return (
     <>
       <div className="form-group mb-2">
@@ -12,6 +24,8 @@ export default function AudioForm() {
           className="form-control"
           id="title_input"
           placeholder="Insira um título"
+          onChange={handleChange}
+          value={activities_state.title}
         />
       </div>
       <div className="form-group mb-2">

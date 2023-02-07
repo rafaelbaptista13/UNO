@@ -8,7 +8,7 @@ export interface ActivitiesState {
 
 const initialState: ActivitiesState = {
   type: "video",
-  title: "Não definido",
+  title: "",
 };
 
 export const activitiesSlice = createSlice({
