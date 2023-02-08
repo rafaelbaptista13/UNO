@@ -1,3 +1,5 @@
+const authJwt = require("../middleware/authJwt.js");
+
 module.exports = app => {
     const contents = require("../controllers/content.controller.js");
   
@@ -10,7 +12,7 @@ module.exports = app => {
     router.get("/weeks/:id", contents.findOne);
 
     // Retrieve all weeks of contents
-    router.get("/weeks", contents.findAll);
+    router.get("/weeks", [authJwt.verifyToken], contents.findAll);
 
     // Delete a week of contents
     router.delete("/weeks/:id", contents.delete)

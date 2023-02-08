@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 
 let corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:8081",
 };
 
 app.use(cors(corsOptions));
@@ -17,6 +17,37 @@ app.use(express.urlencoded({ extended: true }));
 
 const db = require("./app/models");
 
+const Role = db.roles;
+
+async function synchronize() {
+  try {
+    await db.sequelize.sync();
+    await Role.findOrCreate({
+      where: {
+        id: 1,
+      },
+      defaults: {
+        name: "student",
+      },
+    });
+
+    await Role.findOrCreate({
+      where: {
+        id: 2,
+      },
+      defaults: {
+        name: "teacher",
+      },
+    });
+
+    console.log("Synced db.");
+  } catch (err) {
+    console.log("Failed to sync db: " + err.message);
+  }
+}
+
+synchronize();
+/*
 db.sequelize.sync()
   .then(() => {
     console.log("Synced db.");
@@ -24,12 +55,15 @@ db.sequelize.sync()
   .catch((err) => {
     console.log("Failed to sync db: " + err.message);
   });
+  */
 
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to rafael application." });
 });
 
+// routes
+require("./app/routes/auth.routes")(app);
 require("./app/routes/content.routes")(app);
 require("./app/routes/activity.routes")(app);
 

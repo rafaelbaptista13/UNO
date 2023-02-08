@@ -19,9 +19,23 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.users = require("./user.model.js")(sequelize, Sequelize);
+db.roles = require("./role.model.js")(sequelize, Sequelize);
 db.weekcontents = require("./weekcontent.model.js")(sequelize, Sequelize);
 db.activities = require("./activities.model.js")(sequelize, Sequelize);
 
+db.roles.belongsToMany(db.users, {
+  through: "UserRoles",
+  foreignKey: "roleId",
+  otherKey: "userId"
+});
+db.users.belongsToMany(db.roles, {
+  through: "UserRoles",
+  foreignKey: "userId",
+  otherKey: "roleId"
+});
 db.activities.belongsTo(db.weekcontents, {through: "weekcontent", foreignKey: "weekcontent_id", as: "weekcontent"});
+
+db.ROLES = ["student", "teacher"]
 
 module.exports = db;
