@@ -6,15 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unomobile.R
-import com.example.unomobile.fragments.WeekContentFragment
 import com.example.unomobile.models.Content
 import com.example.unomobile.network.Api
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +22,14 @@ class ContentFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var manager: RecyclerView.LayoutManager
     private lateinit var adapter: RecyclerView.Adapter<*>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Set NavBar visible
+        val navBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        navBar.visibility = View.VISIBLE
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,8 +56,12 @@ class ContentFragment : Fragment() {
                     recyclerView.adapter = adapter
                     (adapter as ContentAdapter).setOnItemClickListener(object : ContentAdapter.onItemClickListener{
                         override fun onItemClick(position: Int) {
+                            val week = response.body()!![position]
                             Log.i("ContentFragment", "Clicked")
-                            findNavController().navigate(R.id.action_contentFragment_to_weekContentFragment)
+                            val bundle = Bundle()
+                            bundle.putInt("week_id", week.id)
+                            bundle.putInt("week_number", week.week_number)
+                            findNavController().navigate(R.id.action_contentFragment_to_weekContentFragment, bundle)
                         }
                     })
                 }
