@@ -10,36 +10,46 @@ import com.example.unomobile.models.Content
 
 class ContentAdapter(private val data: List<Content>) : RecyclerView.Adapter<ContentAdapter.MyViewHolder>() {
 
-    class MyViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+    private lateinit var mListener : onItemClickListener
 
-        fun bind(content: Content) {
-            //val tv = view.findViewById<TextView>(R.id.list_tv)
-            //tv.text = text
-            val title = view.findViewById<TextView>(R.id.week_title)
-            val number_of_activities = view.findViewById<TextView>(R.id.num_of_activities)
+    interface onItemClickListener{
 
-            title.text = "Semana " + content.week_number
+        fun onItemClick(position : Int)
+    }
 
-            var activities = ""
-            if (content.number_of_videos > 0) {
-                activities += content.number_of_videos.toString() + " vídeos\n"
+    fun setOnItemClickListener(listener: onItemClickListener) {
+        mListener = listener
+    }
+
+    class MyViewHolder(val view: View, listener: onItemClickListener): RecyclerView.ViewHolder(view) {
+
+        val title : TextView = view.findViewById(R.id.week_title)
+        val number_of_activities : TextView = view.findViewById(R.id.num_of_activities)
+
+        init {
+            view.setOnClickListener {
+                listener.onItemClick(adapterPosition)
             }
-            if (content.number_of_exercises > 0) {
-                activities += content.number_of_exercises.toString() + " exercícios\n"
-            }
-
-            number_of_activities.text = activities
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.content_list_item, parent, false)
-        return MyViewHolder(v)
+        return MyViewHolder(v, mListener)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(data[position])
+        val currentItem = data[position]
+        holder.title.text = "Semana " + currentItem.week_number
+        var activities = ""
+        if (currentItem.number_of_videos > 0) {
+            activities += currentItem.number_of_videos.toString() + " vídeos\n"
+        }
+        if (currentItem.number_of_exercises > 0) {
+            activities += currentItem.number_of_exercises.toString() + " exercícios\n"
+        }
+        holder.number_of_activities.text = activities
+
     }
 
     override fun getItemCount(): Int {
