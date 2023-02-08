@@ -9,7 +9,11 @@
         android:id="@+id/contentFragment"
         android:name="com.example.unomobile.fragments.content.ContentFragment"
         android:label="fragment_content"
-        tools:layout="@layout/fragment_content" />
+        tools:layout="@layout/fragment_content" >
+        <action
+            android:id="@+id/action_contentFragment_to_weekContentFragment"
+            app:destination="@id/weekContentFragment" />
+    </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.unomobile.fragments.HomeFragment"
@@ -25,4 +29,19 @@
         android:name="com.example.unomobile.fragments.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/weekContentFragment"
+        android:name="com.example.unomobile.fragments.week_content.WeekContentFragment"
+        android:label="fragment_week_content"
+        tools:layout="@layout/fragment_week_content" >
+        <action
+            android:id="@+id/action_weekContentFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
+        <argument
+            android:name="week_number"
+            app:argType="integer" />
+        <argument
+            android:name="week_id"
+            app:argType="integer" />
+    </fragment>
 </navigation>
