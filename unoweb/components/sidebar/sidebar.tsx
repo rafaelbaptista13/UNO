@@ -48,7 +48,7 @@ export default function SideBar() {
     router.push("/login");
   }, [dispatch, router]);
 
-  return ( 
+  return (
     <SideBarWrapper className={`bg-white`} id="sidebar-wrapper">
       <SideBarHeader
         className={`sidebar-heading text-center py-4 fs-4 fw-bold text-uppercase`}
@@ -71,11 +71,17 @@ export default function SideBar() {
           <SideBarItem item="progress" active={main_path === "progress"} />
           <SideBarItem item="messages" active={main_path === "messages"} />
           <SideBarItem item="notes" active={main_path === "notes"} />
-          <SideBarItem item="logout" active={main_path === "logout"} action_callback={logout_callback} />
+          <SideBarItem
+            item="logout"
+            active={main_path === "logout"}
+            action_callback={logout_callback}
+          />
         </div>
       )}
       {!currentUser && (
-        <SideBarItem item="login" active={main_path === "login"} />
+        <div className="list-group list-group-flush my-3">
+          <SideBarItem item="login" active={main_path === "login"} />
+        </div>
       )}
     </SideBarWrapper>
   );

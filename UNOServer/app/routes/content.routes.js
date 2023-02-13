@@ -6,16 +6,16 @@ module.exports = app => {
     let router = require("express").Router();
   
     // Create a new week of contents
-    router.post("/weeks", contents.create);
+    router.post("/weeks", [authJwt.verifyToken], contents.create);
 
     // Retrieve a specific week of contents by id
-    router.get("/weeks/:id", contents.findOne);
+    router.get("/weeks/:id", [authJwt.verifyToken], contents.findOne);
 
     // Retrieve all weeks of contents
     router.get("/weeks", [authJwt.verifyToken], contents.findAll);
 
     // Delete a week of contents
-    router.delete("/weeks/:id", contents.delete)
+    router.delete("/weeks/:id", [authJwt.verifyToken], contents.delete)
   
     app.use('/api/contents', router);
   };

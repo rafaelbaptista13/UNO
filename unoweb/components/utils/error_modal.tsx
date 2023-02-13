@@ -31,7 +31,7 @@ export default function ErrorModal({
         <p>{message}</p>
       </Modal.Body>
       <Modal.Footer>
-        <ButtonPrimary onClick={onHide}>Close</ButtonPrimary>
+        <ButtonPrimary onClick={onHide}>Fechar</ButtonPrimary>
       </Modal.Footer>
     </Modal>
   );

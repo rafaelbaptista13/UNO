@@ -14,6 +14,7 @@ import { web_server } from "../../../../../../config";
 import { activities_type } from "../index";
 import axios from "axios";
 import { RootState } from "../../../../../../redux/store";
+import ActivitiesService from "../../../../../../services/activities.service";
 
 export type ActivityType = {
   id: number;
@@ -44,32 +45,19 @@ export default function EditActivity({ activity, error }: EditActivityProps) {
     setShowConfirmActionModal(false);
     setIsLoading(true);
 
-    const payload = {
-      activity_id: activity.id,
-      type: activities_state.type,
-      title: activities_state.title,
-    };
-
-    let update_activity_response = await fetch(
-      "/api/contents/activities/update_activity",
-      {
-        method: "PUT",
-        body: JSON.stringify(payload),
-      }
-    );
+    const update_activity_response = await ActivitiesService.updateActivity(activity.id, activities_state.type, activities_state.title);
 
     setIsLoading(false);
 
-    if (update_activity_response.status !== 200) {
+    if (update_activity_response.error) {
       // An error occured
       setErrorMessage(
         "Aconteceu um erro ao atualizar a atividade. Por favor tente novamente."
       );
     } else {
       // Activity updated successfully
-      //let results = await new_activity_response.json();
       setSuccessMessage(
-        "A atividade do tipo " + activities_type[payload.type] + " foi atualizada com sucesso!"
+        "A atividade do tipo " + activities_type[activities_state.type] + " foi atualizada com sucesso!"
       );
     }
   };

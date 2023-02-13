@@ -6,7 +6,11 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Activity
 exports.create = async (req, res) => {
   // Validate request
-  if (!req.body.weekcontent_id || !req.body.type || (!req.body.title && !["game", "question"].includes(req.body.type))) {
+  if (
+    !req.body.weekcontent_id ||
+    !req.body.type ||
+    (!req.body.title && !["game", "question"].includes(req.body.type))
+  ) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
@@ -14,9 +18,12 @@ exports.create = async (req, res) => {
   }
 
   // Check activity type
-  if (!["video", "exercise", "game", "audio", "question"].includes(req.body.type)) {
+  if (
+    !["video", "exercise", "game", "audio", "question"].includes(req.body.type)
+  ) {
     res.status(400).send({
-      message: "Invalid activity type. Must be a video, exercise, game, audio or question.",
+      message:
+        "Invalid activity type. Must be a video, exercise, game, audio or question.",
     });
     return;
   }
@@ -26,7 +33,7 @@ exports.create = async (req, res) => {
   try {
     activities_data = await Activity.findAll({
       where: { weekcontent_id: { [Op.eq]: `${req.body.weekcontent_id}` } },
-      order: [['activity_number', 'DESC']]
+      order: [["activity_number", "DESC"]],
     });
   } catch (e) {
     console.log(e);
@@ -105,26 +112,25 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   Activity.update(req.body, {
-    where: { id: id }
+    where: { id: id },
   })
-    .then(num => {
+    .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Activity was updated successfully."
+          message: "Activity was updated successfully.",
         });
       } else {
         res.send({
-          message: `Cannot update Activity with id=${id}. Maybe Activity was not found or req.body is empty!`
+          message: `Cannot update Activity with id=${id}. Maybe Activity was not found or req.body is empty!`,
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
-        message: "Error updating Activity with id=" + id
+        message: "Error updating Activity with id=" + id,
       });
     });
 };
-
 
 // Delete a activity from the database.
 exports.delete = async (req, res) => {
@@ -134,33 +140,39 @@ exports.delete = async (req, res) => {
   try {
     const result = await sequelize.transaction(async (t) => {
       // Get the activity number of the activity to be deleted
-      const activity_to_delete = await Activity.findByPk(id, {transaction: t});
+      const activity_to_delete = await Activity.findByPk(id, {
+        transaction: t,
+      });
       const activity_number_to_delete = activity_to_delete.activity_number;
 
       // Delete the activity
-      const num_of_deleted_activities = await Activity.destroy(
-        {where: { id: id} },
-        {transaction: t}
-      );
-      
+      const num_of_deleted_activities = await Activity.destroy({
+        where: { id: id },
+        transaction: t,
+      });
+
       if (num_of_deleted_activities !== 1) {
-        throw new Error(`Cannot delete Activity with id=${id}. Maybe Activity was not found!`);
+        throw new Error(
+          `Cannot delete Activity with id=${id}. Maybe Activity was not found!`
+        );
       }
 
       // Get the activities that had a higher activity_number to update them
-      const remaining_activities = await Activity.findAll(
-        { where: {activity_number: { [Op.gt]: `${activity_number_to_delete}`}, weekcontent_id: weekcontent_id}},
-        { transaction: t}
-      );
+      const remaining_activities = await Activity.findAll({
+        where: {
+          activity_number: { [Op.gt]: `${activity_number_to_delete}` },
+          weekcontent_id: weekcontent_id,
+        },
+        transaction: t,
+      });
 
       // Update each activity_number by decreasing one
       for (let idx in remaining_activities) {
         let activity = remaining_activities[idx];
         await Activity.update(
           { activity_number: activity.activity_number - 1 },
-          { where: { id: activity.id } },
-          { transaction: t }
-        )
+          { where: { id: activity.id }, transaction: t }
+        );
       }
 
       return activity_to_delete;

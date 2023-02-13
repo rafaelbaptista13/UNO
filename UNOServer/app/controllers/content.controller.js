@@ -101,10 +101,10 @@ exports.delete = async (req, res) => {
       const week_number_to_delete = week_to_delete.week_number;
 
       // Delete the week
-      const num_of_deleted_week = await WeekContent.destroy(
-        { where: { id: id } },
-        { transaction: t }
-      );
+      const num_of_deleted_week = await WeekContent.destroy({
+        where: { id: id },
+        transaction: t,
+      });
       if (num_of_deleted_week !== 1) {
         throw new Error(
           `Cannot delete Week with id=${id}. Maybe Week was not found!`
@@ -122,8 +122,7 @@ exports.delete = async (req, res) => {
         let week = remaining_weeks[idx];
         await WeekContent.update(
           { week_number: week.week_number - 1 },
-          { where: { id: week.id } },
-          { transaction: t }
+          { where: { id: week.id }, transaction: t }
         );
       }
 

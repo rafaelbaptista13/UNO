@@ -12,6 +12,7 @@ import LoadingModal from "../../../../../components/utils/loading_modal";
 import SuccessModal from "../../../../../components/utils/success_modal";
 import ConfirmActionModal from "../../../../../components/utils/confirm_action_modal";
 import axios from "axios";
+import ActivitiesService from "../../../../../services/activities.service";
 
 export type ActivitiesType = {
   id: number;
@@ -61,21 +62,11 @@ export default function EditWeek({
   }) => {
     setIsLoading(true);
 
-    const payload = {
-      activity_id: activity_id,
-      weekcontent_id: weekcontent_id,
-    };
-    const delete_activity_response = await fetch(
-      "/api/contents/activities/delete_activity",
-      {
-        method: "DELETE",
-        body: JSON.stringify(payload),
-      }
-    );
+    const delete_activity_response = await ActivitiesService.deleteActivity(activity_id, weekcontent_id);
 
     setIsLoading(false);
 
-    if (delete_activity_response.status !== 200) {
+    if (delete_activity_response.error) {
       // An error occured
       setErrorMessage(
         "Aconteceu um erro ao apagar a atividade. Por favor tente novamente."

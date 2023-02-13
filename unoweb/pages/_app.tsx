@@ -6,13 +6,16 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 import styled from "styled-components";
 import { useCallback, useEffect, useRef, useState } from "react";
-import SideBar from "../components/sidebar/sidebar";
+const SideBar = dynamic(() => import("../components/sidebar/sidebar"), {
+  ssr: false,
+  });
 import SideBarButton from "../components/sidebar/sidebarbutton";
 import Loading from "../components/utils/loading";
 import { Router } from "next/router";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
 import RouteGuard from "../components/utils/route_guard";
+import dynamic from "next/dynamic";
 
 const Wrapper = styled.div`
   overflow-x: hidden;
