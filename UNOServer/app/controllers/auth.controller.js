@@ -73,15 +73,17 @@ exports.signin = (req, res) => {
         for (const element of roles) {
           authorities.push("ROLE_" + element.name.toUpperCase());
         }
-        res.status(200).send({
-          id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          instrument: user.instrument,
-          roles: authorities,
-          accessToken: token,
-        });
+      });
+
+      req.session.token = token;
+
+      res.status(200).send({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        instrument: user.instrument,
+        roles: authorities,
       });
     })
     .catch((err) => {

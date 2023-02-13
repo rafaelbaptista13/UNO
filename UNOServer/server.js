@@ -1,10 +1,11 @@
 const express = require("express");
 const cors = require("cors");
+const cookieSession = require("cookie-session");
 
 const app = express();
 
 let corsOptions = {
-  origin: "http://localhost:8081",
+  origin: "http://localhost:3000",
 };
 
 app.use(cors(corsOptions));
@@ -14,6 +15,15 @@ app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  cookieSession({
+    name: "uno-session",
+    // keys: ['key1', 'key2'],
+    secret: "COOKIE_SECRET", // should use as secret environment variable
+    httpOnly: true,
+  })
+);
 
 const db = require("./app/models");
 
@@ -47,15 +57,6 @@ async function synchronize() {
 }
 
 synchronize();
-/*
-db.sequelize.sync()
-  .then(() => {
-    console.log("Synced db.");
-  })
-  .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
-  });
-  */
 
 // simple route
 app.get("/", (req, res) => {

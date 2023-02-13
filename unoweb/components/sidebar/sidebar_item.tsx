@@ -11,6 +11,8 @@ import {
   faMessage,
   faNoteSticky,
   faCircleInfo,
+  faSignIn,
+  faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 
 import styled from "styled-components";
@@ -94,6 +96,22 @@ const pages = new Map<string, { icon: IconProp; text: string; path: string }>([
       path: "/notes",
     },
   ],
+  [
+    "login",
+    {
+      icon: faSignIn,
+      text: "Iniciar sessão",
+      path: "/login",
+    },
+  ],
+  [
+    "logout",
+    {
+      icon: faSignOut,
+      text: "Sair",
+      path: "/logout",
+    },
+  ]
 ]);
 
 export default function SideBarItem({

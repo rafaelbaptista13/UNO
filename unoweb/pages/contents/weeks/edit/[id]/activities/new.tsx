@@ -5,19 +5,20 @@ import NewActivityForm from "../../../../../../components/contents/activityform/
 import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
 import { useSelector } from "react-redux";
-import { activitiesState } from "../../../../../../redux/features/activitiesSlice";
+import { ActivitiesState } from "../../../../../../redux/features/activitiesSlice";
 import { useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
 import SuccessModal from "../../../../../../components/utils/success_modal";
 import LoadingModal from "../../../../../../components/utils/loading_modal";
 import { activities_type } from "../index";
+import { RootState } from "../../../../../../redux/store";
 
 interface ContentWeekProps {
   weekcontent_id: number;
 }
 
 export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
-  const activities_state = useSelector(activitiesState);
+  const activities_state = useSelector<RootState, ActivitiesState>((state) => state.activities);
 
   const [show_confirm_action_modal, setShowConfirmActionModal] =
     useState(false);

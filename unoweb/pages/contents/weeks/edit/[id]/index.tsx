@@ -5,12 +5,13 @@ import Link from "next/link";
 import ActivityCard from "../../../../../components/contents/activity_card";
 import ErrorCard from "../../../../../components/utils/error_card";
 import PageHeaderWithLinkCard from "../../../../../components/utils/page_header_with_link_card";
-import { api_server } from "../../../../../config";
+import { web_server } from "../../../../../config";
 import { ButtonPrimary } from "../../../../../utils/buttons";
 import ErrorModal from "../../../../../components/utils/error_modal";
 import LoadingModal from "../../../../../components/utils/loading_modal";
 import SuccessModal from "../../../../../components/utils/success_modal";
 import ConfirmActionModal from "../../../../../components/utils/confirm_action_modal";
+import axios from "axios";
 
 export type ActivitiesType = {
   id: number;
@@ -166,24 +167,24 @@ export default function EditWeek({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const cookies = context.req.headers.cookie;
   const weekcontent_id = context.query.id;
 
   // Get week content details and activities
   let weekcontent_request;
   let activities_request;
   try {
-    weekcontent_request = await fetch(
-      `${api_server}/contents/weeks/${weekcontent_id}`,
-      {
-        method: "GET",
+    weekcontent_request = await axios.get(`${web_server}/api/contents/weeks/${weekcontent_id}`, {
+      headers: {
+        "Cookie": cookies
       }
-    );
-    activities_request = await fetch(
-      `${api_server}/activities?weekcontent_id=${weekcontent_id}`,
-      {
-        method: "GET",
+    });
+    activities_request = await axios.get(`${web_server}/api/activities?weekcontent_id=${weekcontent_id}`, {
+      headers: {
+        "Cookie": cookies
       }
-    );
+    }); 
   } catch (e) {
     console.log(e);
     return {
@@ -206,8 +207,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const weekcontent_response = await weekcontent_request.json();
-  const activities_response = await activities_request.json();
+  const weekcontent_response = weekcontent_request.data;
+  const activities_response = activities_request.data;
 
   return {
     props: {

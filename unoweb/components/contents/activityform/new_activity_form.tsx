@@ -6,7 +6,8 @@ import GameForm from "./game_form";
 import QuestionForm from "./question_form";
 import VideoForm from "./video_form";
 import { useSelector, useDispatch } from "react-redux";
-import { activitiesState, setType } from "../../../redux/features/activitiesSlice";
+import { ActivitiesState, setType } from "../../../redux/features/activitiesSlice";
+import { RootState } from "../../../redux/store";
 
 const CardDiv = styled.div`
   position: relative;
@@ -14,7 +15,7 @@ const CardDiv = styled.div`
 
 export default function NewActivityForm() {
   const dispatch = useDispatch();
-  const activities_state = useSelector(activitiesState);
+  const activities_state = useSelector<RootState, ActivitiesState>((state) => state.activities);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch(setType(event.target.value));
