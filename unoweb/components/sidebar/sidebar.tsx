@@ -45,8 +45,9 @@ export default function SideBar() {
 
   const logout_callback = useCallback(() => {
     dispatch(logout());
-  }, [dispatch]);
-  
+    router.push("/login");
+  }, [dispatch, router]);
+
   return ( 
     <SideBarWrapper className={`bg-white`} id="sidebar-wrapper">
       <SideBarHeader
@@ -70,7 +71,7 @@ export default function SideBar() {
           <SideBarItem item="progress" active={main_path === "progress"} />
           <SideBarItem item="messages" active={main_path === "messages"} />
           <SideBarItem item="notes" active={main_path === "notes"} />
-          <SideBarItem item="logout" active={main_path === "logout"} />
+          <SideBarItem item="logout" active={main_path === "logout"} action_callback={logout_callback} />
         </div>
       )}
       {!currentUser && (

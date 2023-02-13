@@ -19,6 +19,27 @@ import styled from "styled-components";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import Link from "next/link";
 
+const ListItemDiv = styled.div`
+  border: none;
+  padding: 20px 30px;
+  font-size: 18px;
+  color: var(--second-text-color);
+  text-decoration: none;
+  position: relative;
+  font-weight: bold;
+  cursor: pointer;
+
+  &.active {
+    background-color: transparent;
+    color: var(--main-text-color);
+  }
+
+  &:first-child {
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+  }
+`;
+
 const ListItem = styled(Link)`
   border: none;
   padding: 20px 30px;
@@ -111,15 +132,17 @@ const pages = new Map<string, { icon: IconProp; text: string; path: string }>([
       text: "Sair",
       path: "/logout",
     },
-  ]
+  ],
 ]);
 
 export default function SideBarItem({
   item,
   active,
+  action_callback,
 }: {
   item: string;
   active: boolean;
+  action_callback?: () => void;
 }) {
   let icon = pages.get(item)?.icon;
   if (icon === undefined) {
@@ -128,6 +151,22 @@ export default function SideBarItem({
   let path = pages.get(item)?.path;
   if (path === undefined) {
     path = "/error";
+  }
+
+  if (item === "logout") {
+    return (
+      <ListItemDiv
+        className={
+          active
+            ? "list-group list-group-item-action bg-transparent second-text flex-row align-items-center active"
+            : "list-group list-group-item-action bg-transparent second-text flex-row align-items-center"
+        }
+        onClick={action_callback}
+      >
+        <FontAwesomeIcon icon={icon} className="me-2 " />
+        {pages.get(item)?.text}
+      </ListItemDiv>
+    );
   }
 
   return (

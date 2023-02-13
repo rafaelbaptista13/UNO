@@ -14,7 +14,7 @@ exports.signup = (req, res) => {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
+    password: bcrypt.hashSync(req.body.password, 8),
   })
     .then((user) => {
       if (req.body.roles) {
@@ -89,4 +89,15 @@ exports.signin = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.signout = async (req, res) => {
+  try {
+    req.session = null;
+    return res.status(200).send({
+      message: "You've been signed out!",
+    });
+  } catch (err) {
+    this.next(err);
+  }
 };

@@ -12,6 +12,7 @@ import Loading from "../components/utils/loading";
 import { Router } from "next/router";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
+import RouteGuard from "../components/utils/route_guard";
 
 const Wrapper = styled.div`
   overflow-x: hidden;
@@ -61,6 +62,7 @@ export default function App({ Component, pageProps }: AppProps) {
     Router.events.on("routeChangeStart", start);
     Router.events.on("routeChangeComplete", end);
     Router.events.on("routeChangeError", end);
+
     return () => {
       Router.events.off("routeChangeStart", start);
       Router.events.off("routeChangeComplete", end);
@@ -74,7 +76,13 @@ export default function App({ Component, pageProps }: AppProps) {
         <SideBar />
         <PageContentWrapper id="page-content-wrapper">
           <SideBarButton handleSideBar={useCallback(handleSideBarStatus, [])} />
-          {isLoading ? <Loading /> : <Component {...pageProps} />}
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <RouteGuard>
+              <Component {...pageProps} />
+            </RouteGuard>
+          )}
         </PageContentWrapper>
       </Wrapper>
     </Provider>
