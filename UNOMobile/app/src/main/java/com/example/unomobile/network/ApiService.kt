@@ -1,9 +1,6 @@
 package com.example.unomobile.network
 
-import com.example.unomobile.models.Activity
-import com.example.unomobile.models.Content
-import com.example.unomobile.models.ResponseMessage
-import com.example.unomobile.models.UserInfoToRegister
+import com.example.unomobile.models.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
@@ -29,6 +26,9 @@ interface ApiService {
 
     @POST("auth/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>
+
+    @POST("auth/signin")
+    fun login(@Body user_data: UserInfoToLogin): Call<UserInfo>
 }
 
 object Api {

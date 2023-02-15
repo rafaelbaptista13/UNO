@@ -37,10 +37,12 @@
         app:layout_constraintTop_toBottomOf="@+id/textView"
         android:layout_marginTop="20dp">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_email"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:inputType="text"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,7 +55,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvEmail"
         android:layout_marginTop="10dp">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
