@@ -1,24 +1,23 @@
 package com.example.unomobile.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
 import com.example.unomobile.MainActivity
 import com.example.unomobile.R
-import com.example.unomobile.models.ResponseMessage
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.models.UserInfoToLogin
-import com.example.unomobile.models.UserInfoToRegister
 import com.example.unomobile.network.Api
+import com.example.unomobile.network.cookieHandler
 import com.example.unomobile.validation.FormFieldText
 import com.example.unomobile.validation.disable
 import com.example.unomobile.validation.enable
 import com.example.unomobile.validation.validate
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -32,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
 
     lateinit var login_button : AppCompatButton;
     lateinit var register_button : AppCompatButton;
-    var currentUser : Boolean = false
 
     private val fieldEmail by lazy {
         FormFieldText(
@@ -104,9 +102,32 @@ class LoginActivity : AppCompatActivity() {
 
                         Log.i("LoginActivity", response.headers().toString())
 
+                        val loginResponse = response.body()
+                        val headerResponse = response.headers()
+
+                        val headerMapList = headerResponse.toMultimap()
+
+                        // Get list of "Set-Cookie" from Map
+                        val allCookies = headerMapList["Set-Cookie"]
+                        var cookieval = ""
+                        for (cookie in allCookies!!) {
+                            cookieval += cookie
+                        }
+
+                        // Save cookies value in Application class
+                        val sharedPreferences = getSharedPreferences("data", MODE_PRIVATE)
+                        val sharedPreferencesEdit = sharedPreferences.edit()
+
+                        val gson = Gson()
+                        sharedPreferencesEdit.putString("token", cookieval)
+                        sharedPreferencesEdit.putString("user", gson.toJson(loginResponse))
+                        sharedPreferencesEdit.apply()
+
                         // Redirect to Main Page
-                        //var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        //startActivity(intent)
+                        var intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
                     } else {
                         Log.i("LoginActivity", "Response was unsuccessful")
                         showToast("Credenciais inválidas.")
@@ -129,16 +150,5 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        if (currentUser) {
-            sendToMainActivity()
-        }
-    }
-
-    private fun sendToMainActivity() {
-        var intent = Intent(this@LoginActivity, MainActivity::class.java)
-        startActivity(intent)
-    }
+    override fun onBackPressed() { }
 }

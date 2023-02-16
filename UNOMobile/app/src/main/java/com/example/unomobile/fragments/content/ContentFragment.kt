@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,18 +24,14 @@ class ContentFragment : Fragment() {
     private lateinit var manager: RecyclerView.LayoutManager
     private lateinit var adapter: RecyclerView.Adapter<*>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // Set NavBar visible
-        val navBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-        navBar.visibility = View.VISIBLE
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Set NavBar visible
+        val navBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        navBar.visibility = View.VISIBLE
+
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_content, container, false)
 

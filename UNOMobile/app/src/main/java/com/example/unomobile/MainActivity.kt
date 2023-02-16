@@ -1,26 +1,35 @@
 package com.example.unomobile
 
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
-import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.example.unomobile.activities.LoginActivity
 import com.example.unomobile.databinding.ActivityMainBinding
+import com.example.unomobile.models.UserInfo
+import com.example.unomobile.network.ApiService
+import com.example.unomobile.network.cookieHandler
+import com.google.gson.Gson
+
+
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-    var currentUser : Boolean = false
+    private var isLoggedIn = false
+    private var cookies = cookieHandler.cookieStore.cookies
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -32,8 +41,13 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        if (!currentUser) {
+        isLoggedIn = cookies.any { obj -> obj.name == "uno-session" } && cookies.any { obj -> obj.name == "uno-session.sig" }
+
+        if (!isLoggedIn) {
+            Log.i("MainActivity", "User is not logged in.")
             sendToLoginActivity()
+        } else {
+            Log.i("MainActivity", "User is logged in.")
         }
     }
 
@@ -41,4 +55,5 @@ class MainActivity : AppCompatActivity() {
         var intent = Intent(this@MainActivity, LoginActivity::class.java)
         startActivity(intent)
     }
+
 }
