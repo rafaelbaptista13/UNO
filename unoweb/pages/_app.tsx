@@ -16,6 +16,7 @@ import { Provider } from "react-redux";
 import { store } from "../redux/store";
 import RouteGuard from "../components/utils/route_guard";
 import dynamic from "next/dynamic";
+import setupInterceptors from "../services/setupInterceptors";
 
 const Wrapper = styled.div`
   overflow-x: hidden;

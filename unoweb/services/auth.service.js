@@ -21,8 +21,19 @@ const login = (email, password) => {
       if (response.data.email) {
         localStorage.setItem("user", JSON.stringify(response.data));
       }
-
       return response.data;
+    });
+};
+
+const refreshtoken = () => {
+  return axios
+    .post(API_URL + "refreshtoken", {})
+    .then((response) => {
+      console.log("AuthService: " + response.headers);
+      return response.data;
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 
@@ -40,6 +51,7 @@ const getCurrentUser = () => {
 const AuthService = {
   register,
   login,
+  refreshtoken,
   logout,
   getCurrentUser,
 };

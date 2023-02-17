@@ -1,4 +1,3 @@
-import axios from "axios";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useState } from "react";
@@ -11,6 +10,7 @@ import PageHeaderButtonCard from "../../../components/utils/page_header_button_c
 import SuccessModal from "../../../components/utils/success_modal";
 import { web_server } from "../../../config";
 import WeeksService from "../../../services/weeks.service";
+import api from "../../../services/api";
 
 export type ContentsWeeksType = {
   id: number;
@@ -153,11 +153,11 @@ export default function ContentsWeek({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = context.req.headers.cookie;
-
+  console.log(cookies);
   let contents_weeks_request;
   try {
-    contents_weeks_request = await axios.get(
-      `${web_server}/api/contents/weeks`,
+    contents_weeks_request = await api.get(
+      `/contents/weeks`,
       {
         headers: {
           Cookie: cookies,
@@ -165,7 +165,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }
     );
   } catch (e) {
-    console.log(e);
+    //console.log(e);
     return {
       props: {
         contents_weeks: [],
@@ -176,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // Handle error
   if (contents_weeks_request.status !== 200) {
-    console.log(contents_weeks_request);
+    //console.log(contents_weeks_request);
     return {
       props: {
         contents_weeks: [],

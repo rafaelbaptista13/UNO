@@ -12,6 +12,8 @@ export const config = {
 const proxy = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) =>
   new Promise((resolve, reject) => {
     const proxy: httpProxy = httpProxy.createProxy();
+    console.log("proxy");
+    console.log(req.headers);
     proxy.once("proxyRes", resolve).once("error", reject).web(req, res, {
       changeOrigin: true,
       target: "http://localhost:8080",
