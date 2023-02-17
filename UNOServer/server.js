@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -21,11 +22,14 @@ app.use(
     name: "uno-session",
     // keys: ['key1', 'key2'],
     secret: "COOKIE_SECRET", // should use as secret environment variable
-    httpOnly: true,
+    httpOnly: true
   })
 );
 
+app.use(cookieParser())
+
 const db = require("./app/models");
+
 
 const Role = db.roles;
 

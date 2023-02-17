@@ -2,6 +2,7 @@ const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.users;
 const Role = db.roles;
+const RefreshToken = db.refreshToken;
 
 const Op = db.Sequelize.Op;
 
@@ -47,7 +48,7 @@ exports.signin = (req, res) => {
       email: req.body.email,
     },
   })
-    .then((user) => {
+    .then(async (user) => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
@@ -65,30 +66,83 @@ exports.signin = (req, res) => {
       }
 
       let token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400, // 24 hours
+        expiresIn: config.jwtExpiration,
       });
+
+      let refreshToken = await RefreshToken.createToken(user);
 
       let authorities = [];
       user.getRoles().then((roles) => {
         for (const element of roles) {
           authorities.push("ROLE_" + element.name.toUpperCase());
         }
-      });
 
-      req.session.token = token;
+        req.session.token = token;
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          path: "/"
+        })
 
-      res.status(200).send({
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        instrument: user.instrument,
-        roles: authorities,
+        res.status(200).send({
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          instrument: user.instrument,
+          roles: authorities
+        });
       });
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.refreshToken = async (req, res) => {
+  const requestToken = req.cookies.refreshToken;
+  console.log("vu coerar")
+  console.log(requestToken);
+  if (requestToken == null) {
+    console.log("10");
+    return res.status(403).json({ message: "Refresh Token is required!" });
+  }
+
+  try {
+    let refreshToken = await RefreshToken.findOne({
+      where: { token: requestToken },
+    });
+
+    console.log(refreshToken);
+
+    if (!refreshToken) {
+      console.log("2");
+      res.status(403).json({ message: "Refresh token is not in database!" });
+      return;
+    }
+
+    if (RefreshToken.verifyExpiration(refreshToken)) {
+      RefreshToken.destroy({ where: { id: refreshToken.id } });
+      console.log("1");
+      res.status(403).json({
+        message: "Refresh token was expired. Please make a new signin request",
+      });
+      return;
+    }
+
+    const user = await refreshToken.getUser();
+    let newAccessToken = jwt.sign({ id: user.id }, config.secret, {
+      expiresIn: config.jwtExpiration,
+    });
+
+    req.session.token = newAccessToken;
+    console.log("vou enviar com sucesos");
+    return res.status(200).json({
+      refreshToken: refreshToken.token,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: err });
+  }
 };
 
 exports.signout = async (req, res) => {

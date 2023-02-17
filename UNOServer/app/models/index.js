@@ -21,6 +21,7 @@ db.sequelize = sequelize;
 
 db.users = require("./user.model.js")(sequelize, Sequelize);
 db.roles = require("./role.model.js")(sequelize, Sequelize);
+db.refreshToken = require("../models/refreshToken.model.js")(sequelize, Sequelize);
 db.weekcontents = require("./weekcontent.model.js")(sequelize, Sequelize);
 db.activities = require("./activities.model.js")(sequelize, Sequelize);
 
@@ -33,6 +34,12 @@ db.users.belongsToMany(db.roles, {
   through: "UserRoles",
   foreignKey: "userId",
   otherKey: "roleId"
+});
+db.refreshToken.belongsTo(db.users, {
+  foreignKey: 'userId', targetKey: 'id'
+});
+db.users.hasOne(db.refreshToken, {
+  foreignKey: 'userId', targetKey: 'id'
 });
 db.activities.belongsTo(db.weekcontents, {through: "weekcontent", foreignKey: "weekcontent_id", as: "weekcontent"});
 
