@@ -65,6 +65,7 @@ app.get("/", (req, res) => {
 
 // routes
 require("./app/routes/auth.routes")(app);
+require("./app/routes/class.routes")(app);
 require("./app/routes/content.routes")(app);
 require("./app/routes/activity.routes")(app);
 
