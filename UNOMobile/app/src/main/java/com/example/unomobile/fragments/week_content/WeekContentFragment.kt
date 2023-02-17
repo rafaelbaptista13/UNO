@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,18 +27,14 @@ class WeekContentFragment : Fragment() {
     private lateinit var manager: RecyclerView.LayoutManager
     private lateinit var adapter: RecyclerView.Adapter<*>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // Hide Navbar
-        val navBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-        navBar.visibility = View.GONE
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Hide Navbar
+        val navBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        navBar.visibility = View.GONE
+
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_week_content, container, false)
         val back_button = view.findViewById<ImageView>(R.id.back_button)

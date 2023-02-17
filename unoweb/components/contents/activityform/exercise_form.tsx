@@ -1,10 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { activitiesState, setTitle } from "../../../redux/features/activitiesSlice";
+import { ActivitiesState, setTitle } from "../../../redux/features/activitiesSlice";
+import { RootState } from "../../../redux/store";
 
 export default function ExerciseForm() {
   const dispatch = useDispatch();
-  const activities_state = useSelector(activitiesState);
+  const activities_state = useSelector<RootState, ActivitiesState>((state) => state.activities);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setTitle(event.target.value));

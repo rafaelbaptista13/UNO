@@ -33,10 +33,22 @@
         android:textColor="@color/primary_text"/>
 
     <View
+        android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/primary_text"
         android:layout_below="@+id/title"
         android:layout_marginTop="10dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/logout_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sair"
+        android:layout_below="@+id/line"
+        android:background="@drawable/inverse_primary_button"
+        android:textColor="@color/primary_text"
+        android:layout_marginTop="20dp"/>
+
 
 </RelativeLayout>

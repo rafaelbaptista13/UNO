@@ -5,19 +5,21 @@ import NewActivityForm from "../../../../../../components/contents/activityform/
 import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
 import { useSelector } from "react-redux";
-import { activitiesState } from "../../../../../../redux/features/activitiesSlice";
+import { ActivitiesState } from "../../../../../../redux/features/activitiesSlice";
 import { useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
 import SuccessModal from "../../../../../../components/utils/success_modal";
 import LoadingModal from "../../../../../../components/utils/loading_modal";
 import { activities_type } from "../index";
+import { RootState } from "../../../../../../redux/store";
+import ActivitiesService from "../../../../../../services/activities.service";
 
 interface ContentWeekProps {
   weekcontent_id: number;
 }
 
 export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
-  const activities_state = useSelector(activitiesState);
+  const activities_state = useSelector<RootState, ActivitiesState>((state) => state.activities);
 
   const [show_confirm_action_modal, setShowConfirmActionModal] =
     useState(false);
@@ -29,20 +31,11 @@ export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
     setShowConfirmActionModal(false);
     setIsLoading(true);
 
-    const payload = {
-      type: activities_state.type,
-      weekcontent_id: weekcontent_id,
-      title: activities_state.title,
-    };
-
-    let new_activity_response = await fetch("/api/contents/activities/create_activity", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
+    const new_activity_response = await ActivitiesService.createActivity(activities_state.type, weekcontent_id, activities_state.title)
 
     setIsLoading(false);
 
-    if (new_activity_response.status !== 200) {
+    if (new_activity_response.error) {
       // An error occured
       setErrorMessage(
         "Aconteceu um erro ao criar a nova atividade. Por favor tente novamente."
@@ -51,7 +44,7 @@ export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
       // Activity created successfully
       //let results = await new_activity_response.json();
       setSuccessMessage(
-        "A atividade do tipo " + activities_type[payload.type] + " foi criada com sucesso!"
+        "A atividade do tipo " + activities_type[activities_state.type] + " foi criada com sucesso!"
       );
     }
   };

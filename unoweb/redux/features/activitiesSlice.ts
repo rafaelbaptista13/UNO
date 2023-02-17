@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 
 export interface ActivitiesState {
   type: string;
@@ -11,7 +10,7 @@ const initialState: ActivitiesState = {
   title: "",
 };
 
-export const activitiesSlice = createSlice({
+export const activitiesSlice: Slice = createSlice({
   initialState: initialState,
   name: "activities",
   reducers: {
@@ -25,7 +24,5 @@ export const activitiesSlice = createSlice({
 });
 
 export const { setType, setTitle } = activitiesSlice.actions;
-
-export const activitiesState = (state: RootState) => state.activities;
 
 export default activitiesSlice.reducer;

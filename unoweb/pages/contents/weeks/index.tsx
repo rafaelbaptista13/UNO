@@ -1,3 +1,5 @@
+import axios from "axios";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import ContentCard from "../../../components/contents/content_card";
@@ -7,7 +9,8 @@ import ErrorModal from "../../../components/utils/error_modal";
 import LoadingModal from "../../../components/utils/loading_modal";
 import PageHeaderButtonCard from "../../../components/utils/page_header_button_card";
 import SuccessModal from "../../../components/utils/success_modal";
-import { api_server } from "../../../config";
+import { web_server } from "../../../config";
+import WeeksService from "../../../services/weeks.service";
 
 export type ContentsWeeksType = {
   id: number;
@@ -38,30 +41,21 @@ export default function ContentsWeek({
   const createNewWeek = async () => {
     setIsLoading(true);
 
-    const payload = {
-      number_of_videos: 0,
-      number_of_exercises: 0,
-    };
-
-    let new_week_response = await fetch("/api/contents/create_week", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
+    const new_week_response = await WeeksService.createWeek(0, 0);
 
     setIsLoading(false);
 
-    if (new_week_response.status !== 200) {
+    if (new_week_response.error) {
       // An error occured
       setErrorMessage(
         "Aconteceu um erro ao criar uma nova semana de conteúdos. Por favor tente novamente."
       );
     } else {
       // Week created successfully
-      let results = await new_week_response.json();
-      contents_weeks.push(results.data);
+      contents_weeks.push(new_week_response);
       setSuccessMessage(
         "A semana de conteúdos " +
-          results.data.week_number +
+          new_week_response.week_number +
           " foi criada com sucesso!"
       );
     }
@@ -76,15 +70,11 @@ export default function ContentsWeek({
   }) => {
     setIsLoading(true);
 
-    const payload = { week_id: week_id };
-    const delete_week_response = await fetch("/api/contents/delete_week", {
-      method: "DELETE",
-      body: JSON.stringify(payload),
-    });
+    const delete_week_response = await WeeksService.deleteWeek(week_id);
 
     setIsLoading(false);
 
-    if (delete_week_response.status !== 200) {
+    if (delete_week_response.error) {
       // An error occured
       setErrorMessage(
         "Aconteceu um erro ao apagar uma semana de conteúdos. Por favor tente novamente."
@@ -161,12 +151,19 @@ export default function ContentsWeek({
   );
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const cookies = context.req.headers.cookie;
+
   let contents_weeks_request;
   try {
-    contents_weeks_request = await fetch(`${api_server}/contents/weeks`, {
-      method: "GET",
-    });
+    contents_weeks_request = await axios.get(
+      `${web_server}/api/contents/weeks`,
+      {
+        headers: {
+          Cookie: cookies,
+        },
+      }
+    );
   } catch (e) {
     console.log(e);
     return {
@@ -179,6 +176,7 @@ export async function getServerSideProps() {
 
   // Handle error
   if (contents_weeks_request.status !== 200) {
+    console.log(contents_weeks_request);
     return {
       props: {
         contents_weeks: [],
@@ -187,11 +185,11 @@ export async function getServerSideProps() {
     };
   }
 
-  const contents_weeks_response = await contents_weeks_request.json();
+  const contents_weeks_response = contents_weeks_request.data;
 
   return {
     props: {
       contents_weeks: contents_weeks_response,
     },
   };
-}
+};

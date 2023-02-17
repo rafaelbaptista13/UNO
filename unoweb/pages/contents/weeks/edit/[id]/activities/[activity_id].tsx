@@ -5,13 +5,16 @@ import NewActivityForm from "../../../../../../components/contents/activityform/
 import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
 import { useSelector, useDispatch } from "react-redux";
-import { activitiesState, setType, setTitle } from "../../../../../../redux/features/activitiesSlice";
+import { setType, setTitle, ActivitiesState } from "../../../../../../redux/features/activitiesSlice";
 import { useEffect, useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
 import SuccessModal from "../../../../../../components/utils/success_modal";
 import LoadingModal from "../../../../../../components/utils/loading_modal";
-import { api_server } from "../../../../../../config";
+import { web_server } from "../../../../../../config";
 import { activities_type } from "../index";
+import axios from "axios";
+import { RootState } from "../../../../../../redux/store";
+import ActivitiesService from "../../../../../../services/activities.service";
 
 export type ActivityType = {
   id: number;
@@ -29,7 +32,7 @@ interface EditActivityProps {
 }
 
 export default function EditActivity({ activity, error }: EditActivityProps) {
-  const activities_state = useSelector(activitiesState);
+  const activities_state = useSelector<RootState, ActivitiesState>((state) => state.activities);
   const dispatch = useDispatch();
 
   const [show_confirm_action_modal, setShowConfirmActionModal] =
@@ -42,32 +45,19 @@ export default function EditActivity({ activity, error }: EditActivityProps) {
     setShowConfirmActionModal(false);
     setIsLoading(true);
 
-    const payload = {
-      activity_id: activity.id,
-      type: activities_state.type,
-      title: activities_state.title,
-    };
-
-    let update_activity_response = await fetch(
-      "/api/contents/activities/update_activity",
-      {
-        method: "PUT",
-        body: JSON.stringify(payload),
-      }
-    );
+    const update_activity_response = await ActivitiesService.updateActivity(activity.id, activities_state.type, activities_state.title);
 
     setIsLoading(false);
 
-    if (update_activity_response.status !== 200) {
+    if (update_activity_response.error) {
       // An error occured
       setErrorMessage(
         "Aconteceu um erro ao atualizar a atividade. Por favor tente novamente."
       );
     } else {
       // Activity updated successfully
-      //let results = await new_activity_response.json();
       setSuccessMessage(
-        "A atividade do tipo " + activities_type[payload.type] + " foi atualizada com sucesso!"
+        "A atividade do tipo " + activities_type[activities_state.type] + " foi atualizada com sucesso!"
       );
     }
   };
@@ -132,12 +122,16 @@ export default function EditActivity({ activity, error }: EditActivityProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const cookies = context.req.headers.cookie;
   const activity_id = context.query.activity_id;
 
   let activity_request;
   try {
-    activity_request = await fetch(`${api_server}/activities/` + activity_id, {
-      method: "GET",
+    activity_request = await axios.get(`${web_server}/api/activities/${activity_id}`, {
+      headers: {
+        "Cookie": cookies
+      }
     });
   } catch (e) {
     console.log(e);
@@ -159,7 +153,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const activity_response = await activity_request.json();
+  const activity_response = await activity_request.data;
 
   return {
     props: {
