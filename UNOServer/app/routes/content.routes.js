@@ -1,21 +1,37 @@
 const authJwt = require("../middleware/authJwt.js");
 
-module.exports = app => {
-    const contents = require("../controllers/content.controller.js");
-  
-    let router = require("express").Router();
-  
-    // Create a new week of contents
-    router.post("/weeks", [authJwt.verifyToken], contents.create);
+module.exports = (app) => {
+  const contents = require("../controllers/content.controller.js");
 
-    // Retrieve a specific week of contents by id
-    router.get("/weeks/:id", [authJwt.verifyToken], contents.findOne);
+  let router = require("express").Router();
 
-    // Retrieve all weeks of contents
-    router.get("/weeks", [authJwt.verifyToken], contents.findAll);
+  // Create a new week of contents
+  router.post(
+    "/weeks/:class_id",
+    [
+      authJwt.verifyToken,
+      authJwt.isTeacher,
+      authJwt.isTeacherOfRequestedClass,
+    ],
+    contents.create
+  );
 
-    // Delete a week of contents
-    router.delete("/weeks/:id", [authJwt.verifyToken], contents.delete)
-  
-    app.use('/api/contents', router);
-  };
+  // Retrieve a specific week of contents by id
+  router.get("/weeks/:class_id/:weekcontent_id", [authJwt.verifyToken, authJwt.isPartOfRequestedClass], contents.findOne);
+
+  // Retrieve all weeks of contents of a class
+  router.get("/weeks/:class_id", [authJwt.verifyToken, authJwt.isPartOfRequestedClass], contents.findAll);
+
+  // Delete a week of contents
+  router.delete(
+    "/weeks/:class_id/:weekcontent_id",
+    [
+      authJwt.verifyToken,
+      authJwt.isTeacher,
+      authJwt.isTeacherOfRequestedClass,
+    ],
+    contents.delete
+  );
+
+  app.use("/api/contents", router);
+};

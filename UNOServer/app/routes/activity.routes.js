@@ -6,19 +6,39 @@ module.exports = (app) => {
   let router = require("express").Router();
 
   // Create a new activity
-  router.post("/", [authJwt.verifyToken], activities.create);
+  router.post(
+    "/:class_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    activities.create
+  );
 
   // Retrieve an activity given the id
-  router.get("/:id", [authJwt.verifyToken], activities.findOne);
+  router.get(
+    "/:class_id/:id",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    activities.findOne
+  );
 
   // Retrieve activities with filters
-  router.get("/", [authJwt.verifyToken], activities.findAll);
+  router.get(
+    "/:class_id",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    activities.findAll
+  );
 
   // Update an activity
-  router.put("/:id", [authJwt.verifyToken], activities.update);
+  router.put(
+    "/:class_id/:id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    activities.update
+  );
 
   // Delete an activity given the id
-  router.delete("/:id", [authJwt.verifyToken], activities.delete);
+  router.delete(
+    "/:class_id/:id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    activities.delete
+  );
 
   app.use("/api/activities", router);
 };

@@ -2,6 +2,7 @@ const { sequelize } = require("../models");
 const db = require("../models");
 const WeekContent = db.weekcontents;
 const Op = db.Sequelize.Op;
+const ClassUsers = db.classusers;
 
 // Create and Save a new Content
 exports.create = async (req, res) => {
@@ -21,6 +22,9 @@ exports.create = async (req, res) => {
   try {
     weekcontent_data = await WeekContent.findAll({
       order: [["week_number", "DESC"]],
+      where: {
+        class_id: req.params.class_id,
+      },
     });
   } catch (e) {
     console.log(e);
@@ -35,6 +39,7 @@ exports.create = async (req, res) => {
     week_number: week_number,
     number_of_videos: req.body.number_of_videos,
     number_of_exercises: req.body.number_of_exercises,
+    class_id: req.params.class_id,
   };
 
   // Save WeekContent in the database
@@ -52,9 +57,14 @@ exports.create = async (req, res) => {
 
 // Find a single WeekContent with an id
 exports.findOne = (req, res) => {
-  const id = req.params.id;
+  const id = req.params.weekcontent_id;
 
-  WeekContent.findByPk(id)
+  WeekContent.findOne({
+    where: {
+      id: id,
+      class_id: req.params.class_id,
+    },
+  })
     .then((data) => {
       if (data) {
         res.send(data);
@@ -71,14 +81,13 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Retrieve all week contents from the database.
+// Retrieve all weeks of contents of a class
 exports.findAll = (req, res) => {
-  const week_number = req.query.week_number;
-  let condition = week_number
-    ? { week_number: { [Op.eq]: `${week_number}` } }
-    : null;
-
-  WeekContent.findAll({ where: condition })
+  WeekContent.findAll({
+    where: {
+      class_id: req.params.class_id,
+    },
+  })
     .then((data) => {
       res.send(data);
     })
@@ -92,24 +101,26 @@ exports.findAll = (req, res) => {
 
 // Delete a week of contents from the database.
 exports.delete = async (req, res) => {
-  const id = req.params.id;
+  const id = req.params.weekcontent_id;
+  const class_id = req.params.class_id;
 
   try {
     const result = await sequelize.transaction(async (t) => {
       // Get the week number of the week to be deleted
-      const week_to_delete = await WeekContent.findByPk(id, { transaction: t });
-      const week_number_to_delete = week_to_delete.week_number;
-
-      // Delete the week
-      const num_of_deleted_week = await WeekContent.destroy({
-        where: { id: id },
-        transaction: t,
-      });
-      if (num_of_deleted_week !== 1) {
+      const week_to_delete = await WeekContent.findOne(
+        { where: { id: id, class_id: class_id } },
+        { transaction: t }
+      );
+      if (week_to_delete === null)
         throw new Error(
           `Cannot delete Week with id=${id}. Maybe Week was not found!`
         );
-      }
+      const week_number_to_delete = week_to_delete.week_number;
+
+      // Delete the week
+      await week_to_delete.destroy({
+        transaction: t,
+      });
 
       // Get the weeks that had a higher week_number to update them
       const remaining_weeks = await WeekContent.findAll(

@@ -1,6 +1,8 @@
 const { sequelize } = require("../models");
 const db = require("../models");
 const Activity = db.activities;
+const WeekContent = db.weekcontents;
+const Class = db.classes;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -28,12 +30,29 @@ exports.create = async (req, res) => {
     return;
   }
 
+  // Check if weekcontent exists
+  let weekcontent = await WeekContent.findOne({
+    where: {
+      id: req.body.weekcontent_id,
+      class_id: req.params.class_id,
+    },
+  });
+  if (weekcontent === null) {
+    res.status(400).send({
+      message: "You're not the teacher of this WeekContent.",
+    });
+    return;
+  }
+
   // Get number of activity
   let activities_data;
   try {
     activities_data = await Activity.findAll({
-      where: { weekcontent_id: { [Op.eq]: `${req.body.weekcontent_id}` } },
       order: [["activity_number", "DESC"]],
+      includes: {
+        model: WeekContent,
+        where: { class_id: req.params.class_id, id: req.body.weekcontent_id },
+      },
     });
   } catch (e) {
     console.log(e);
@@ -76,7 +95,18 @@ exports.create = async (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Activity.findByPk(id)
+  Activity.findOne({
+    where: {
+      id: id,
+    },
+    include: [
+      {
+        model: WeekContent,
+        as: "weekcontent",
+        where: { class_id: req.params.class_id },
+      },
+    ],
+  })
     .then((data) => {
       res.send(data);
     })
@@ -91,11 +121,19 @@ exports.findOne = (req, res) => {
 // Retrieve all week contents from the database.
 exports.findAll = (req, res) => {
   const weekcontent_id = req.query.weekcontent_id;
-  let condition = weekcontent_id
-    ? { weekcontent_id: { [Op.eq]: `${weekcontent_id}` } }
-    : null;
 
-  Activity.findAll({ where: condition })
+  Activity.findAll({
+    include: [
+      {
+        model: WeekContent,
+        as: "weekcontent",
+        where: {
+          id: weekcontent_id,
+          class_id: req.params.class_id,
+        },
+      },
+    ],
+  })
     .then((data) => {
       res.send(data);
     })
@@ -111,21 +149,27 @@ exports.findAll = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  Activity.update(req.body, {
+  // Find Activity
+  Activity.findOne({
     where: { id: id },
+    include: [
+      {
+        model: WeekContent,
+        as: "weekcontent",
+        where: { class_id: req.params.class_id },
+      },
+    ],
   })
-    .then((num) => {
-      if (num == 1) {
+    .then((activity) => {
+      if (activity === null) throw new Error();
+      activity.update(req.body).then((num) => {
         res.send({
           message: "Activity was updated successfully.",
         });
-      } else {
-        res.send({
-          message: `Cannot update Activity with id=${id}. Maybe Activity was not found or req.body is empty!`,
-        });
-      }
+      });
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).send({
         message: "Error updating Activity with id=" + id,
       });
@@ -140,22 +184,29 @@ exports.delete = async (req, res) => {
   try {
     const result = await sequelize.transaction(async (t) => {
       // Get the activity number of the activity to be deleted
-      const activity_to_delete = await Activity.findByPk(id, {
-        transaction: t,
-      });
-      const activity_number_to_delete = activity_to_delete.activity_number;
-
-      // Delete the activity
-      const num_of_deleted_activities = await Activity.destroy({
-        where: { id: id },
-        transaction: t,
-      });
-
-      if (num_of_deleted_activities !== 1) {
+      const activity_to_delete = await Activity.findOne(
+        {
+          where: { id: id },
+          include: [
+            {
+              model: WeekContent,
+              as: "weekcontent",
+              where: { id: weekcontent_id, class_id: req.params.class_id },
+            },
+          ],
+        },
+        { transaction: t }
+      );
+      if (activity_to_delete === null)
         throw new Error(
           `Cannot delete Activity with id=${id}. Maybe Activity was not found!`
         );
-      }
+      const activity_number_to_delete = activity_to_delete.activity_number;
+
+      // Delete the activity
+      await activity_to_delete.destroy({
+        transaction: t,
+      });
 
       // Get the activities that had a higher activity_number to update them
       const remaining_activities = await Activity.findAll({
