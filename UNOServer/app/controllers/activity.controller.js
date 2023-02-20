@@ -49,10 +49,13 @@ exports.create = async (req, res) => {
   try {
     activities_data = await Activity.findAll({
       order: [["activity_number", "DESC"]],
-      includes: {
-        model: WeekContent,
-        where: { class_id: req.params.class_id, id: req.body.weekcontent_id },
-      },
+      include: [
+        {
+          model: WeekContent,
+          as: "weekcontent",
+          where: { class_id: req.params.class_id, id: req.body.weekcontent_id },
+        },
+      ],
     });
   } catch (e) {
     console.log(e);

@@ -1,16 +1,20 @@
-import axios from "axios";
+import api from "./api";
 
-const API_URL = "http://localhost:3000/api";
-
-const getWeeks = () => {
-  return axios.get(API_URL + "/contents/weeks").then((response) => {
+const getActivities = (class_id, weekcontent_id) => {
+  return api.get("/activities/" + class_id +"?weekcontent_id=" + weekcontent_id).then((response) => {
     return response.data;
   });
 };
 
-const createActivity = (type, weekcontent_id, title) => {
-  return axios
-    .post(API_URL + "/activities", {
+const getActivity = (class_id, activity_id) => {
+  return api.get("/activities/" + class_id + "/" + activity_id).then((response) => {
+    return response.data;
+  });
+};
+
+const createActivity = (class_id, type, weekcontent_id, title) => {
+  return api
+    .post("/activities/" + class_id, {
       type: type,
       weekcontent_id: weekcontent_id,
       title: title
@@ -28,9 +32,9 @@ const createActivity = (type, weekcontent_id, title) => {
     });
 };
 
-const updateActivity = (activity_id, type, title) => {
-  return axios
-    .put(API_URL + "/activities/" + activity_id, {
+const updateActivity = (class_id, activity_id, type, title) => {
+  return api
+    .put("/activities/" + class_id + "/" + activity_id, {
       type: type,
       title: title
     })
@@ -47,9 +51,9 @@ const updateActivity = (activity_id, type, title) => {
     });
 };
 
-const deleteActivity = (activity_id, weekcontent_id) => {
-  return axios
-    .delete(API_URL + "/activities/" + activity_id, {
+const deleteActivity = (class_id, activity_id, weekcontent_id) => {
+  return api
+    .delete("/activities/" + class_id + "/" + activity_id, {
       data: {
         weekcontent_id: weekcontent_id,
       },
@@ -68,6 +72,8 @@ const deleteActivity = (activity_id, weekcontent_id) => {
 };
 
 const ActivitiesService = {
+  getActivities,
+  getActivity,
   createActivity,
   updateActivity,
   deleteActivity,

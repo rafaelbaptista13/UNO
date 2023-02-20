@@ -5,16 +5,21 @@ import NewActivityForm from "../../../../../../components/contents/activityform/
 import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
 import { useSelector, useDispatch } from "react-redux";
-import { setType, setTitle, ActivitiesState } from "../../../../../../redux/features/activitiesSlice";
+import {
+  setType,
+  setTitle,
+  ActivitiesState,
+} from "../../../../../../redux/features/activitiesSlice";
 import { useEffect, useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
 import SuccessModal from "../../../../../../components/utils/success_modal";
 import LoadingModal from "../../../../../../components/utils/loading_modal";
-import { web_server } from "../../../../../../config";
 import { activities_type } from "../index";
-import axios from "axios";
 import { RootState } from "../../../../../../redux/store";
 import ActivitiesService from "../../../../../../services/activities.service";
+import { ActiveClassState } from "../../../../../../redux/features/active_class";
+import ErrorCard from "../../../../../../components/utils/error_card";
+import Loading from "../../../../../../components/utils/loading";
 
 export type ActivityType = {
   id: number;
@@ -27,12 +32,13 @@ export type ActivityType = {
 };
 
 interface EditActivityProps {
-  activity: ActivityType;
-  error?: boolean;
+  activity_id: number;
 }
 
-export default function EditActivity({ activity, error }: EditActivityProps) {
-  const activities_state = useSelector<RootState, ActivitiesState>((state) => state.activities);
+export default function EditActivity({ activity_id }: EditActivityProps) {
+  const activities_state = useSelector<RootState, ActivitiesState>(
+    (state) => state.activities
+  );
   const dispatch = useDispatch();
 
   const [show_confirm_action_modal, setShowConfirmActionModal] =
@@ -40,12 +46,31 @@ export default function EditActivity({ activity, error }: EditActivityProps) {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [isPageLoading, setIsPageLoading] = useState(false);
+  const { id: class_id } = useSelector<RootState, ActiveClassState>(
+    (state) => state.active_class
+  );
+  const [activity, setActivity] = useState<ActivityType>({
+    id: -1,
+    type: "",
+    activity_number: 0,
+    title: "",
+    createdAt: "",
+    updatedAt: "",
+    weekcontent_id: 0,
+  });
+  const [error, setError] = useState(false);
+
   const updateActivity = async () => {
     setShowConfirmActionModal(false);
     setIsLoading(true);
 
-    const update_activity_response = await ActivitiesService.updateActivity(activity.id, activities_state.type, activities_state.title);
+    const update_activity_response = await ActivitiesService.updateActivity(
+      class_id,
+      activity.id,
+      activities_state.type,
+      activities_state.title
+    );
 
     setIsLoading(false);
 
@@ -57,15 +82,28 @@ export default function EditActivity({ activity, error }: EditActivityProps) {
     } else {
       // Activity updated successfully
       setSuccessMessage(
-        "A atividade do tipo " + activities_type[activities_state.type] + " foi atualizada com sucesso!"
+        "A atividade do tipo " +
+          activities_type[activities_state.type] +
+          " foi atualizada com sucesso!"
       );
     }
   };
 
   useEffect(() => {
-    dispatch(setType(activity.type))
-    dispatch(setTitle(activity.title))
-  }, [activity.title, activity.type, dispatch])
+    setIsPageLoading(true);
+    ActivitiesService.getActivity(class_id, activity_id)
+      .then((data) => {
+        setActivity(data);
+        dispatch(setType(data.type));
+        dispatch(setTitle(data.title));
+      })
+      .catch((err) => {
+        setError(true);
+      })
+      .finally(() => {
+        setIsPageLoading(false);
+      });
+  }, [activity_id, class_id, dispatch]);
 
   return (
     <>
@@ -77,11 +115,18 @@ export default function EditActivity({ activity, error }: EditActivityProps) {
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeader header_text={`${activity.activity_number}. Atividade - Editar`} />
+          <PageHeader
+            header_text={`${activity.activity_number}. Atividade - Editar`}
+          />
         </div>
 
         <div className="row g-3 mt-2 mb-4">
-          <NewActivityForm />
+          {error && (
+            <div className="row g-3 my-2">
+              <ErrorCard message="Ocorreu um erro ao obter a atividade. Por favor tente novamente." />
+            </div>
+          )}
+          {!error && <NewActivityForm />}
         </div>
 
         <div className="row g-3 my-2">
@@ -117,47 +162,17 @@ export default function EditActivity({ activity, error }: EditActivityProps) {
         show={show_confirm_action_modal}
         confirmAction={() => updateActivity()}
       />
+      {isPageLoading && <Loading />}
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
-  const cookies = context.req.headers.cookie;
   const activity_id = context.query.activity_id;
-
-  let activity_request;
-  try {
-    activity_request = await axios.get(`${web_server}/api/activities/${activity_id}`, {
-      headers: {
-        "Cookie": cookies
-      }
-    });
-  } catch (e) {
-    console.log(e);
-    return {
-      props: {
-        activity: {},
-        error: true,
-      },
-    };
-  }
-
-  // Handle error
-  if (activity_request.status !== 200) {
-    return {
-      props: {
-        activity: {},
-        error: true,
-      },
-    };
-  }
-
-  const activity_response = await activity_request.data;
 
   return {
     props: {
-      activity: activity_response,
+      activity_id: activity_id,
     },
   };
 };

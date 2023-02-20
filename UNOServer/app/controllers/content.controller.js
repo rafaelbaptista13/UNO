@@ -124,7 +124,7 @@ exports.delete = async (req, res) => {
 
       // Get the weeks that had a higher week_number to update them
       const remaining_weeks = await WeekContent.findAll(
-        { where: { week_number: { [Op.gt]: `${week_number_to_delete}` } } },
+        { where: { week_number: { [Op.gt]: `${week_number_to_delete}` }, class_id: class_id } },
         { transaction: t }
       );
 

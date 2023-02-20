@@ -1,15 +1,16 @@
-import axios from "axios";
-import { GetServerSideProps } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import ContentCard from "../../../components/contents/content_card";
 import ConfirmActionModal from "../../../components/utils/confirm_action_modal";
 import ErrorCard from "../../../components/utils/error_card";
 import ErrorModal from "../../../components/utils/error_modal";
+import Loading from "../../../components/utils/loading";
 import LoadingModal from "../../../components/utils/loading_modal";
 import PageHeaderButtonCard from "../../../components/utils/page_header_button_card";
 import SuccessModal from "../../../components/utils/success_modal";
-import { web_server } from "../../../config";
+import { ActiveClassState } from "../../../redux/features/active_class";
+import { RootState } from "../../../redux/store";
 import WeeksService from "../../../services/weeks.service";
 
 export type ContentsWeeksType = {
@@ -21,15 +22,7 @@ export type ContentsWeeksType = {
   updatedAt: string;
 };
 
-interface ContentsWeeksProps {
-  contents_weeks: Array<ContentsWeeksType>;
-  error?: boolean;
-}
-
-export default function ContentsWeek({
-  contents_weeks,
-  error,
-}: ContentsWeeksProps) {
+export default function ContentsWeek() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [confirmActionWeek, setConfirmActionWeek] = useState({
@@ -37,11 +30,17 @@ export default function ContentsWeek({
     week_number: -1,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(false);
+  const [contentsWeeks, setContentsWeeks] = useState<Array<ContentsWeeksType>>([]);
+  const [error, setError] = useState(false);
+  const { id: class_id } = useSelector<RootState, ActiveClassState>(
+    (state) => state.active_class
+  );
 
   const createNewWeek = async () => {
     setIsLoading(true);
 
-    const new_week_response = await WeeksService.createWeek(0, 0);
+    const new_week_response = await WeeksService.createWeek(class_id, 0, 0);
 
     setIsLoading(false);
 
@@ -52,7 +51,8 @@ export default function ContentsWeek({
       );
     } else {
       // Week created successfully
-      contents_weeks.push(new_week_response);
+      contentsWeeks.push(new_week_response);
+      setContentsWeeks([...contentsWeeks]);
       setSuccessMessage(
         "A semana de conteúdos " +
           new_week_response.week_number +
@@ -70,7 +70,7 @@ export default function ContentsWeek({
   }) => {
     setIsLoading(true);
 
-    const delete_week_response = await WeeksService.deleteWeek(week_id);
+    const delete_week_response = await WeeksService.deleteWeek(class_id, week_id);
 
     setIsLoading(false);
 
@@ -84,13 +84,30 @@ export default function ContentsWeek({
       setSuccessMessage(
         "A semana de conteúdos " + week_number + " foi eliminada com sucesso!"
       );
+      let contents_weeks = contentsWeeks;
       contents_weeks.splice(week_number - 1, 1);
       for (let idx = week_number - 1; idx < contents_weeks.length; idx++) {
         contents_weeks[idx].week_number -= 1;
       }
+      setContentsWeeks(contents_weeks);
     }
     setConfirmActionWeek({ week_id: -1, week_number: -1 });
   };
+
+  useEffect(() => {
+    setIsPageLoading(true);
+    WeeksService.getWeeks(class_id)
+      .then((data) => {
+        setError(false);
+        setContentsWeeks(data);
+      })
+      .catch((err) => {
+        setError(true);
+      })
+      .finally(() => {
+        setIsPageLoading(false);
+      });
+  }, [class_id]);
 
   return (
     <>
@@ -113,9 +130,9 @@ export default function ContentsWeek({
             <ErrorCard message="Ocorreu um erro ao obter os conteúdos semanais. Por favor tente novamente." />
           </div>
         )}
-        {contents_weeks.map(function (contents_week: ContentsWeeksType, index) {
+        {contentsWeeks.map(function (contents_week: ContentsWeeksType, index) {
           return (
-            <div className="row g-3 my-1" key={contents_week.week_number}>
+            <div className="row g-3 my-1" key={contents_week.id}>
               <ContentCard
                 id={contents_week.id}
                 week_number={contents_week.week_number}
@@ -147,49 +164,7 @@ export default function ContentsWeek({
           "?"
         }
       />
+      {isPageLoading && <Loading />}
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const cookies = context.req.headers.cookie;
-
-  let contents_weeks_request;
-  try {
-    contents_weeks_request = await axios.get(
-      `${web_server}/api/contents/weeks`,
-      {
-        headers: {
-          Cookie: cookies,
-        },
-      }
-    );
-  } catch (e) {
-    console.log(e);
-    return {
-      props: {
-        contents_weeks: [],
-        error: true,
-      },
-    };
-  }
-
-  // Handle error
-  if (contents_weeks_request.status !== 200) {
-    console.log(contents_weeks_request);
-    return {
-      props: {
-        contents_weeks: [],
-        error: true,
-      },
-    };
-  }
-
-  const contents_weeks_response = contents_weeks_request.data;
-
-  return {
-    props: {
-      contents_weeks: contents_weeks_response,
-    },
-  };
-};

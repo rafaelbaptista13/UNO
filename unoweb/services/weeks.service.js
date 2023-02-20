@@ -1,16 +1,22 @@
-import axios from "axios";
+import api from "./api";
 
 const API_URL = "http://localhost:3000/api";
 
-const getWeeks = () => {
-  return axios.get(API_URL + "/contents/weeks").then((response) => {
+const getWeeks = (class_id) => {
+  return api.get("/contents/weeks/" + class_id).then((response) => {
     return response.data;
   });
 };
 
-const createWeek = (number_of_videos, number_of_exercises) => {
-  return axios
-    .post(API_URL + "/contents/weeks", {
+const getWeek = (class_id, week_id) => {
+  return api.get("/contents/weeks/" + class_id + "/" + week_id).then((response) => {
+    return response.data;
+  });
+};
+
+const createWeek = (class_id, number_of_videos, number_of_exercises) => {
+  return api
+    .post("/contents/weeks/" + class_id, {
       number_of_videos: number_of_videos,
       number_of_exercises: number_of_exercises,
     })
@@ -27,9 +33,9 @@ const createWeek = (number_of_videos, number_of_exercises) => {
     });
 };
 
-const deleteWeek = (week_id) => {
-  return axios
-    .delete(API_URL + "/contents/weeks/" + week_id)
+const deleteWeek = (class_id, week_id) => {
+  return api
+    .delete("/contents/weeks/" + class_id + "/" + week_id)
     .then((response) => {
       if (response.status === 200) {
         return response.data;
@@ -45,6 +51,7 @@ const deleteWeek = (week_id) => {
 
 const WeeksService = {
   getWeeks,
+  getWeek,
   createWeek,
   deleteWeek,
 };

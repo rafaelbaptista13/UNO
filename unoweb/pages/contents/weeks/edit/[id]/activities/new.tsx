@@ -13,6 +13,7 @@ import LoadingModal from "../../../../../../components/utils/loading_modal";
 import { activities_type } from "../index";
 import { RootState } from "../../../../../../redux/store";
 import ActivitiesService from "../../../../../../services/activities.service";
+import { ActiveClassState } from "../../../../../../redux/features/active_class";
 
 interface ContentWeekProps {
   weekcontent_id: number;
@@ -26,12 +27,15 @@ export default function NewActivity({ weekcontent_id }: ContentWeekProps) {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { id: class_id } = useSelector<RootState, ActiveClassState>(
+    (state) => state.active_class
+  );
 
   const createNewActivity = async () => {
     setShowConfirmActionModal(false);
     setIsLoading(true);
 
-    const new_activity_response = await ActivitiesService.createActivity(activities_state.type, weekcontent_id, activities_state.title)
+    const new_activity_response = await ActivitiesService.createActivity(class_id, activities_state.type, weekcontent_id, activities_state.title)
 
     setIsLoading(false);
 

@@ -122,6 +122,7 @@ const authSlice: Slice = createSlice({
       state.user = null;
     });
     builder.addCase(logout.fulfilled, (state, action) => {
+      console.log("aqui");
       state.isLoggedIn = false;
       state.user = null;
     });

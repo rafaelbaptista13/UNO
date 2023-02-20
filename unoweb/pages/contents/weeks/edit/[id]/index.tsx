@@ -1,18 +1,21 @@
 import { GetServerSideProps } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import ActivityCard from "../../../../../components/contents/activity_card";
 import ErrorCard from "../../../../../components/utils/error_card";
 import PageHeaderWithLinkCard from "../../../../../components/utils/page_header_with_link_card";
-import { web_server } from "../../../../../config";
 import { ButtonPrimary } from "../../../../../utils/buttons";
 import ErrorModal from "../../../../../components/utils/error_modal";
 import LoadingModal from "../../../../../components/utils/loading_modal";
 import SuccessModal from "../../../../../components/utils/success_modal";
 import ConfirmActionModal from "../../../../../components/utils/confirm_action_modal";
-import axios from "axios";
 import ActivitiesService from "../../../../../services/activities.service";
+import WeeksService from "../../../../../services/weeks.service";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../redux/store";
+import { ActiveClassState } from "../../../../../redux/features/active_class";
+import Loading from "../../../../../components/utils/loading";
 
 export type ActivitiesType = {
   id: number;
@@ -26,9 +29,6 @@ export type ActivitiesType = {
 
 interface ContentWeekProps {
   weekcontent_id: number;
-  week_number: number;
-  activities: Array<ActivitiesType>;
-  error?: boolean;
 }
 
 export const activities_type: { [type: string]: string } = {
@@ -39,19 +39,21 @@ export const activities_type: { [type: string]: string } = {
   question: "Pergunta",
 };
 
-export default function EditWeek({
-  weekcontent_id,
-  week_number,
-  activities,
-  error,
-}: ContentWeekProps) {
+export default function EditWeek({ weekcontent_id }: ContentWeekProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [confirmActionActivity, setConfirmActionActivity] = useState({
     activity_id: -1,
     activity_number: -1,
   });
+  const { id: class_id } = useSelector<RootState, ActiveClassState>(
+    (state) => state.active_class
+  );
+  const [weekNumber, setWeekNumber] = useState(0);
+  const [error, setError] = useState(false);
+  const [activities, setActivities] = useState<Array<ActivitiesType>>([]);
 
   const deleteActivity = async ({
     activity_id,
@@ -62,7 +64,11 @@ export default function EditWeek({
   }) => {
     setIsLoading(true);
 
-    const delete_activity_response = await ActivitiesService.deleteActivity(activity_id, weekcontent_id);
+    const delete_activity_response = await ActivitiesService.deleteActivity(
+      class_id,
+      activity_id,
+      weekcontent_id
+    );
 
     setIsLoading(false);
 
@@ -76,13 +82,39 @@ export default function EditWeek({
       setSuccessMessage(
         "A atividade " + activity_number + " foi eliminada com sucesso!"
       );
-      activities.splice(activity_number - 1, 1);
-      for (let idx = activity_number - 1; idx < activities.length; idx++) {
-        activities[idx].activity_number -= 1;
+      let _activities = activities;
+      _activities.splice(activity_number - 1, 1);
+      for (let idx = activity_number - 1; idx < _activities.length; idx++) {
+        _activities[idx].activity_number -= 1;
       }
+      setActivities(_activities);
     }
     setConfirmActionActivity({ activity_id: -1, activity_number: -1 });
   };
+
+  useEffect(() => {
+    setIsPageLoading(true);
+    WeeksService.getWeek(class_id, weekcontent_id)
+      .then((data) => {
+        setWeekNumber(data.week_number);
+        ActivitiesService.getActivities(class_id, weekcontent_id)
+          .then((data) => {
+            setError(false);
+            setActivities(data);
+          })
+          .catch((err) => {
+            setActivities([]);
+            setError(true);
+          });
+      })
+      .catch((err) => {
+        setActivities([]);
+        setError(true);
+      })
+      .finally(() => {
+        setIsPageLoading(false);
+      });
+  }, [class_id, weekcontent_id]);
 
   return (
     <>
@@ -95,7 +127,7 @@ export default function EditWeek({
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
           <PageHeaderWithLinkCard
-            header_text={"Semana " + week_number + " - Editar atividades"}
+            header_text={"Semana " + weekNumber + " - Editar atividades"}
             button_text="Nova atividade"
             link_path={`/contents/weeks/edit/${weekcontent_id}/activities/new`}
           />
@@ -153,59 +185,17 @@ export default function EditWeek({
           "?"
         }
       />
+      {isPageLoading && <Loading />}
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
-  const cookies = context.req.headers.cookie;
   const weekcontent_id = context.query.id;
-
-  // Get week content details and activities
-  let weekcontent_request;
-  let activities_request;
-  try {
-    weekcontent_request = await axios.get(`${web_server}/api/contents/weeks/${weekcontent_id}`, {
-      headers: {
-        "Cookie": cookies
-      }
-    });
-    activities_request = await axios.get(`${web_server}/api/activities?weekcontent_id=${weekcontent_id}`, {
-      headers: {
-        "Cookie": cookies
-      }
-    }); 
-  } catch (e) {
-    console.log(e);
-    return {
-      props: {
-        weekcontent_id: weekcontent_id,
-        activities: [],
-        error: true,
-      },
-    };
-  }
-
-  // Handle error
-  if (weekcontent_request.status !== 200 || activities_request.status !== 200) {
-    return {
-      props: {
-        weekcontent_id: weekcontent_id,
-        activities: [],
-        error: true,
-      },
-    };
-  }
-
-  const weekcontent_response = weekcontent_request.data;
-  const activities_response = activities_request.data;
 
   return {
     props: {
       weekcontent_id: weekcontent_id,
-      week_number: weekcontent_response.week_number,
-      activities: activities_response,
     },
   };
 };
