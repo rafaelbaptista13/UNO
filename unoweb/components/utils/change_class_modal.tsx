@@ -76,6 +76,11 @@ export default function ChangeClassModal({
               value={selectedClass.id}
               onChange={handleChange}
             >
+              {selectedClass.id === -1 &&
+                <option selected>
+                  {"Escolha a sua turma..."}
+                </option>
+              } 
               {classes.map(function (class_elem: ClassesType, index) {
                 return (
                   <option key={class_elem.id} value={class_elem.id}>

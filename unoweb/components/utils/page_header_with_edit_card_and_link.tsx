@@ -4,8 +4,7 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // import the icons you need
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-
+import { faAdd, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -13,21 +12,19 @@ const CardDiv = styled.div`
   position: relative;
 `;
 
-const CardLink = styled(Link)`
-  text-decoration: none;
-`;
-
-export default function ClassCard({
+export default function PageHeaderWithEditAndLinkCard({
   id,
   name,
-  class_code,
-  setConfirmActionClass,
+  order,
+  button_text,
+  link_path,
   updateAction,
 }: {
   id: number;
   name: string;
-  class_code: string;
-  setConfirmActionClass: ({ id, name }: { id: number; name: string }) => void;
+  order: number;
+  button_text: string;
+  link_path: string;
   updateAction: ({ id, name }: { id: number; name: string }) => void;
 }) {
   const [view, setView] = useState("normal");
@@ -38,31 +35,30 @@ export default function ClassCard({
   };
 
   return (
-    <CardDiv className="p-3 bg-white shadow-sm rounded d-md-flex justify-content-md-between text-center align-items-center">
+    <CardDiv className="p-3 bg-white shadow-sm rounded d-sm-flex justify-content-sm-between">
       {view === "normal" && (
         <>
-          <h3 className="primary-text ms-3 text-center mb-0">{name}</h3>
-          <span className="primary-text ms-3 me-3 mb-sm-0 mb-3">Código de acesso: <strong>{class_code}</strong></span>
-          <div className="d-flex justify-content-center d-grid gap-3 mt-md-0 mt-2">
-            <CardLink href={"#"}>
-              <button className="btn btn-warning">{"Ver alunos"}</button>
-            </CardLink>
+          <div className="d-flex align-items-center">
+          <span className="primary-text">{order + "."}</span>
+            <h3 className="primary-text fw-bold ms-3 text-center mb-0">
+              {name + " - Editar"}
+            </h3>
+          </div>
+
+          <div className="d-flex justify-content-center d-grid gap-3">
             <div>
               <button
                 className="btn btn-secondary"
                 onClick={() => setView("edit")}
               >
-                <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon> Editar
+                <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon> Editar nome
               </button>
             </div>
-            <div>
-              <button
-                className="btn btn-danger"
-                onClick={() => setConfirmActionClass({ id: id, name: name })}
-              >
-                <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon> Apagar
+            <Link href={link_path}>
+              <button className="btn btn-warning">
+                <FontAwesomeIcon icon={faAdd}></FontAwesomeIcon> {button_text}
               </button>
-            </div>
+            </Link>
           </div>
         </>
       )}

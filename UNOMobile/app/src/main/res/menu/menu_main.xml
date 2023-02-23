@@ -8,7 +8,7 @@
         android:checkable="true"/>
 
     <item
-        android:id="@+id/contentFragment"
+        android:id="@+id/activitygroupsFragment"
         android:icon="@drawable/content_icon"
         android:title="Conteúdos"
         android:checkable="true"/>

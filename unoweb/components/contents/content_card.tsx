@@ -18,29 +18,32 @@ const CardLink = styled(Link)`
 
 export default function ContentCard({
   id,
-  week_number,
+  name,
+  order,
   setConfirmActionWeek,
 }: {
   id: number;
-  week_number: number;
+  name: string;
+  order: number;
   setConfirmActionWeek: ({
-    week_id,
-    week_number,
+    activitygroup_id,
+    order,
   }: {
-    week_id: number;
-    week_number: number;
+    activitygroup_id: number;
+    order: number;
   }) => void;
 }) {
   return (
     <CardDiv className="p-3 bg-white shadow-sm rounded d-sm-flex justify-content-sm-between">
-      <h3 className="primary-text ms-3 text-center">
-        {"Semana " + week_number}
-      </h3>
+      <div className="d-flex align-items-center">
+        <span className="primary-text">{order + "."}</span>
+        <h3 className="primary-text ms-3 text-center mb-0">{name}</h3>
+      </div>
       <div className="d-flex justify-content-center d-grid gap-3">
         <CardLink href={"#"}>
           <button className="btn btn-warning">{"Ver alunos"}</button>
         </CardLink>
-        <CardLink href={"/contents/weeks/edit/" + id}>
+        <CardLink href={"/contents/groups/edit/" + id}>
           <button className="btn btn-secondary">
             <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon> Editar
           </button>
@@ -49,7 +52,7 @@ export default function ContentCard({
           <button
             className="btn btn-danger"
             onClick={() =>
-              setConfirmActionWeek({ week_id: id, week_number: week_number })
+              setConfirmActionWeek({ activitygroup_id: id, order: order })
             }
           >
             <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon> Apagar

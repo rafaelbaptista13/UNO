@@ -33,7 +33,7 @@ export default function HomePage() {
         <div className="col-lg-6 col-xl-4">
           <PageCard
             header="Conteúdos"
-            text="Gerencie os conteúdos e exercícios das suas turmas para as diferentes semanas. "
+            text="Gerencie os conteúdos e exercícios nos grupos de atividades e materiais de apoio. "
             path="/contents"
           />
         </div>

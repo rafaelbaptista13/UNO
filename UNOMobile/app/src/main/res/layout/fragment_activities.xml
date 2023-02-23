@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginHorizontal="20dp"
-    tools:context=".fragments.week_content.WeekContentFragment">
+    tools:context=".fragments.activities.ActivitiesFragment">
 
     <ImageView
         android:id="@+id/back_button"

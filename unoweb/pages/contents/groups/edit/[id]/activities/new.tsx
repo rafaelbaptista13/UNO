@@ -4,13 +4,9 @@ import Link from "next/link";
 import NewActivityForm from "../../../../../../components/contents/activityform/new_activity_form";
 import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  setType,
-  setTitle,
-  ActivitiesState,
-} from "../../../../../../redux/features/activitiesSlice";
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { ActivitiesState } from "../../../../../../redux/features/activitiesSlice";
+import { useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
 import SuccessModal from "../../../../../../components/utils/success_modal";
 import LoadingModal from "../../../../../../components/utils/loading_modal";
@@ -18,92 +14,52 @@ import { activities_type } from "../index";
 import { RootState } from "../../../../../../redux/store";
 import ActivitiesService from "../../../../../../services/activities.service";
 import { ActiveClassState } from "../../../../../../redux/features/active_class";
-import ErrorCard from "../../../../../../components/utils/error_card";
-import Loading from "../../../../../../components/utils/loading";
 
-export type ActivityType = {
-  id: number;
-  type: string;
-  activity_number: number;
-  title: string;
-  createdAt: string;
-  updatedAt: string;
-  weekcontent_id: number;
-};
-
-interface EditActivityProps {
-  activity_id: number;
+interface NewActivityProps {
+  activitygroup_id: number;
 }
 
-export default function EditActivity({ activity_id }: EditActivityProps) {
+export default function NewActivity({ activitygroup_id }: NewActivityProps) {
   const activities_state = useSelector<RootState, ActivitiesState>(
     (state) => state.activities
   );
-  const dispatch = useDispatch();
 
   const [show_confirm_action_modal, setShowConfirmActionModal] =
     useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(false);
   const { id: class_id } = useSelector<RootState, ActiveClassState>(
     (state) => state.active_class
   );
-  const [activity, setActivity] = useState<ActivityType>({
-    id: -1,
-    type: "",
-    activity_number: 0,
-    title: "",
-    createdAt: "",
-    updatedAt: "",
-    weekcontent_id: 0,
-  });
-  const [error, setError] = useState(false);
 
-  const updateActivity = async () => {
+  const createNewActivity = async () => {
     setShowConfirmActionModal(false);
     setIsLoading(true);
 
-    const update_activity_response = await ActivitiesService.updateActivity(
+    const new_activity_response = await ActivitiesService.createActivity(
       class_id,
-      activity.id,
       activities_state.type,
+      activitygroup_id,
       activities_state.title
     );
 
     setIsLoading(false);
 
-    if (update_activity_response.error) {
+    if (new_activity_response.error) {
       // An error occured
       setErrorMessage(
-        "Aconteceu um erro ao atualizar a atividade. Por favor tente novamente."
+        "Aconteceu um erro ao criar a nova atividade. Por favor tente novamente."
       );
     } else {
-      // Activity updated successfully
+      // Activity created successfully
       setSuccessMessage(
         "A atividade do tipo " +
           activities_type[activities_state.type] +
-          " foi atualizada com sucesso!"
+          " foi criada com sucesso!"
       );
     }
   };
-
-  useEffect(() => {
-    setIsPageLoading(true);
-    ActivitiesService.getActivity(class_id, activity_id)
-      .then((data) => {
-        setActivity(data);
-        dispatch(setType(data.type));
-        dispatch(setTitle(data.title));
-      })
-      .catch((err) => {
-        setError(true);
-      })
-      .finally(() => {
-        setIsPageLoading(false);
-      });
-  }, [activity_id, class_id, dispatch]);
 
   return (
     <>
@@ -115,18 +71,11 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeader
-            header_text={`${activity.activity_number}. Atividade - Editar`}
-          />
+          <PageHeader header_text={"Nova Atividade"} />
         </div>
 
         <div className="row g-3 mt-2 mb-4">
-          {error && (
-            <div className="row g-3 my-2">
-              <ErrorCard message="Ocorreu um erro ao obter a atividade. Por favor tente novamente." />
-            </div>
-          )}
-          {!error && <NewActivityForm />}
+          <NewActivityForm />
         </div>
 
         <div className="row g-3 my-2">
@@ -137,7 +86,7 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
             >
               Concluir
             </button>
-            <Link href={`/contents/weeks/edit/${activity.weekcontent_id}`}>
+            <Link href={`/contents/groups/edit/${activitygroup_id}`}>
               <button className="btn btn-danger">Cancelar</button>
             </Link>
           </div>
@@ -153,26 +102,27 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
         show={successMessage !== ""}
         onHide={() => setSuccessMessage("")}
         message={successMessage}
-        button_link_path={`/contents/weeks/edit/${activity.weekcontent_id}`}
+        button_link_path={`/contents/groups/edit/${activitygroup_id}`}
       />
       {isLoading && <LoadingModal />}
       <ConfirmActionModal
-        message={`Tem a certeza que pretende atualizar a atividade?`}
+        message={`Tem a certeza que pretende criar uma atividade do tipo ${
+          activities_type[activities_state.type]
+        }?`}
         onHide={() => setShowConfirmActionModal(false)}
         show={show_confirm_action_modal}
-        confirmAction={() => updateActivity()}
+        confirmAction={() => createNewActivity()}
       />
-      {isPageLoading && <Loading />}
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const activity_id = context.query.activity_id;
+  const activitygroup_id = context.query.id;
 
   return {
     props: {
-      activity_id: activity_id,
+      activitygroup_id: activitygroup_id,
     },
   };
 };

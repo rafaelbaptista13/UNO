@@ -23,7 +23,7 @@ db.users = require("./user.model.js")(sequelize, Sequelize);
 db.roles = require("./role.model.js")(sequelize, Sequelize);
 db.classes = require("./class.model")(sequelize, Sequelize);
 db.classusers = require("./classusers.model")(sequelize, Sequelize);
-db.weekcontents = require("./weekcontent.model.js")(sequelize, Sequelize);
+db.activitygroups = require("./activitygroups.model.js")(sequelize, Sequelize);
 db.activities = require("./activities.model.js")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
@@ -43,17 +43,17 @@ db.users.belongsToMany(db.classes, {
 db.classes.belongsToMany(db.users, {
   through: db.classusers,
 });
-// Class 1 - * WeekContent
-db.weekcontents.belongsTo(db.classes, {
+// Class 1 - * ActivityGroup
+db.activitygroups.belongsTo(db.classes, {
   through: "class",
   foreignKey: { name: "class_id", allowNull: false },
   as: "class",
 });
 
-db.activities.belongsTo(db.weekcontents, {
-  through: "weekcontent",
-  foreignKey: { name: "weekcontent_id", allowNull: false },
-  as: "weekcontent",
+db.activities.belongsTo(db.activitygroups, {
+  through: "activitygroup",
+  foreignKey: { name: "activitygroup_id", allowNull: false },
+  as: "activitygroup",
 });
 
 db.ROLES = ["student", "teacher"];

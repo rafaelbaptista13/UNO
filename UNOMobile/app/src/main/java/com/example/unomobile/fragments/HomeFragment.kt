@@ -25,8 +25,10 @@ class HomeFragment : Fragment() {
         val sharedPreferences = requireActivity().getSharedPreferences("data", AppCompatActivity.MODE_PRIVATE)
         val userInfo = gson.fromJson(sharedPreferences.getString("user", ""), UserInfo::class.java)
 
-        val title = view.findViewById<TextView>(R.id.title)
-        title.text = "Olá " + userInfo.first_name + "!"
+        if (userInfo !== null) {
+            val title = view.findViewById<TextView>(R.id.title)
+            title.text = "Olá " + userInfo.first_name + "!"
+        }
         return view
     }
 

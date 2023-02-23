@@ -1,7 +1,7 @@
 import api from "./api";
 
-const getActivities = (class_id, weekcontent_id) => {
-  return api.get("/activities/" + class_id +"?weekcontent_id=" + weekcontent_id).then((response) => {
+const getActivities = (class_id, activitygroup_id) => {
+  return api.get("/activities/" + class_id +"?activitygroup_id=" + activitygroup_id).then((response) => {
     return response.data;
   });
 };
@@ -12,11 +12,11 @@ const getActivity = (class_id, activity_id) => {
   });
 };
 
-const createActivity = (class_id, type, weekcontent_id, title) => {
+const createActivity = (class_id, type, activitygroup_id, title) => {
   return api
     .post("/activities/" + class_id, {
       type: type,
-      weekcontent_id: weekcontent_id,
+      activitygroup_id: activitygroup_id,
       title: title
     })
     .then((response) => {
@@ -51,11 +51,11 @@ const updateActivity = (class_id, activity_id, type, title) => {
     });
 };
 
-const deleteActivity = (class_id, activity_id, weekcontent_id) => {
+const deleteActivity = (class_id, activity_id, activitygroup_id) => {
   return api
     .delete("/activities/" + class_id + "/" + activity_id, {
       data: {
-        weekcontent_id: weekcontent_id,
+        activitygroup_id: activitygroup_id,
       },
     })
     .then((response) => {

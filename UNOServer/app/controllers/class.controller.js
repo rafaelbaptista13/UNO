@@ -1,7 +1,7 @@
 const db = require("../models");
 const Class = db.classes;
 const User = db.users;
-const ClassUsers = db.classusers;
+const crypto = require("crypto");
 
 // Create and Save a new Class
 exports.create = async (req, res) => {
@@ -19,6 +19,7 @@ exports.create = async (req, res) => {
   // Create a Class
   const new_class = {
     name: req.body.name,
+    code: crypto.randomBytes(3).toString("hex")
   };
 
   Class.create(new_class)
@@ -31,6 +32,33 @@ exports.create = async (req, res) => {
         message: err.message || "Some error occurred while creating the Class.",
       });
     });
+};
+
+// Join a new class
+exports.join = async (req, res) => {
+  // Validate request
+  if (!req.body.class_code) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+    return;
+  }
+
+  // Find Class
+  Class.findOne({
+    where: {
+      code: req.body.class_code,
+    },
+  })
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occured while searching the Class."
+    })
+  });
 };
 
 // Retrieve a Class and its users from the database.
@@ -81,7 +109,16 @@ exports.findAll = async (req, res) => {
 exports.update = async (req, res) => {
   const id = req.params.class_id;
 
-  Class.update(req.body, {
+  if (!req.body.name) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+    return;
+  }
+
+  Class.update({
+    name: req.body.name
+  }, {
     where: { id: id },
   })
     .then((num) => {

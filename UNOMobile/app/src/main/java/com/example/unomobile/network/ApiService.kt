@@ -9,12 +9,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Query
-import java.net.CookieHandler
+import retrofit2.http.*
 import java.net.CookieManager
 import java.util.concurrent.TimeUnit
 
@@ -39,13 +34,13 @@ private val retrofit = Retrofit.Builder()
 
 interface ApiService {
 
-    @GET("contents/weeks")
-    fun getContents(): Call<List<Content>>
+    @GET("activitygroup/{class_id}")
+    fun getActivityGroups(@Path("class_id") class_id: Number): Call<List<ActivityGroup>>
 
-    @GET("activities")
-    fun getActivities(@Query("weekcontent_id") weekcontent_id: String): Call<List<Activity>>
+    @GET("activities/{class_id}")
+    fun getActivities(@Path("class_id") class_id: Number, @Query("activitygroup_id") activitygroup_id: String): Call<List<Activity>>
 
-    @POST("auth/signup")
+    @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>
 
     @POST("auth/signin")

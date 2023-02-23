@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import ClassCard from "../components/classes/class_card";
+import NewCardWithTextInput from "../components/contents/new_card_with_text_input";
 import ConfirmActionModal from "../components/utils/confirm_action_modal";
 import ErrorCard from "../components/utils/error_card";
 import ErrorModal from "../components/utils/error_modal";
@@ -15,6 +16,7 @@ import ClassesService from "../services/classes.service";
 export type ClassesType = {
   id: number;
   name: string;
+  code: string;
 };
 
 interface ClassesProps {
@@ -31,11 +33,12 @@ export default function Classes({ teacher_classes, error }: ClassesProps) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [teacherClasses, setTeacherClasses] = useState(teacher_classes);
+  const [newClassMode, setNewClassMode] = useState(false);
 
-  const createNewClass = async () => {
+  const createNewClass = async (name: string) => {
     setIsLoading(true);
 
-    const new_class_response = await ClassesService.createClass("Nome Teste");
+    const new_class_response = await ClassesService.createClass(name);
 
     setIsLoading(false);
 
@@ -51,7 +54,7 @@ export default function Classes({ teacher_classes, error }: ClassesProps) {
       setSuccessMessage(
         "A turma com o nome " +
           new_class_response.name +
-          " foi criada com sucesso!"
+          " foi criada com sucesso! Atualize a página para ver as atualizações."
       );
     }
   };
@@ -112,12 +115,20 @@ export default function Classes({ teacher_classes, error }: ClassesProps) {
           <PageHeaderButtonCard
             header_text="As suas turmas"
             button_text="Nova turma"
-            button_action={createNewClass}
+            button_action={() => setNewClassMode(true)}
           />
         </div>
         {error && (
           <div className="row g-3 my-2">
             <ErrorCard message="Ocorreu um erro ao obter os conteúdos semanais. Por favor tente novamente." />
+          </div>
+        )}
+        {newClassMode && (
+          <div className="row g-3 my-2">
+            <NewCardWithTextInput
+              confirm={createNewClass}
+              cancel={() => setNewClassMode(false)}
+            />
           </div>
         )}
         {teacherClasses.map(function (class_item: ClassesType, index) {
@@ -126,6 +137,7 @@ export default function Classes({ teacher_classes, error }: ClassesProps) {
               <ClassCard
                 id={class_item.id}
                 name={class_item.name}
+                class_code={class_item.code}
                 setConfirmActionClass={setConfirmActionClass}
                 updateAction={updateClass}
               />

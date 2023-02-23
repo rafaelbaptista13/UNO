@@ -1,4 +1,4 @@
-package com.example.unomobile.fragments.week_content
+package com.example.unomobile.fragments.activities
 
 import android.os.Bundle
 import android.util.Log
@@ -14,14 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unomobile.R
 import com.example.unomobile.models.Activity
+import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class WeekContentFragment : Fragment() {
+class ActivitiesFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var manager: RecyclerView.LayoutManager
@@ -36,32 +38,37 @@ class WeekContentFragment : Fragment() {
         navBar.visibility = View.GONE
 
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_week_content, container, false)
+        val view = inflater.inflate(R.layout.fragment_activities, container, false)
         val back_button = view.findViewById<ImageView>(R.id.back_button)
         back_button.setOnClickListener {
-            Log.i("WeekContentFragment", "Back Button clicked")
-            findNavController().navigate(R.id.action_weekContentFragment_to_contentFragment)
+            Log.i("ActivitiesFragment", "Back Button clicked")
+            findNavController().navigate(R.id.action_activitiesFragment_to_activitygroupsFragment)
         }
 
         val title = view.findViewById<TextView>(R.id.title)
-        title.text = "Semana " + arguments?.getInt("week_number")
+        title.text = arguments?.getString("name")
 
         recyclerView = view.findViewById(R.id.recycler_view)
         manager = LinearLayoutManager(activity)
         recyclerView.layoutManager = manager
-        recyclerView.adapter = WeekContentAdapter(listOf(), requireContext())
+        recyclerView.adapter = ActivitiesAdapter(listOf(), requireContext())
         getActivities()
 
         return view
     }
 
     private fun getActivities() {
-        Api.retrofitService.getActivities(arguments?.getInt("week_id").toString()).enqueue(object: Callback<List<Activity>> {
+        val sharedPreferences = requireActivity().getSharedPreferences("data", AppCompatActivity.MODE_PRIVATE)
+        val gson = Gson()
+        val user_info = sharedPreferences.getString("user", "")
+        val user = gson.fromJson(user_info, UserInfo::class.java)
+
+        Api.retrofitService.getActivities(user.class_id!!, arguments?.getInt("id").toString()).enqueue(object: Callback<List<Activity>> {
             override fun onResponse(call: Call<List<Activity>>, response: Response<List<Activity>>) {
-                Log.i("WeekContentFragment", response.toString())
+                Log.i("ActivitiesFragment", response.toString())
                 if (response.isSuccessful) {
-                    Log.i("WeekContentFragment", "Response is successful")
-                    adapter = WeekContentAdapter(response.body()!!, requireContext())
+                    Log.i("ActivitiesFragment", "Response is successful")
+                    adapter = ActivitiesAdapter(response.body()!!, requireContext())
                     recyclerView.adapter = adapter
                 }
             }

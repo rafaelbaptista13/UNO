@@ -11,12 +11,19 @@ module.exports = function(app) {
   });
 
   app.post(
-    "/api/auth/signup",
+    "/api/auth/student/signup",
     [
       verifySignUp.checkDuplicateEmail,
-      verifySignUp.checkRolesExisted
     ],
-    controller.signup
+    controller.signupStudent
+  );
+
+  app.post(
+    "/api/auth/teacher/signup",
+    [
+      verifySignUp.checkDuplicateEmail,
+    ],
+    controller.signupTeacher
   );
 
   app.post("/api/auth/signin", controller.signin);

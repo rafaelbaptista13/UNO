@@ -8,14 +8,13 @@ module.exports = (app) => {
   // Create a new Class
   router.post("/", [authJwt.verifyToken, authJwt.isTeacher], classes.create);
 
+  // Join a new Class
+  router.post("/", [authJwt.verifyToken, authJwt.isStudent], classes.join);
+
   // Retrieve the users of a class
   router.get(
     "/:class_id",
-    [
-      authJwt.verifyToken,
-      authJwt.isTeacher,
-      authJwt.isTeacherOfRequestedClass,
-    ],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     classes.findOne
   );
 
@@ -25,22 +24,14 @@ module.exports = (app) => {
   // Update a class
   router.put(
     "/:class_id",
-    [
-      authJwt.verifyToken,
-      authJwt.isTeacher,
-      authJwt.isTeacherOfRequestedClass,
-    ],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     classes.update
   );
 
   // Delete a class given the id
   router.delete(
     "/:class_id",
-    [
-      authJwt.verifyToken,
-      authJwt.isTeacher,
-      authJwt.isTeacherOfRequestedClass,
-    ],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     classes.delete
   );
 

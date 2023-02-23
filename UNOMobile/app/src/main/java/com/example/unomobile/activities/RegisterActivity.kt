@@ -33,7 +33,8 @@ class RegisterActivity : AppCompatActivity() {
     private val messages : Map<String, String> = mapOf(
         "User was registered successfully!" to "Utilizador registado com sucesso!",
         "Failed! Email is already in use!" to "Erro! Email já está a ser utilizado!",
-        "User Not found." to "Utilizador não encontrado."
+        "User Not found." to "Utilizador não encontrado.",
+        "Invalid class code." to "Código de turma inválido."
     )
 
     private val fieldFirstName by lazy {
@@ -111,6 +112,20 @@ class RegisterActivity : AppCompatActivity() {
         )
     }
 
+    private val fieldClassCode by lazy {
+        FormFieldText(
+            scope = lifecycleScope,
+            textInputLayout = findViewById(R.id.tvClassCode),
+            textInputEditText = findViewById(R.id.input_class_code),
+            validation = { value ->
+                when {
+                    value.isNullOrBlank() -> "Este campo é necessário."
+                    else -> null
+                }
+            }
+        )
+    }
+
     private val formFields by lazy {
         listOf(
             fieldFirstName,
@@ -118,6 +133,7 @@ class RegisterActivity : AppCompatActivity() {
             fieldEmail,
             fieldPassword,
             fieldConfirmPassword,
+            fieldClassCode
         )
     }
 
@@ -147,7 +163,8 @@ class RegisterActivity : AppCompatActivity() {
                 first_name = fieldFirstName.value!!,
                 last_name = fieldLastName.value!!,
                 email = fieldEmail.value!!,
-                password = fieldPassword.value!!)
+                password = fieldPassword.value!!,
+                class_code = fieldClassCode.value!!)
 
             Api.retrofitService.createAccount(user_info).enqueue(object: Callback<ResponseMessage> {
                 override fun onResponse(call: Call<ResponseMessage>, response: Response<ResponseMessage>) {

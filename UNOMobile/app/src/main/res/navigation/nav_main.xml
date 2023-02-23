@@ -6,13 +6,13 @@
     app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/contentFragment"
-        android:name="com.example.unomobile.fragments.content.ContentFragment"
-        android:label="fragment_content"
-        tools:layout="@layout/fragment_content" >
+        android:id="@+id/activitygroupsFragment"
+        android:name="com.example.unomobile.fragments.activitygroups.ActivityGroupsFragment"
+        android:label="fragment_activitygroup"
+        tools:layout="@layout/fragment_activitygroups" >
         <action
-            android:id="@+id/action_contentFragment_to_weekContentFragment"
-            app:destination="@id/weekContentFragment" />
+            android:id="@+id/action_activitygroupFragment_to_activitiesFragment"
+            app:destination="@id/activitiesFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -30,18 +30,18 @@
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment
-        android:id="@+id/weekContentFragment"
-        android:name="com.example.unomobile.fragments.week_content.WeekContentFragment"
-        android:label="fragment_week_content"
-        tools:layout="@layout/fragment_week_content" >
+        android:id="@+id/activitiesFragment"
+        android:name="com.example.unomobile.fragments.activities.ActivitiesFragment"
+        android:label="fragment_activities"
+        tools:layout="@layout/fragment_activities" >
         <action
-            android:id="@+id/action_weekContentFragment_to_contentFragment"
-            app:destination="@id/contentFragment" />
+            android:id="@+id/action_activitiesFragment_to_activitygroupsFragment"
+            app:destination="@id/activitygroupsFragment" />
         <argument
-            android:name="week_number"
+            android:name="order"
             app:argType="integer" />
         <argument
-            android:name="week_id"
+            android:name="id"
             app:argType="integer" />
     </fragment>
 </navigation>
