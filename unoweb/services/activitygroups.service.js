@@ -32,6 +32,24 @@ const createActivityGroup = (class_id, name, number_of_videos, number_of_exercis
     });
 };
 
+const changeOrder = (class_id, new_order) => {
+  return api
+    .put("activitygroup/" + class_id + "/change_order", {
+      new_order: new_order
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
+    })
+}
+
 const updateActivityGroup = (class_id, id, name) => {
   return api
     .put("/activitygroup/" + class_id + "/" + id, {
@@ -70,6 +88,7 @@ const ActivityGroupsService = {
   getActivityGroups,
   getActivityGroup,
   createActivityGroup,
+  changeOrder,
   updateActivityGroup,
   deleteActivityGroup,
 };

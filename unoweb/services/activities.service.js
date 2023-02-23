@@ -51,6 +51,25 @@ const updateActivity = (class_id, activity_id, type, title) => {
     });
 };
 
+const changeOrder = (class_id, activitygroup_id, new_order) => {
+  return api
+    .put("activities/" + class_id + "/change_order", {
+      activitygroup_id: activitygroup_id,
+      new_order: new_order
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
+    })
+}
+
 const deleteActivity = (class_id, activity_id, activitygroup_id) => {
   return api
     .delete("/activities/" + class_id + "/" + activity_id, {
@@ -76,6 +95,7 @@ const ActivitiesService = {
   getActivity,
   createActivity,
   updateActivity,
+  changeOrder,
   deleteActivity,
 };
 

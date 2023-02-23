@@ -26,6 +26,13 @@ module.exports = (app) => {
     activities.findAll
   );
 
+  // Change order of Activities
+  router.put(
+    "/:class_id/change_order",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    activities.change_order
+  );
+
   // Update an activity
   router.put(
     "/:class_id/:id",

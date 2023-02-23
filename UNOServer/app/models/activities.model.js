@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING(30),
             allowNull: false
         },
-        activity_number: {
+        order: {
             type: Sequelize.INTEGER,
             allowNull: false
         },

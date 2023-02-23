@@ -16,6 +16,17 @@ module.exports = (app) => {
     activitygroup.create
   );
 
+  // Change order of ActivityGroups
+  router.put(
+    "/:class_id/change_order",
+    [
+      authJwt.verifyToken,
+      authJwt.isTeacher,
+      authJwt.isTeacherOfRequestedClass,
+    ],
+    activitygroup.change_order
+  );
+
   // Update an ActivityGroup
   router.put(
     "/:class_id/:id",
