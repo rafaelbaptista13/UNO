@@ -35,11 +35,11 @@ export default function ContentCard({
 }) {
   return (
     <CardDiv className="p-3 bg-white shadow-sm rounded d-sm-flex justify-content-sm-between">
-      <div className="d-flex align-items-center">
+      <div className="d-flex align-items-center justify-content-center justify-content-sm-between">
         <span className="primary-text">{order + "."}</span>
         <h3 className="primary-text ms-3 text-center mb-0">{name}</h3>
       </div>
-      <div className="d-flex justify-content-center d-grid gap-3">
+      <div className="d-flex justify-content-center d-grid gap-3 mt-2 mt-sm-0">
         <CardLink href={"#"}>
           <button className="btn btn-warning">{"Ver alunos"}</button>
         </CardLink>

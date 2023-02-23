@@ -27,7 +27,7 @@ class ActivitiesAdapter(private val data: List<Activity>, val context: Context) 
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentItem = data[position]
-        holder.activity_number.text = currentItem.activity_number.toString() + "."
+        holder.activity_number.text = currentItem.order.toString() + "."
         holder.activity_title.text = currentItem.title
         holder.activity_type.text = context.resources.getString(
             context.resources.getIdentifier(currentItem.type, "string", context.packageName))

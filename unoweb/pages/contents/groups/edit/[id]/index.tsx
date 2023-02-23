@@ -15,19 +15,21 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../../redux/store";
 import { ActiveClassState } from "../../../../../redux/features/active_class";
 import Loading from "../../../../../components/utils/loading";
-import PageHeaderWithEditAndLinkCard from "../../../../../components/utils/page_header_with_edit_card_and_link";
+import ActivitiesHeader from "../../../../../components/contents/activities_header";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import DraggableActivityCard from "../../../../../components/contents/draggable_activity_card";
 
 export type ActivitiesType = {
   id: number;
   type: string;
-  activity_number: number;
-  weekcontent_id: number;
+  order: number;
+  activitygroup_id: number;
   title: string;
   createdAt: string;
   updatedAt: string;
 };
 
-interface ContentWeekProps {
+interface EditGroupProps {
   activitygroup_id: number;
 }
 
@@ -39,14 +41,14 @@ export const activities_type: { [type: string]: string } = {
   question: "Pergunta",
 };
 
-export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
+export default function EditGroup({ activitygroup_id }: EditGroupProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [confirmActionActivity, setConfirmActionActivity] = useState({
-    activity_id: -1,
-    activity_number: -1,
+    id: -1,
+    order: -1,
   });
   const { id: class_id } = useSelector<RootState, ActiveClassState>(
     (state) => state.active_class
@@ -54,6 +56,7 @@ export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
   const [groupInfo, setGroupInfo] = useState({ order: 0, name: "" });
   const [error, setError] = useState(false);
   const [activities, setActivities] = useState<Array<ActivitiesType>>([]);
+  const [view, setView] = useState("normal");
 
   const updateActivityGroupName = async ({
     id,
@@ -79,17 +82,17 @@ export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
   };
 
   const deleteActivity = async ({
-    activity_id,
-    activity_number,
+    id,
+    order,
   }: {
-    activity_id: number;
-    activity_number: number;
+    id: number;
+    order: number;
   }) => {
     setIsLoading(true);
 
     const delete_activity_response = await ActivitiesService.deleteActivity(
       class_id,
-      activity_id,
+      id,
       activitygroup_id
     );
 
@@ -103,16 +106,38 @@ export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
     } else {
       // Activity deleted successfully
       setSuccessMessage(
-        "A atividade " + activity_number + " foi eliminada com sucesso!"
+        "A atividade " + order + " foi eliminada com sucesso!"
       );
       let _activities = activities;
-      _activities.splice(activity_number - 1, 1);
-      for (let idx = activity_number - 1; idx < _activities.length; idx++) {
-        _activities[idx].activity_number -= 1;
+      _activities.splice(order - 1, 1);
+      for (let idx = order - 1; idx < _activities.length; idx++) {
+        _activities[idx].order -= 1;
       }
       setActivities(_activities);
     }
-    setConfirmActionActivity({ activity_id: -1, activity_number: -1 });
+    setConfirmActionActivity({ id: -1, order: -1 });
+  };
+
+  const changeOrder = async () => {
+    setIsLoading(true);
+
+    let new_order = activities.map((item) => item.id);
+    const change_order_response = await ActivitiesService.changeOrder(
+      class_id,
+      activitygroup_id,
+      new_order
+    );
+
+    setIsLoading(false);
+
+    if (change_order_response.error) {
+      setErrorMessage(
+        "Aconteceu um erro ao editar a ordem dos grupos de atividades. Por favor tente novamente."
+      );
+    } else {
+      // Order changed successfully
+      setView("normal");
+    }
   };
 
   useEffect(() => {
@@ -142,6 +167,24 @@ export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
     return <Loading />;
   }
 
+  const reorder = (startIndex: number, endIndex: number) => {
+    const [removed] = activities.splice(startIndex, 1);
+    activities.splice(endIndex, 0, removed);
+
+    return activities;
+  };
+
+  const onDragEnd = (result: any) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const items = reorder(result.source.index, result.destination.index);
+    console.log(items);
+    setActivities(items);
+  };
+
   return (
     <>
       <Head>
@@ -152,13 +195,15 @@ export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeaderWithEditAndLinkCard
+          <ActivitiesHeader
             id={activitygroup_id}
             name={groupInfo.name}
-            button_text="Nova atividade"
-            link_path={`/contents/groups/edit/${activitygroup_id}/activities/new`}
-            updateAction={updateActivityGroupName}
+            activitygroup_id={activitygroup_id}
+            update_action={updateActivityGroupName}
             order={groupInfo.order}
+            view={view}
+            set_view={setView}
+            change_order={changeOrder}
           />
         </div>
         {error && (
@@ -166,21 +211,63 @@ export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
             <ErrorCard message="Ocorreu um erro ao obter as atividades. Por favor tente novamente." />
           </div>
         )}
-        {activities.map(function (activity: ActivitiesType, index) {
-          return (
-            <div className="row g-3 my-1" key={activity.activity_number}>
-              <ActivityCard
-                activitygroup_id={activitygroup_id}
-                activity_id={activity.id}
-                num={activity.activity_number}
-                title={activity.title}
-                type={activity.type}
-                description={activities_type[activity.type]}
-                setConfirmActionActivity={setConfirmActionActivity}
-              />
-            </div>
-          );
-        })}
+
+        {(view === "normal" || view === "edit_name") && (
+          <>
+            {activities.map(function (activity: ActivitiesType, index) {
+              return (
+                <div className="row g-3 my-1" key={activity.id}>
+                  <ActivityCard
+                    activitygroup_id={activitygroup_id}
+                    activity_id={activity.id}
+                    num={index + 1}
+                    title={activity.title}
+                    type={activity.type}
+                    description={activities_type[activity.type]}
+                    setConfirmActionActivity={setConfirmActionActivity}
+                  />
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {view === "edit_order" &&
+          <>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="droppable">
+                {(provided, snapshot) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {activities.map((item, index) => (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id.toString()}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            className="row g-3 my-1"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <DraggableActivityCard
+                              num={index + 1}
+                              title={item.title}
+                              type={item.type}
+                              description={activities_type[item.type]}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </>
+        }
 
         <div className="row g-3 my-2">
           <div className="col gap-3 d-flex justify-content-end">
@@ -203,14 +290,14 @@ export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
       />
       {isLoading && <LoadingModal />}
       <ConfirmActionModal
-        show={confirmActionActivity.activity_id !== -1}
+        show={confirmActionActivity.id !== -1}
         onHide={() =>
-          setConfirmActionActivity({ activity_id: -1, activity_number: -1 })
+          setConfirmActionActivity({ id: -1, order: -1 })
         }
         confirmAction={() => deleteActivity(confirmActionActivity)}
         message={
           "Tem a certeza que pretende eliminar a atividade " +
-          confirmActionActivity.activity_number +
+          confirmActionActivity.order +
           "?"
         }
       />

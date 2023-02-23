@@ -51,7 +51,8 @@ exports.create = async (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the ActivityGroup.",
+          err.message ||
+          "Some error occurred while creating the ActivityGroup.",
       });
     });
 };
@@ -68,11 +69,14 @@ exports.update = async (req, res) => {
     return;
   }
 
-  ActivityGroup.update({
-    name: newName
-  }, {
-    where: { id: id },
-  })
+  ActivityGroup.update(
+    {
+      name: newName,
+    },
+    {
+      where: { id: id },
+    }
+  )
     .then((num) => {
       if (num == 1) {
         res.send({
@@ -91,6 +95,63 @@ exports.update = async (req, res) => {
     });
 };
 
+// Update the order of all ActivityGroups
+exports.change_order = async (req, res) => {
+  const new_order = req.body.new_order;
+
+  if (!new_order) {
+    res.status(400).send({
+      message: "new_order can not be empty!",
+    });
+    return;
+  }
+
+  // Check new order
+  const _old_order = await ActivityGroup.findAll({
+    where: {
+      class_id: req.params.class_id,
+    },
+    order: [
+      ["order", "ASC"]
+    ],
+    attributes: ["id"],
+    raw: true
+  });
+  if (_old_order.length < 2) {
+    res.status(400).send({
+      message: "Impossible to reorder, there are only zero or one ActivityGroup!",
+    });
+    return;
+  }
+  const old_order = _old_order.map((item) => item.id);
+  let sorted_new_order = [...new_order].sort();
+  if (old_order.sort().join(",") !== sorted_new_order.join(",")) {
+    res.status(400).send({
+      message: "Wrong ActivityGroups ids.",
+    });
+    return;
+  }
+
+  try {
+    await sequelize.transaction(async (t) => {
+      let order = 1;
+      for (let activitygroup_id of new_order) {
+        await ActivityGroup.update(
+          { order: order}, 
+          { where: { id: activitygroup_id }, transaction: t});
+        order++;
+      }
+    })
+
+    res.send({
+      message: `Order was changed successfully!`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Could not change order of ActivityGroups.",
+    });
+  }
+};
 
 // Find a single ActivityGroup with an id
 exports.findOne = (req, res) => {
@@ -124,6 +185,9 @@ exports.findAll = (req, res) => {
     where: {
       class_id: req.params.class_id,
     },
+    order: [
+      ["order", "ASC"]
+    ]
   })
     .then((data) => {
       res.send(data);

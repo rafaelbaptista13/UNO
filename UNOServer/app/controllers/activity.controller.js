@@ -47,7 +47,7 @@ exports.create = async (req, res) => {
   let activities_data;
   try {
     activities_data = await Activity.findAll({
-      order: [["activity_number", "DESC"]],
+      order: [["order", "DESC"]],
       include: [
         {
           model: ActivityGroup,
@@ -61,7 +61,7 @@ exports.create = async (req, res) => {
   }
   let activity_number = 1;
   if (activities_data.length !== 0)
-    activity_number = activities_data[0].dataValues.activity_number + 1;
+    activity_number = activities_data[0].dataValues.order + 1;
 
   // Set Title
   let title = req.body.title;
@@ -75,7 +75,7 @@ exports.create = async (req, res) => {
   // Create a Activity
   const activity = {
     type: req.body.type,
-    activity_number: activity_number,
+    order: activity_number,
     activitygroup_id: req.body.activitygroup_id,
     title: title,
   };
@@ -135,6 +135,9 @@ exports.findAll = (req, res) => {
         },
       },
     ],
+    order: [
+      ["order", "ASC"]
+    ],
   })
     .then((data) => {
       res.send(data);
@@ -178,6 +181,65 @@ exports.update = (req, res) => {
     });
 };
 
+// Update the order of all activities of a activitygroup
+exports.change_order = async (req, res) => {
+  const new_order = req.body.new_order;
+  const activitygroup_id = req.body.activitygroup_id;
+
+  if (!new_order || !activitygroup_id) {
+    res.status(400).send({
+      message: "new_order and activitygroup_id can not be empty!",
+    });
+    return;
+  }
+
+  // Check new order
+  const _old_order = await Activity.findAll({
+    where: {
+      activitygroup_id: activitygroup_id
+    },
+    order: [
+      ["order", "ASC"]
+    ],
+    attributes: ["id"],
+    raw: true
+  });
+  if (_old_order.length < 2) {
+    res.status(400).send({
+      message: "Impossible to reorder, there are only zero or one Activities!",
+    });
+    return;
+  }
+  const old_order = _old_order.map((item) => item.id);
+  let sorted_new_order = [...new_order].sort();
+  if (old_order.sort().join(",") !== sorted_new_order.join(",")) {
+    res.status(400).send({
+      message: "Wrong Activities ids.",
+    });
+    return;
+  }
+
+  try {
+    await sequelize.transaction(async (t) => {
+      let order = 1;
+      for (let activity_id of new_order) {
+        await Activity.update(
+          { order: order}, 
+          { where: { id: activity_id }, transaction: t});
+        order++;
+      }
+    })
+
+    res.send({
+      message: `Order was changed successfully!`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Could not change order of Activities.",
+    });
+  }
+}
+
 // Delete a activity from the database.
 exports.delete = async (req, res) => {
   const id = req.params.id;
@@ -203,17 +265,17 @@ exports.delete = async (req, res) => {
         throw new Error(
           `Cannot delete Activity with id=${id}. Maybe Activity was not found!`
         );
-      const activity_number_to_delete = activity_to_delete.activity_number;
+      const activity_number_to_delete = activity_to_delete.order;
 
       // Delete the activity
       await activity_to_delete.destroy({
         transaction: t,
       });
 
-      // Get the activities that had a higher activity_number to update them
+      // Get the activities that had a higher order to update them
       const remaining_activities = await Activity.findAll({
         where: {
-          activity_number: { [Op.gt]: `${activity_number_to_delete}` },
+          order: { [Op.gt]: `${activity_number_to_delete}` },
           activitygroup_id: activitygroup_id,
         },
         transaction: t,
@@ -223,7 +285,7 @@ exports.delete = async (req, res) => {
       for (let idx in remaining_activities) {
         let activity = remaining_activities[idx];
         await Activity.update(
-          { activity_number: activity.activity_number - 1 },
+          { order: activity.order - 1 },
           { where: { id: activity.id }, transaction: t }
         );
       }

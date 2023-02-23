@@ -8,11 +8,14 @@ import ErrorCard from "../../../components/utils/error_card";
 import ErrorModal from "../../../components/utils/error_modal";
 import Loading from "../../../components/utils/loading";
 import LoadingModal from "../../../components/utils/loading_modal";
-import PageHeaderButtonCard from "../../../components/utils/page_header_button_card";
 import SuccessModal from "../../../components/utils/success_modal";
 import { ActiveClassState } from "../../../redux/features/active_class";
 import { RootState } from "../../../redux/store";
 import ActivityGroupsService from "../../../services/activitygroups.service";
+
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import DraggableContentCard from "../../../components/contents/draggable_content_card";
+import ActivityGroupsHeader from "../../../components/contents/activitygroups_header";
 
 export type ActivityGroupsType = {
   id: number;
@@ -38,6 +41,7 @@ export default function ActivityGroup() {
     order: -1,
   });
   const [newActivityGroupMode, setNewActivityGroupMode] = useState(false);
+  const [view, setView] = useState("normal");
 
   // Page Data
   const [activityGroups, setActivityGroups] = useState<
@@ -111,6 +115,24 @@ export default function ActivityGroup() {
     setConfirmDeleteGroup({ activitygroup_id: -1, order: -1 });
   };
 
+  const changeOrder = async () => {
+    setIsLoading(true);
+
+    let new_order = activityGroups.map((item) => item.id);
+    const change_order_response = await ActivityGroupsService.changeOrder(class_id, new_order);
+
+    setIsLoading(false);
+
+    if (change_order_response.error) {
+      setErrorMessage(
+        "Aconteceu um erro ao editar a ordem dos grupos de atividades. Por favor tente novamente."
+      );
+    } else {
+      // Order changed successfully
+      setView("normal");
+    }
+  }
+
   useEffect(() => {
     setIsPageLoading(true);
     ActivityGroupsService.getActivityGroups(class_id)
@@ -127,6 +149,24 @@ export default function ActivityGroup() {
 
   if (isPageLoading) return <Loading />;
 
+  const reorder = (startIndex: number, endIndex: number) => {
+    const [removed] = activityGroups.splice(startIndex, 1);
+    activityGroups.splice(endIndex, 0, removed);
+
+    return activityGroups;
+  };
+
+  const onDragEnd = (result: any) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const items = reorder(result.source.index, result.destination.index);
+    console.log(items);
+    setActivityGroups(items);
+  };
+
   return (
     <>
       <Head>
@@ -137,10 +177,13 @@ export default function ActivityGroup() {
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeaderButtonCard
+          <ActivityGroupsHeader
             header_text="Grupos de atividades"
             button_text="Novo grupo"
-            button_action={() => setNewActivityGroupMode(true)}
+            set_new_activitygroup_view={setNewActivityGroupMode}
+            set_order_view={setView}
+            view={view}
+            confirm_action={changeOrder}
           />
         </div>
         {error && (
@@ -156,21 +199,62 @@ export default function ActivityGroup() {
             />
           </div>
         )}
-        {activityGroups.map(function (
-          activityGroup: ActivityGroupsType,
-          index
-        ) {
-          return (
-            <div className="row g-3 my-1" key={activityGroup.id}>
-              <ContentCard
-                id={activityGroup.id}
-                name={activityGroup.name}
-                order={activityGroup.order}
-                setConfirmActionWeek={setConfirmDeleteGroup}
-              />
-            </div>
-          );
-        })}
+
+        {view === "normal" && (
+          <>
+            {activityGroups.map(function (
+              activityGroup: ActivityGroupsType,
+              index
+            ) {
+              return (
+                <div className="row g-3 my-1" key={activityGroup.id}>
+                  <ContentCard
+                    id={activityGroup.id}
+                    name={activityGroup.name}
+                    order={index+1}
+                    setConfirmActionWeek={setConfirmDeleteGroup}
+                  />
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {view === "edit_order" && (
+          <>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="droppable">
+                {(provided, snapshot) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {activityGroups.map((item, index) => (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id.toString()}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            className="row g-3 my-1"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <DraggableContentCard
+                              id={item.id}
+                              name={item.name}
+                              order={index + 1}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </>
+        )}
       </div>
 
       <ErrorModal
