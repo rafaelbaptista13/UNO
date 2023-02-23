@@ -71,6 +71,7 @@ export default function SideBar() {
           <SideBarItem item="progress" active={main_path === "progress"} />
           <SideBarItem item="messages" active={main_path === "messages"} />
           <SideBarItem item="notes" active={main_path === "notes"} />
+          <SideBarItem item="classes" active={main_path === "classes"} />
           <SideBarItem
             item="logout"
             active={main_path === "logout"}

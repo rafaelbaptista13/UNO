@@ -2,39 +2,85 @@ const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.users;
 const Role = db.roles;
+const Class = db.classes;
+const ClassUser = db.classusers;
 
 const Op = db.Sequelize.Op;
 
 let jwt = require("jsonwebtoken");
 let bcrypt = require("bcryptjs");
 
-exports.signup = (req, res) => {
-  // Save User to Database
-  User.create({
+exports.signupStudent = (req, res) => {
+  if (
+    !req.body.first_name ||
+    !req.body.last_name ||
+    !req.body.email ||
+    !req.body.password ||
+    !req.body.class_code
+  ) {
+    res.status(400).send({
+      message:
+        "Error. first_name, last_name, email, password and class_code body parameters are required.",
+    });
+    return;
+  }
+
+  const class_code = req.body.class_code;
+
+  // Check if Class code exists
+  Class.findOne({
+    where: {
+      code: class_code,
+    },
+  })
+    .then((class_entry) => {
+      console.log(class_entry);
+      if (class_entry) {
+        const newUser = {
+          first_name: req.body.first_name,
+          last_name: req.body.last_name,
+          email: req.body.email,
+          password: bcrypt.hashSync(req.body.password, 8),
+        };
+
+        // Save User to Database
+        User.create(newUser).then((user) => {
+          // Set student Role
+          user.setRoles([1]).then(() => {
+            // Assign user to class
+            ClassUser.create({
+              UserId: user.id,
+              ClassId: class_entry.id,
+              user_type: "student",
+            }).then(() => {
+              res.send({ message: "User was registered successfully!" });
+            });
+          });
+        });
+      } else {
+        res.status(400).send({ message: "Invalid class code." });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.signupTeacher = (req, res) => {
+  const newUser = {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
-  })
+  };
+
+  // Save User to Database
+  User.create(newUser)
     .then((user) => {
-      if (req.body.roles) {
-        Role.findAll({
-          where: {
-            name: {
-              [Op.or]: req.body.roles,
-            },
-          },
-        }).then((roles) => {
-          user.setRoles(roles).then(() => {
-            res.send({ message: "User was registered successfully!" });
-          });
-        });
-      } else {
-        // user role = 1
-        user.setRoles([1]).then(() => {
-          res.send({ message: "User was registered successfully!" });
-        });
-      }
+      // Set teacher Role
+      user.setRoles([2]).then(() => {
+        res.send({ message: "User was registered successfully!" });
+      });
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
@@ -68,22 +114,33 @@ exports.signin = (req, res) => {
         expiresIn: 86400, // 24 hours
       });
 
-      let authorities = [];
       user.getRoles().then((roles) => {
-        for (const element of roles) {
-          authorities.push("ROLE_" + element.name.toUpperCase());
-        }
-
         req.session.token = token;
-
-        res.status(200).send({
-          id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          instrument: user.instrument,
-          roles: authorities,
-        });
+        
+        if (roles[0].name === "student") {
+          ClassUser.findAll({
+            where: {
+              userId: user.id,
+            },
+          }).then((classuser_item) => {
+            res.status(200).send({
+              id: user.id,
+              first_name: user.first_name,
+              last_name: user.last_name,
+              email: user.email,
+              instrument: user.instrument,
+              class_id: classuser_item[0].ClassId,
+            });
+          });
+        } else {
+          res.status(200).send({
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            instrument: user.instrument,
+          });
+        }
       });
     })
     .catch((err) => {

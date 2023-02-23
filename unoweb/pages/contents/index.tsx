@@ -14,9 +14,9 @@ export default function Contents() {
         <div className="row g-3 my-2">
           <div className="col-lg-6">
             <PageCard
-              header="Conteúdos Semanais"
-              text="Gerencie os conteúdos e exercícios semanais das suas turmas."
-              path="/contents/weeks"
+              header="Grupos de atividades"
+              text="Gerencie os conteúdos e exercícios das suas turmas."
+              path="/contents/groups"
             />
           </div>
           <div className="col-lg-6">

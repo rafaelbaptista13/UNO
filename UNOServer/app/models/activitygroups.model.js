@@ -1,12 +1,16 @@
 module.exports = (sequelize, Sequelize) => {
-    const WeekContent = sequelize.define("WeekContents", {
+    const ActivityGroup = sequelize.define("ActivityGroups", {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
             allowNull: false,
             primaryKey: true
         },
-        week_number: {
+        name: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        order: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
@@ -20,5 +24,5 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
 
-    return WeekContent;
+    return ActivityGroup;
 };

@@ -120,6 +120,23 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tvClassCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:hint="Código da turma"
+            app:layout_constraintTop_toBottomOf="@+id/tvConfirmPassword"
+            android:layout_marginTop="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_class_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/register_button"
             android:layout_width="match_parent"
@@ -127,7 +144,7 @@
             android:layout_margin="30dp"
             android:textColor="#fff"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/tvConfirmPassword"
+            app:layout_constraintTop_toBottomOf="@+id/tvClassCode"
             android:background="@drawable/primary_button"
             />
 

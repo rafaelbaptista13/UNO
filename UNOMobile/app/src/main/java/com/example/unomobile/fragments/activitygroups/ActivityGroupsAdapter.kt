@@ -1,4 +1,4 @@
-package com.example.unomobile.fragments.content
+package com.example.unomobile.fragments.activitygroups
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unomobile.R
-import com.example.unomobile.models.Content
+import com.example.unomobile.models.ActivityGroup
 
-class ContentAdapter(private val data: List<Content>) : RecyclerView.Adapter<ContentAdapter.MyViewHolder>() {
+class ActivityGroupsAdapter(private val data: List<ActivityGroup>) : RecyclerView.Adapter<ActivityGroupsAdapter.MyViewHolder>() {
 
     private lateinit var mListener : onItemClickListener
 
@@ -34,13 +34,13 @@ class ContentAdapter(private val data: List<Content>) : RecyclerView.Adapter<Con
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.content_list_item, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.activitygroup_list_item, parent, false)
         return MyViewHolder(v, mListener)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentItem = data[position]
-        holder.title.text = "Semana " + currentItem.week_number
+        holder.title.text = currentItem.name
         var activities = ""
         if (currentItem.number_of_videos > 0) {
             activities += currentItem.number_of_videos.toString() + " vídeos\n"

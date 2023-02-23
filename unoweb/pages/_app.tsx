@@ -9,7 +9,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const SideBar = dynamic(() => import("../components/sidebar/sidebar"), {
   ssr: false,
   });
-import SideBarButton from "../components/sidebar/sidebarbutton";
+const SideBarButton = dynamic(() => import("../components/sidebar/sidebarbutton"), {
+  ssr: false,
+  });
 import Loading from "../components/utils/loading";
 import { Router } from "next/router";
 import { Provider } from "react-redux";

@@ -1,18 +1,21 @@
 import { GetServerSideProps } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import ActivityCard from "../../../../../components/contents/activity_card";
 import ErrorCard from "../../../../../components/utils/error_card";
-import PageHeaderWithLinkCard from "../../../../../components/utils/page_header_with_link_card";
-import { web_server } from "../../../../../config";
 import { ButtonPrimary } from "../../../../../utils/buttons";
 import ErrorModal from "../../../../../components/utils/error_modal";
 import LoadingModal from "../../../../../components/utils/loading_modal";
 import SuccessModal from "../../../../../components/utils/success_modal";
 import ConfirmActionModal from "../../../../../components/utils/confirm_action_modal";
-import axios from "axios";
 import ActivitiesService from "../../../../../services/activities.service";
+import ActivityGroupsService from "../../../../../services/activitygroups.service";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../redux/store";
+import { ActiveClassState } from "../../../../../redux/features/active_class";
+import Loading from "../../../../../components/utils/loading";
+import PageHeaderWithEditAndLinkCard from "../../../../../components/utils/page_header_with_edit_card_and_link";
 
 export type ActivitiesType = {
   id: number;
@@ -25,10 +28,7 @@ export type ActivitiesType = {
 };
 
 interface ContentWeekProps {
-  weekcontent_id: number;
-  week_number: number;
-  activities: Array<ActivitiesType>;
-  error?: boolean;
+  activitygroup_id: number;
 }
 
 export const activities_type: { [type: string]: string } = {
@@ -39,19 +39,44 @@ export const activities_type: { [type: string]: string } = {
   question: "Pergunta",
 };
 
-export default function EditWeek({
-  weekcontent_id,
-  week_number,
-  activities,
-  error,
-}: ContentWeekProps) {
+export default function EditGroup({ activitygroup_id }: ContentWeekProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [confirmActionActivity, setConfirmActionActivity] = useState({
     activity_id: -1,
     activity_number: -1,
   });
+  const { id: class_id } = useSelector<RootState, ActiveClassState>(
+    (state) => state.active_class
+  );
+  const [groupInfo, setGroupInfo] = useState({ order: 0, name: "" });
+  const [error, setError] = useState(false);
+  const [activities, setActivities] = useState<Array<ActivitiesType>>([]);
+
+  const updateActivityGroupName = async ({
+    id,
+    name,
+  }: {
+    id: number;
+    name: string;
+  }) => {
+    setIsLoading(true);
+
+    const update_activitygroup_name_response =
+      await ActivityGroupsService.updateActivityGroup(class_id, id, name);
+
+    setIsLoading(false);
+
+    if (update_activitygroup_name_response.error) {
+      setErrorMessage(
+        "Aconteceu um erro ao atualizar o nome do grupo de atividades. Por favor tente novamente."
+      );
+    } else {
+      setGroupInfo({ order: groupInfo.order, name: name });
+    }
+  };
 
   const deleteActivity = async ({
     activity_id,
@@ -62,7 +87,11 @@ export default function EditWeek({
   }) => {
     setIsLoading(true);
 
-    const delete_activity_response = await ActivitiesService.deleteActivity(activity_id, weekcontent_id);
+    const delete_activity_response = await ActivitiesService.deleteActivity(
+      class_id,
+      activity_id,
+      activitygroup_id
+    );
 
     setIsLoading(false);
 
@@ -76,13 +105,42 @@ export default function EditWeek({
       setSuccessMessage(
         "A atividade " + activity_number + " foi eliminada com sucesso!"
       );
-      activities.splice(activity_number - 1, 1);
-      for (let idx = activity_number - 1; idx < activities.length; idx++) {
-        activities[idx].activity_number -= 1;
+      let _activities = activities;
+      _activities.splice(activity_number - 1, 1);
+      for (let idx = activity_number - 1; idx < _activities.length; idx++) {
+        _activities[idx].activity_number -= 1;
       }
+      setActivities(_activities);
     }
     setConfirmActionActivity({ activity_id: -1, activity_number: -1 });
   };
+
+  useEffect(() => {
+    setIsPageLoading(true);
+    ActivityGroupsService.getActivityGroup(class_id, activitygroup_id)
+      .then((data) => {
+        setGroupInfo({ order: data.order, name: data.name });
+        ActivitiesService.getActivities(class_id, activitygroup_id)
+          .then((data) => {
+            setActivities(data);
+          })
+          .catch((err) => {
+            setActivities([]);
+            setError(true);
+          });
+      })
+      .catch((err) => {
+        setActivities([]);
+        setError(true);
+      })
+      .finally(() => {
+        setIsPageLoading(false);
+      });
+  }, [class_id, activitygroup_id]);
+
+  if (isPageLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -94,10 +152,13 @@ export default function EditWeek({
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeaderWithLinkCard
-            header_text={"Semana " + week_number + " - Editar atividades"}
+          <PageHeaderWithEditAndLinkCard
+            id={activitygroup_id}
+            name={groupInfo.name}
             button_text="Nova atividade"
-            link_path={`/contents/weeks/edit/${weekcontent_id}/activities/new`}
+            link_path={`/contents/groups/edit/${activitygroup_id}/activities/new`}
+            updateAction={updateActivityGroupName}
+            order={groupInfo.order}
           />
         </div>
         {error && (
@@ -109,7 +170,7 @@ export default function EditWeek({
           return (
             <div className="row g-3 my-1" key={activity.activity_number}>
               <ActivityCard
-                weekcontent_id={weekcontent_id}
+                activitygroup_id={activitygroup_id}
                 activity_id={activity.id}
                 num={activity.activity_number}
                 title={activity.title}
@@ -123,7 +184,7 @@ export default function EditWeek({
 
         <div className="row g-3 my-2">
           <div className="col gap-3 d-flex justify-content-end">
-            <Link href={`/contents/weeks`}>
+            <Link href={`/contents/groups`}>
               <ButtonPrimary>Voltar para o plano de aulas</ButtonPrimary>
             </Link>
           </div>
@@ -158,54 +219,11 @@ export default function EditWeek({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
-  const cookies = context.req.headers.cookie;
-  const weekcontent_id = context.query.id;
-
-  // Get week content details and activities
-  let weekcontent_request;
-  let activities_request;
-  try {
-    weekcontent_request = await axios.get(`${web_server}/api/contents/weeks/${weekcontent_id}`, {
-      headers: {
-        "Cookie": cookies
-      }
-    });
-    activities_request = await axios.get(`${web_server}/api/activities?weekcontent_id=${weekcontent_id}`, {
-      headers: {
-        "Cookie": cookies
-      }
-    }); 
-  } catch (e) {
-    console.log(e);
-    return {
-      props: {
-        weekcontent_id: weekcontent_id,
-        activities: [],
-        error: true,
-      },
-    };
-  }
-
-  // Handle error
-  if (weekcontent_request.status !== 200 || activities_request.status !== 200) {
-    return {
-      props: {
-        weekcontent_id: weekcontent_id,
-        activities: [],
-        error: true,
-      },
-    };
-  }
-
-  const weekcontent_response = weekcontent_request.data;
-  const activities_response = activities_request.data;
+  const activitygroup_id = context.query.id;
 
   return {
     props: {
-      weekcontent_id: weekcontent_id,
-      week_number: weekcontent_response.week_number,
-      activities: activities_response,
+      activitygroup_id: activitygroup_id,
     },
   };
 };

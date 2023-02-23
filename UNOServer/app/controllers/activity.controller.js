@@ -1,15 +1,14 @@
 const { sequelize } = require("../models");
 const db = require("../models");
 const Activity = db.activities;
-const WeekContent = db.weekcontents;
-const Class = db.classes;
+const ActivityGroup = db.activitygroups;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
 exports.create = async (req, res) => {
   // Validate request
   if (
-    !req.body.weekcontent_id ||
+    !req.body.activitygroup_id ||
     !req.body.type ||
     (!req.body.title && !["game", "question"].includes(req.body.type))
   ) {
@@ -30,16 +29,16 @@ exports.create = async (req, res) => {
     return;
   }
 
-  // Check if weekcontent exists
-  let weekcontent = await WeekContent.findOne({
+  // Check if ActivityGroup exists
+  let activitygroup = await ActivityGroup.findOne({
     where: {
-      id: req.body.weekcontent_id,
+      id: req.body.activitygroup_id,
       class_id: req.params.class_id,
     },
   });
-  if (weekcontent === null) {
+  if (activitygroup === null) {
     res.status(400).send({
-      message: "You're not the teacher of this WeekContent.",
+      message: "You're not the teacher of this ActivityGroup.",
     });
     return;
   }
@@ -49,10 +48,13 @@ exports.create = async (req, res) => {
   try {
     activities_data = await Activity.findAll({
       order: [["activity_number", "DESC"]],
-      includes: {
-        model: WeekContent,
-        where: { class_id: req.params.class_id, id: req.body.weekcontent_id },
-      },
+      include: [
+        {
+          model: ActivityGroup,
+          as: "activitygroup",
+          where: { class_id: req.params.class_id, id: req.body.activitygroup_id },
+        },
+      ],
     });
   } catch (e) {
     console.log(e);
@@ -74,7 +76,7 @@ exports.create = async (req, res) => {
   const activity = {
     type: req.body.type,
     activity_number: activity_number,
-    weekcontent_id: req.body.weekcontent_id,
+    activitygroup_id: req.body.activitygroup_id,
     title: title,
   };
 
@@ -101,8 +103,8 @@ exports.findOne = (req, res) => {
     },
     include: [
       {
-        model: WeekContent,
-        as: "weekcontent",
+        model: ActivityGroup,
+        as: "activitygroup",
         where: { class_id: req.params.class_id },
       },
     ],
@@ -118,17 +120,17 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Retrieve all week contents from the database.
+// Retrieve all activities from the database.
 exports.findAll = (req, res) => {
-  const weekcontent_id = req.query.weekcontent_id;
+  const activitygroup_id = req.query.activitygroup_id;
 
   Activity.findAll({
     include: [
       {
-        model: WeekContent,
-        as: "weekcontent",
+        model: ActivityGroup,
+        as: "activitygroup",
         where: {
-          id: weekcontent_id,
+          id: activitygroup_id,
           class_id: req.params.class_id,
         },
       },
@@ -154,8 +156,8 @@ exports.update = (req, res) => {
     where: { id: id },
     include: [
       {
-        model: WeekContent,
-        as: "weekcontent",
+        model: ActivityGroup,
+        as: "activitygroup",
         where: { class_id: req.params.class_id },
       },
     ],
@@ -179,7 +181,7 @@ exports.update = (req, res) => {
 // Delete a activity from the database.
 exports.delete = async (req, res) => {
   const id = req.params.id;
-  const weekcontent_id = req.body.weekcontent_id;
+  const activitygroup_id = req.body.activitygroup_id;
 
   try {
     const result = await sequelize.transaction(async (t) => {
@@ -189,9 +191,9 @@ exports.delete = async (req, res) => {
           where: { id: id },
           include: [
             {
-              model: WeekContent,
-              as: "weekcontent",
-              where: { id: weekcontent_id, class_id: req.params.class_id },
+              model: ActivityGroup,
+              as: "activitygroup",
+              where: { id: activitygroup_id, class_id: req.params.class_id },
             },
           ],
         },
@@ -212,7 +214,7 @@ exports.delete = async (req, res) => {
       const remaining_activities = await Activity.findAll({
         where: {
           activity_number: { [Op.gt]: `${activity_number_to_delete}` },
-          weekcontent_id: weekcontent_id,
+          activitygroup_id: activitygroup_id,
         },
         transaction: t,
       });

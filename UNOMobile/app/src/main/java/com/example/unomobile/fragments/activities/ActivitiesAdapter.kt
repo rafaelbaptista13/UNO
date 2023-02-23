@@ -1,4 +1,4 @@
-package com.example.unomobile.fragments.week_content
+package com.example.unomobile.fragments.activities
 
 import android.content.Context
 import com.example.unomobile.models.Activity
@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unomobile.R
 
-class WeekContentAdapter(private val data: List<Activity>, val context: Context) : RecyclerView.Adapter<WeekContentAdapter.MyViewHolder>() {
+class ActivitiesAdapter(private val data: List<Activity>, val context: Context) : RecyclerView.Adapter<ActivitiesAdapter.MyViewHolder>() {
 
     class MyViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val activity_number : TextView = view.findViewById(R.id.activity_number)

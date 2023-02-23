@@ -32,7 +32,7 @@ const TableCell = styled.div`
 `;
 
 export default function ActivityCard({
-  weekcontent_id,
+  activitygroup_id,
   activity_id,
   num,
   title,
@@ -40,7 +40,7 @@ export default function ActivityCard({
   description,
   setConfirmActionActivity,
 }: {
-  weekcontent_id: number;
+  activitygroup_id: number;
   activity_id: number;
   num: number;
   title: string;
@@ -83,7 +83,7 @@ export default function ActivityCard({
         </div>
         <div className="col-md-4 d-flex align-items-center justify-content-center justify-content-md-end d-grid gap-3 mt-2 mt-md-0">
           <CardLink
-            href={`/contents/weeks/edit/${weekcontent_id}/activities/${activity_id}`}
+            href={`/contents/groups/edit/${activitygroup_id}/activities/${activity_id}`}
           >
             <button className="btn btn-secondary">
               <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon> Editar

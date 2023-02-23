@@ -13,6 +13,7 @@ import {
   faCircleInfo,
   faSignIn,
   faSignOut,
+  faPeopleGroup,
 } from "@fortawesome/free-solid-svg-icons";
 
 import styled from "styled-components";
@@ -115,6 +116,14 @@ const pages = new Map<string, { icon: IconProp; text: string; path: string }>([
       icon: faNoteSticky,
       text: "Notas",
       path: "/notes",
+    },
+  ],
+  [
+    "classes",
+    {
+      icon: faPeopleGroup,
+      text: "Suas turmas",
+      path: "/classes",
     },
   ],
   [

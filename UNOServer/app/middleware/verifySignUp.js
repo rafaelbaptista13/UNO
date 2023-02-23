@@ -20,24 +20,8 @@ const checkDuplicateEmail = (req, res, next) => {
   });
 };
 
-const checkRolesExisted = (req, res, next) => {
-  if (req.body.roles) {
-    for (const element of req.body.roles) {
-      if (!ROLES.includes(element)) {
-        res.status(400).send({
-          message: "Failed! Role does not exist = " + element,
-        });
-        return;
-      }
-    }
-  }
-
-  next();
-};
-
 const verifySignUp = {
   checkDuplicateEmail: checkDuplicateEmail,
-  checkRolesExisted: checkRolesExisted,
 };
 
 module.exports = verifySignUp;
