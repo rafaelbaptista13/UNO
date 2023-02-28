@@ -67,7 +67,8 @@ db.activities.belongsTo(db.activitytypes, {
 
 // MediaActivity 1 - 1 Activity
 db.activities.hasOne(db.mediaactivities, {
-  foreignKey: "activity_id"
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
 })
 
 db.ROLES = ["student", "teacher"];

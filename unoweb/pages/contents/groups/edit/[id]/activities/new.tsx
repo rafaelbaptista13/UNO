@@ -2,9 +2,9 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import PageHeader from "../../../../../../components/utils/page_header";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  ActivitiesState
+  ActivitiesState, setType
 } from "../../../../../../redux/features/activitiesSlice";
 import { useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
@@ -29,6 +29,7 @@ export default function NewActivity({ activitygroup_id }: NewActivityProps) {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -88,7 +89,7 @@ export default function NewActivity({ activitygroup_id }: NewActivityProps) {
       />
       <SuccessModal
         show={successMessage !== ""}
-        onHide={() => setSuccessMessage("")}
+        onHide={() => {setSuccessMessage(""); dispatch(setType(""))}}
         message={successMessage}
         button_link_path={`/contents/groups/edit/${activitygroup_id}`}
       />
