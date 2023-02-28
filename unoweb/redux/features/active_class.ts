@@ -10,12 +10,13 @@ if (typeof window !== "undefined") {
   active_class = JSON.parse(localStorage.getItem("active_class") || "{}");
 }
 
-const initialState: ActiveClassState = active_class && active_class.id !== undefined
-  ? active_class
-  : {
-      id: -1,
-      name: "",
-    };
+const initialState: ActiveClassState =
+  active_class && active_class.id !== undefined
+    ? active_class
+    : {
+        id: -1,
+        name: "",
+      };
 
 const activeClassSlice: Slice = createSlice({
   name: "active_class",

@@ -4,6 +4,10 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import styled from "styled-components";
+import {
+  resetActiveClass,
+  setActiveClass,
+} from "../../redux/features/active_class";
 import { AuthState, logout } from "../../redux/features/auth";
 import { AppDispatch, RootState } from "../../redux/store";
 import SideBarItem from "./sidebar_item";
@@ -45,6 +49,12 @@ export default function SideBar() {
 
   const logout_callback = useCallback(() => {
     dispatch(logout());
+    dispatch(
+      setActiveClass({
+        id: -1,
+        name: "",
+      })
+    );
     router.push("/login");
   }, [dispatch, router]);
 
