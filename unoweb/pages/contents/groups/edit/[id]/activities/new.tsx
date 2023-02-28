@@ -1,19 +1,22 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import NewActivityForm from "../../../../../../components/contents/activityform/new_activity_form";
-import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
 import { useSelector } from "react-redux";
-import { ActivitiesState } from "../../../../../../redux/features/activitiesSlice";
+import {
+  ActivitiesState
+} from "../../../../../../redux/features/activitiesSlice";
 import { useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
 import SuccessModal from "../../../../../../components/utils/success_modal";
 import LoadingModal from "../../../../../../components/utils/loading_modal";
 import { activities_type } from "../index";
 import { RootState } from "../../../../../../redux/store";
-import ActivitiesService from "../../../../../../services/activities.service";
-import { ActiveClassState } from "../../../../../../redux/features/active_class";
+import ChooseNewActivityType from "../../../../../../components/contents/activityform/choose_new_activity_type";
+import MediaForm from "../../../../../../components/contents/activityform/media_form";
+import ExerciseForm from "../../../../../../components/contents/activityform/exercise_form";
+import GameForm from "../../../../../../components/contents/activityform/game_form";
+import QuestionForm from "../../../../../../components/contents/activityform/question_form";
 
 interface NewActivityProps {
   activitygroup_id: number;
@@ -23,43 +26,9 @@ export default function NewActivity({ activitygroup_id }: NewActivityProps) {
   const activities_state = useSelector<RootState, ActivitiesState>(
     (state) => state.activities
   );
-
-  const [show_confirm_action_modal, setShowConfirmActionModal] =
-    useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { id: class_id } = useSelector<RootState, ActiveClassState>(
-    (state) => state.active_class
-  );
-
-  const createNewActivity = async () => {
-    setShowConfirmActionModal(false);
-    setIsLoading(true);
-
-    const new_activity_response = await ActivitiesService.createActivity(
-      class_id,
-      activities_state.type,
-      activitygroup_id,
-      activities_state.title
-    );
-
-    setIsLoading(false);
-
-    if (new_activity_response.error) {
-      // An error occured
-      setErrorMessage(
-        "Aconteceu um erro ao criar a nova atividade. Por favor tente novamente."
-      );
-    } else {
-      // Activity created successfully
-      setSuccessMessage(
-        "A atividade do tipo " +
-          activities_type[activities_state.type] +
-          " foi criada com sucesso!"
-      );
-    }
-  };
 
   return (
     <>
@@ -71,26 +40,45 @@ export default function NewActivity({ activitygroup_id }: NewActivityProps) {
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeader header_text={"Nova Atividade"} />
+          {activities_state.type !== "" ? (
+            <PageHeader
+              header_text={
+                "Nova Atividade - " + activities_type[activities_state.type]
+              }
+            />
+          ) : (
+            <PageHeader header_text={"Nova Atividade"} />
+          )}
         </div>
 
-        <div className="row g-3 mt-2 mb-4">
-          <NewActivityForm />
-        </div>
-
-        <div className="row g-3 my-2">
-          <div className="col gap-3 d-flex justify-content-end">
-            <button
-              className="btn btn-success"
-              onClick={() => setShowConfirmActionModal(true)}
-            >
-              Concluir
-            </button>
-            <Link href={`/contents/groups/edit/${activitygroup_id}`}>
-              <button className="btn btn-danger">Cancelar</button>
-            </Link>
-          </div>
-        </div>
+        {activities_state.type === "" ? (
+          <>
+            <div className="row g-3 mt-2 mb-4">
+              <ChooseNewActivityType />
+            </div>
+            <div className="row g-3 my-2">
+              <div className="col gap-3 d-flex justify-content-end">
+                <Link href={`/contents/groups/edit/${activitygroup_id}`}>
+                  <button className="btn btn-danger">Cancelar</button>
+                </Link>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {activities_state.type === "Media" && (
+              <MediaForm
+                setIsLoading={setIsLoading}
+                setErrorMessage={setErrorMessage}
+                setSuccessMessage={setSuccessMessage}
+                activitygroup_id={activitygroup_id}
+              />
+            )}
+            {activities_state.type === "Exercise" && <ExerciseForm />}
+            {activities_state.type === "Game" && <GameForm />}
+            {activities_state.type === "Question" && <QuestionForm />}
+          </>
+        )}
       </div>
 
       <ErrorModal
@@ -105,14 +93,6 @@ export default function NewActivity({ activitygroup_id }: NewActivityProps) {
         button_link_path={`/contents/groups/edit/${activitygroup_id}`}
       />
       {isLoading && <LoadingModal />}
-      <ConfirmActionModal
-        message={`Tem a certeza que pretende criar uma atividade do tipo ${
-          activities_type[activities_state.type]
-        }?`}
-        onHide={() => setShowConfirmActionModal(false)}
-        show={show_confirm_action_modal}
-        confirmAction={() => createNewActivity()}
-      />
     </>
   );
 }

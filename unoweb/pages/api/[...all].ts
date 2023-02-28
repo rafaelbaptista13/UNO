@@ -6,6 +6,7 @@ export const config = {
     // Enable `externalResolver` option in Next.js
     externalResolver: true,
     bodyParser: false,
+    responseLimit: false
   },
 };
 

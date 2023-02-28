@@ -25,6 +25,8 @@ db.classes = require("./class.model")(sequelize, Sequelize);
 db.classusers = require("./classusers.model")(sequelize, Sequelize);
 db.activitygroups = require("./activitygroups.model.js")(sequelize, Sequelize);
 db.activities = require("./activities.model.js")(sequelize, Sequelize);
+db.activitytypes = require("./activitytype.model")(sequelize, Sequelize);
+db.mediaactivities = require("./mediaactivity.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -55,6 +57,18 @@ db.activities.belongsTo(db.activitygroups, {
   foreignKey: { name: "activitygroup_id", allowNull: false },
   as: "activitygroup",
 });
+
+// Activity * - 1 ActivityType
+db.activities.belongsTo(db.activitytypes, {
+  through: "activitytype",
+  foreignKey: { name: "activitytype_id", allowNull: false },
+  as: "activitytype",
+});
+
+// MediaActivity 1 - 1 Activity
+db.activities.hasOne(db.mediaactivities, {
+  foreignKey: "activity_id"
+})
 
 db.ROLES = ["student", "teacher"];
 

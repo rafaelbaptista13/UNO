@@ -6,7 +6,7 @@ export interface ActivitiesState {
 }
 
 const initialState: ActivitiesState = {
-  type: "video",
+  type: "",
   title: "",
 };
 

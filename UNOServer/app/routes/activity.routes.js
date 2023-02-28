@@ -1,9 +1,31 @@
 const authJwt = require("../middleware/authJwt.js");
+const upload = require("../middleware/upload");
 
 module.exports = (app) => {
   const activities = require("../controllers/activity.controller.js");
 
   let router = require("express").Router();
+
+  // Create a new Media activity
+  router.post(
+    "/:class_id/media",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    activities.createMedia
+  );
+
+  // Update a Media activity
+  router.put(
+    "/:class_id/media/:id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    activities.updateMedia
+  );
+
+  // Get the media from a Media Activity
+  router.get(
+    "/:class_id/:activitygroup_id/:activity_id/media",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    activities.getMediaFromMediaActivity
+  );
 
   // Create a new activity
   router.post(
