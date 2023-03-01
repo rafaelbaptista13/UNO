@@ -40,6 +40,9 @@ interface ApiService {
     @GET("activities/{class_id}")
     fun getActivities(@Path("class_id") class_id: Number, @Query("activitygroup_id") activitygroup_id: String): Call<List<Activity>>
 
+    @GET("activities/{class_id}/{activity_id}")
+    fun getActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Int?): Call<Activity>
+
     @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>
 

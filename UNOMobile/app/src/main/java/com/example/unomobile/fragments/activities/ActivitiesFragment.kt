@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unomobile.R
+import com.example.unomobile.fragments.activitygroups.ActivityGroupsAdapter
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
@@ -70,6 +71,19 @@ class ActivitiesFragment : Fragment() {
                     Log.i("ActivitiesFragment", "Response is successful")
                     adapter = ActivitiesAdapter(response.body()!!, requireContext())
                     recyclerView.adapter = adapter
+                    (adapter as ActivitiesAdapter).setOnItemClickListener(object : ActivitiesAdapter.onItemClickListener{
+                        override fun onItemClick(position: Int) {
+                            val activity = response.body()!![position]
+                            Log.i("ActivitiesFragment", "Clicked")
+                            val bundle = Bundle()
+                            bundle.putInt("activity_id", activity.id)
+                            bundle.putInt("order", activity.order)
+                            bundle.putString("title", activity.title)
+                            bundle.putString("type", context!!.resources.getString(
+                                context!!.resources.getIdentifier(activity.activitytype.name, "string", context!!.packageName)))
+                            findNavController().navigate(R.id.action_activitiesFragment_to_activityFragment, bundle)
+                        }
+                    })
                 }
             }
 
