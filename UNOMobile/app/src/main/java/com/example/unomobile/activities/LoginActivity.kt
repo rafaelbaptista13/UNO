@@ -96,6 +96,7 @@ class LoginActivity : AppCompatActivity() {
 
             Api.retrofitService.login(user_info).enqueue(object: Callback<UserInfo> {
                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
+                    Log.i("LoginActivity", "aqui")
                     Log.i("LoginActivity", response.toString())
                     if (response.isSuccessful) {
                         Log.i("LoginActivity", "Response was successful")

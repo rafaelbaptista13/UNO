@@ -123,7 +123,7 @@ export default function EditMediaForm({
             </div>
             <div className="form-group mb-2">
               <label className="mb-2 primary-text" htmlFor="video_input">
-                {"Ficheiro (vídeo, imagem ou audio)"}
+                {"Ficheiro (vídeo, imagem ou áudio)"}
               </label>
               <input
                 type="file"

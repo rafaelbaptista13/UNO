@@ -43,17 +43,5 @@
         <argument
             android:name="id"
             app:argType="integer" />
-        <action
-            android:id="@+id/action_activitiesFragment_to_activityFragment"
-            app:destination="@id/activityFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/activityFragment"
-        android:name="com.example.unomobile.fragments.ActivityFragment"
-        android:label="fragment_activity"
-        tools:layout="@layout/fragment_activity" >
-        <action
-            android:id="@+id/action_activityFragment_to_activitiesFragment"
-            app:destination="@id/activitiesFragment" />
     </fragment>
 </navigation>

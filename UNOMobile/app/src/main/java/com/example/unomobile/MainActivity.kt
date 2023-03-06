@@ -14,10 +14,8 @@ import com.example.unomobile.databinding.ActivityMainBinding
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.ApiService
 import com.example.unomobile.network.cookieHandler
+import com.example.unomobile.utils.ImageLoader
 import com.google.gson.Gson
-
-
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,8 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
+        ImageLoader.initialize(this, com.example.unomobile.network.client)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

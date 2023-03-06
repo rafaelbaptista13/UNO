@@ -1,5 +1,6 @@
 package com.example.unomobile.fragments.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unomobile.R
-import com.example.unomobile.fragments.activitygroups.ActivityGroupsAdapter
+import com.example.unomobile.activities.ActivityPageActivity
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
@@ -76,12 +77,16 @@ class ActivitiesFragment : Fragment() {
                             val activity = response.body()!![position]
                             Log.i("ActivitiesFragment", "Clicked")
                             val bundle = Bundle()
-                            bundle.putInt("activity_id", activity.id)
-                            bundle.putInt("order", activity.order)
-                            bundle.putString("title", activity.title)
-                            bundle.putString("type", context!!.resources.getString(
-                                context!!.resources.getIdentifier(activity.activitytype.name, "string", context!!.packageName)))
-                            findNavController().navigate(R.id.action_activitiesFragment_to_activityFragment, bundle)
+                            bundle.putIntArray("activities_id", response.body()!!.map { it.id }.toIntArray())
+                            bundle.putIntArray("activities_order", response.body()!!.map { it.order }.toIntArray())
+                            bundle.putStringArray("activities_title", response.body()!!.map { it.title }.toTypedArray())
+                            bundle.putStringArray("activities_type", response.body()!!.map { it.activitytype.name }.toTypedArray())
+                            bundle.putStringArray("activities_description", response.body()!!.map { it.description }.toTypedArray())
+                            bundle.putInt("active_activity", position)
+
+                            var intent = Intent(requireContext(), ActivityPageActivity::class.java)
+                            intent.putExtras(bundle)
+                            startActivity(intent)
                         }
                     })
                 }
