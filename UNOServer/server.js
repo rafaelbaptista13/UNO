@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
+const AWS = require('aws-sdk');
+require('dotenv').config();
+const s3Config = require("./app/config/s3.config");
 
 const app = express();
 
@@ -25,9 +28,17 @@ app.use(
   })
 );
 
+const s3 = new AWS.S3(s3Config);
+
+app.use((req, res, next) => {
+  req.s3 = s3;
+  next();
+})
+
 const db = require("./app/models");
 
 const Role = db.roles;
+const ActivityType = db.activitytypes;
 
 async function synchronize() {
   try {
@@ -50,6 +61,43 @@ async function synchronize() {
       },
     });
 
+    // Create activity types
+    await ActivityType.findOrCreate({
+      where: {
+        id: 1,
+      },
+      defaults: {
+        name: "Media"
+      }
+    });
+
+    await ActivityType.findOrCreate({
+      where: {
+        id: 2,
+      },
+      defaults: {
+        name: "Exercise"
+      }
+    });
+
+    await ActivityType.findOrCreate({
+      where: {
+        id: 3,
+      },
+      defaults: {
+        name: "Question"
+      }
+    });
+
+    await ActivityType.findOrCreate({
+      where: {
+        id: 4,
+      },
+      defaults: {
+        name: "Game"
+      }
+    });
+    
     console.log("Synced db.");
   } catch (err) {
     console.log("Failed to sync db: " + err.message);

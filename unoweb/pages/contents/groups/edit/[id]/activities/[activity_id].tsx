@@ -1,34 +1,32 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import NewActivityForm from "../../../../../../components/contents/activityform/new_activity_form";
-import ConfirmActionModal from "../../../../../../components/utils/confirm_action_modal";
 import PageHeader from "../../../../../../components/utils/page_header";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  setType,
-  setTitle,
-  ActivitiesState,
-} from "../../../../../../redux/features/activitiesSlice";
 import { useEffect, useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
 import SuccessModal from "../../../../../../components/utils/success_modal";
 import LoadingModal from "../../../../../../components/utils/loading_modal";
-import { activities_type } from "../index";
 import { RootState } from "../../../../../../redux/store";
 import ActivitiesService from "../../../../../../services/activities.service";
 import { ActiveClassState } from "../../../../../../redux/features/active_class";
 import ErrorCard from "../../../../../../components/utils/error_card";
 import Loading from "../../../../../../components/utils/loading";
+import EditMediaForm from "../../../../../../components/contents/activityform/edit_media_form";
+
+export type MediaActivity = {
+  media_type: string;
+}
 
 export type ActivityType = {
   id: number;
   type: string;
-  activity_number: number;
+  order: number;
   title: string;
+  description: string;
   createdAt: string;
   updatedAt: string;
   activitygroup_id: number;
+  media: MediaActivity
 };
 
 interface EditActivityProps {
@@ -36,66 +34,36 @@ interface EditActivityProps {
 }
 
 export default function EditActivity({ activity_id }: EditActivityProps) {
-  const activities_state = useSelector<RootState, ActivitiesState>(
-    (state) => state.activities
-  );
   const dispatch = useDispatch();
 
-  const [show_confirm_action_modal, setShowConfirmActionModal] =
-    useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const { id: class_id } = useSelector<RootState, ActiveClassState>(
     (state) => state.active_class
   );
   const [activity, setActivity] = useState<ActivityType>({
     id: -1,
     type: "",
-    activity_number: 0,
+    order: 0,
     title: "",
+    description: "",
     createdAt: "",
     updatedAt: "",
     activitygroup_id: 0,
+    media: {
+      media_type: ""
+    }
   });
   const [error, setError] = useState(false);
-
-  const updateActivity = async () => {
-    setShowConfirmActionModal(false);
-    setIsLoading(true);
-
-    const update_activity_response = await ActivitiesService.updateActivity(
-      class_id,
-      activity.id,
-      activities_state.type,
-      activities_state.title
-    );
-
-    setIsLoading(false);
-
-    if (update_activity_response.error) {
-      // An error occured
-      setErrorMessage(
-        "Aconteceu um erro ao atualizar a atividade. Por favor tente novamente."
-      );
-    } else {
-      // Activity updated successfully
-      setSuccessMessage(
-        "A atividade do tipo " +
-          activities_type[activities_state.type] +
-          " foi atualizada com sucesso!"
-      );
-    }
-  };
 
   useEffect(() => {
     setIsPageLoading(true);
     ActivitiesService.getActivity(class_id, activity_id)
       .then((data) => {
+        console.log(data);
         setActivity(data);
-        dispatch(setType(data.type));
-        dispatch(setTitle(data.title));
       })
       .catch((err) => {
         setError(true);
@@ -118,7 +86,7 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
           <PageHeader
-            header_text={`${activity.activity_number}. Atividade - Editar`}
+            header_text={`${activity.order}. Atividade - Editar`}
           />
         </div>
 
@@ -128,22 +96,17 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
               <ErrorCard message="Ocorreu um erro ao obter a atividade. Por favor tente novamente." />
             </div>
           )}
-          {!error && <NewActivityForm />}
+          {!error && (
+            <EditMediaForm
+              setIsLoading={setIsLoading}
+              setErrorMessage={setErrorMessage}
+              setSuccessMessage={setSuccessMessage}
+              activitygroup_id={activity.activitygroup_id}
+              activity={activity}
+            />
+          )}
         </div>
 
-        <div className="row g-3 my-2">
-          <div className="col gap-3 d-flex justify-content-end">
-            <button
-              className="btn btn-success"
-              onClick={() => setShowConfirmActionModal(true)}
-            >
-              Concluir
-            </button>
-            <Link href={`/contents/groups/edit/${activity.activitygroup_id}`}>
-              <button className="btn btn-danger">Cancelar</button>
-            </Link>
-          </div>
-        </div>
       </div>
 
       <ErrorModal
@@ -158,12 +121,6 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
         button_link_path={`/contents/groups/edit/${activity.activitygroup_id}`}
       />
       {isLoading && <LoadingModal />}
-      <ConfirmActionModal
-        message={`Tem a certeza que pretende atualizar a atividade?`}
-        onHide={() => setShowConfirmActionModal(false)}
-        show={show_confirm_action_modal}
-        confirmAction={() => updateActivity()}
-      />
     </>
   );
 }

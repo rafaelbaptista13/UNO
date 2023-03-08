@@ -12,17 +12,33 @@ import com.example.unomobile.R
 
 class ActivitiesAdapter(private val data: List<Activity>, val context: Context) : RecyclerView.Adapter<ActivitiesAdapter.MyViewHolder>() {
 
-    class MyViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+    private lateinit var mListener : onItemClickListener
+
+    interface onItemClickListener{
+
+        fun onItemClick(position : Int)
+    }
+
+    fun setOnItemClickListener(listener: onItemClickListener) {
+        mListener = listener
+    }
+
+    class MyViewHolder(val view: View, listener: onItemClickListener): RecyclerView.ViewHolder(view) {
         val activity_number : TextView = view.findViewById(R.id.activity_number)
         val activity_title : TextView = view.findViewById(R.id.activity_title)
         val activity_type : TextView = view.findViewById(R.id.activity_type)
         val activity_image : ImageView = view.findViewById(R.id.activity_image)
 
+        init {
+            view.setOnClickListener {
+                listener.onItemClick(adapterPosition)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.activity_list_item, parent, false)
-        return MyViewHolder(v)
+        return MyViewHolder(v, mListener)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -30,8 +46,8 @@ class ActivitiesAdapter(private val data: List<Activity>, val context: Context) 
         holder.activity_number.text = currentItem.order.toString() + "."
         holder.activity_title.text = currentItem.title
         holder.activity_type.text = context.resources.getString(
-            context.resources.getIdentifier(currentItem.type, "string", context.packageName))
-        holder.activity_image.setImageResource(context.resources.getIdentifier(currentItem.type + "_icon", "drawable", context.packageName))
+            context.resources.getIdentifier(currentItem.activitytype.name, "string", context.packageName))
+        holder.activity_image.setImageResource(context.resources.getIdentifier(currentItem.activitytype.name.lowercase() + "_icon", "drawable", context.packageName))
     }
 
     override fun getItemCount(): Int {

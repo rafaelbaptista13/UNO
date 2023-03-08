@@ -19,9 +19,14 @@ import ActivitiesHeader from "../../../../../components/contents/activities_head
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import DraggableActivityCard from "../../../../../components/contents/draggable_activity_card";
 
+export type ActivityTypeType = {
+  id: number;
+  name: string;
+}
+
 export type ActivitiesType = {
   id: number;
-  type: string;
+  activitytype: ActivityTypeType;
   order: number;
   activitygroup_id: number;
   title: string;
@@ -34,11 +39,10 @@ interface EditGroupProps {
 }
 
 export const activities_type: { [type: string]: string } = {
-  video: "Vídeo",
-  exercise: "Exercício",
-  game: "Jogo",
-  audio: "Áudio",
-  question: "Pergunta",
+  Media: "Conteúdo",
+  Exercise: "Exercício",
+  Game: "Jogo",
+  Question: "Pergunta",
 };
 
 export default function EditGroup({ activitygroup_id }: EditGroupProps) {
@@ -222,8 +226,8 @@ export default function EditGroup({ activitygroup_id }: EditGroupProps) {
                     activity_id={activity.id}
                     num={index + 1}
                     title={activity.title}
-                    type={activity.type}
-                    description={activities_type[activity.type]}
+                    type={activity.activitytype.name}
+                    description={activities_type[activity.activitytype.name]}
                     setConfirmActionActivity={setConfirmActionActivity}
                   />
                 </div>
@@ -254,8 +258,8 @@ export default function EditGroup({ activitygroup_id }: EditGroupProps) {
                             <DraggableActivityCard
                               num={index + 1}
                               title={item.title}
-                              type={item.type}
-                              description={activities_type[item.type]}
+                              type={item.activitytype.name}
+                              description={activities_type[item.activitytype.name]}
                             />
                           </div>
                         )}

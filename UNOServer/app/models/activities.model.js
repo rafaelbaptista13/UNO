@@ -6,10 +6,6 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             primaryKey: true
         },
-        type: {
-            type: Sequelize.STRING(30),
-            allowNull: false
-        },
         order: {
             type: Sequelize.INTEGER,
             allowNull: false
@@ -18,6 +14,9 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING(70),
             allowNull: false
         },
+        description: {
+            type: Sequelize.STRING(200),
+        }
     });
 
     return Activity;
