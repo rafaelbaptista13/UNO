@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.navigation.fragment.findNavController
 import com.example.unomobile.R
+import com.example.unomobile.fragments.ExerciseFragment
 import com.example.unomobile.fragments.MediaFragment
 
 class ActivityPageActivity : AppCompatActivity() {
@@ -48,6 +49,9 @@ class ActivityPageActivity : AppCompatActivity() {
             if (activities_type!![active_activity] == "Media") {
                 launchMediaFragment()
             }
+            if (activities_type!![active_activity] == "Exercise") {
+                launchExerciseFragment()
+            }
         }
 
         next_activity.setOnClickListener {
@@ -71,6 +75,9 @@ class ActivityPageActivity : AppCompatActivity() {
             if (activities_type!![active_activity] == "Media") {
                 launchMediaFragment()
             }
+            if (activities_type!![active_activity] == "Exercise") {
+                launchExerciseFragment()
+            }
         }
 
         val bundle = intent.extras
@@ -92,12 +99,22 @@ class ActivityPageActivity : AppCompatActivity() {
         if (activities_type!![active_activity] == "Media") {
             launchMediaFragment()
         }
-
+        if (activities_type!![active_activity] == "Exercise") {
+            launchExerciseFragment()
+        }
     }
 
 
     private fun launchMediaFragment() {
         val fragment = MediaFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    private fun launchExerciseFragment() {
+        val fragment = ExerciseFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

@@ -1,25 +1,20 @@
 package com.example.unomobile.fragments
 
 import android.annotation.SuppressLint
-import android.app.Dialog
-import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.unomobile.MainActivity
 import com.example.unomobile.R
 import com.example.unomobile.activities.FullScreenMediaActivity
 import com.example.unomobile.models.Activity
@@ -38,7 +33,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MediaFragment : Fragment() {
+class ExerciseFragment : Fragment() {
 
     private var player: ExoPlayer? = null
     private var playerView: StyledPlayerView? = null
@@ -51,7 +46,7 @@ class MediaFragment : Fragment() {
     private var activity_id: Int? = null
 
     companion object {
-        fun newInstance(activity_id: Int, order: Int, title: String, description: String) = MediaFragment().apply {
+        fun newInstance(activity_id: Int, order: Int, title: String, description: String) = ExerciseFragment().apply {
             arguments = bundleOf(
                 "activity_id" to activity_id,
                 "order" to order,
@@ -76,7 +71,7 @@ class MediaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_media, container, false)
+        val view = inflater.inflate(R.layout.fragment_exercise, container, false)
 
         val sharedPreferences = requireActivity().getSharedPreferences("data", AppCompatActivity.MODE_PRIVATE)
         val gson = Gson()
@@ -88,16 +83,16 @@ class MediaFragment : Fragment() {
         }
 
         val type_text = view.findViewById<TextView>(R.id.type)
-        type_text.text = order.toString() + ". Conteúdo"
+        type_text.text = order.toString() + ". Exercício"
         val title_text = view.findViewById<TextView>(R.id.title)
         title_text.text = title
         val description_text = view.findViewById<TextView>(R.id.description)
         description_text.text = description
 
-        Log.i("MediaFragment", order.toString())
-        Log.i("MediaFragment", activity_id.toString())
-        Log.i("MediaFragment", title.toString())
-        Log.i("MediaFragment", description.toString())
+        Log.i("ExerciseFragment", order.toString())
+        Log.i("ExerciseFragment", activity_id.toString())
+        Log.i("ExerciseFragment", title.toString())
+        Log.i("ExerciseFragment", description.toString())
 
         val image = view.findViewById<ImageView>(R.id.image_view)
         val video = view.findViewById<StyledPlayerView>(R.id.video_view)
@@ -111,48 +106,42 @@ class MediaFragment : Fragment() {
 
                 call.enqueue(object : Callback<Activity> {
                     override fun onResponse(call: Call<Activity>, response: Response<Activity>) {
-                        Log.i("ActivityFragment", response.isSuccessful.toString());
+                        Log.i("ExerciseFragment", response.isSuccessful.toString());
                         if (response.isSuccessful) {
-                            val activity_data = response.body()
-                            if (activity_data!!.activitytype.name == "Media") {
-                                // Get media type
-                                val media_type = activity_data.media!!.media_type.split("/")[0]
+                            val activity_data = response.body()!!
+                            // Get media type
+                            val media_type = activity_data.media!!.media_type.split("/")[0]
 
-                                Log.i("ActivityFragment", media_type);
-                                media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data.activitygroup_id + "/" + activity_data.id + "/media"
+                            Log.i("ActivityFragment", media_type);
+                            media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data.activitygroup_id + "/" + activity_data.id + "/exercise/media"
 
-                                when (media_type) {
-                                    "image" -> {
-                                        image.visibility = View.VISIBLE
-                                        video.visibility = View.GONE
+                            when (media_type) {
+                                "image" -> {
+                                    image.visibility = View.VISIBLE
+                                    video.visibility = View.GONE
 
-                                        ImageLoader.picasso.load(media_path).into(image)
-                                    }
-                                    "video", "audio" -> {
-                                        image.visibility = View.GONE
-                                        video.visibility = View.VISIBLE
-
-                                        playerView = video
-                                        currentPlayer = playerView
-                                        setFullScreenListener()
-                                    }
+                                    ImageLoader.picasso.load(media_path).into(image)
                                 }
+                                "video", "audio" -> {
+                                    image.visibility = View.GONE
+                                    video.visibility = View.VISIBLE
 
+                                    playerView = video
+                                    currentPlayer = playerView
+                                    setFullScreenListener()
+                                }
                             }
                         }
                     }
 
                     override fun onFailure(call: Call<Activity>, t: Throwable) {
-                        Log.i("ActivityFragment", "Failed request");
-                        Log.i("ActivityFrament", t.message!!)
+                        Log.i("ExerciseFragment", "Failed request");
+                        Log.i("ExerciseFragment", t.message!!)
                         TODO("Not yet implemented")
-
                     }
                 })
-
-
             } catch (e: Exception) {
-                Log.e("MediaFragment", e.toString())
+                Log.e("ExerciseFragment", e.toString())
             }
         }
 

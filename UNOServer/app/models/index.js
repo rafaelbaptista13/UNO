@@ -27,6 +27,8 @@ db.activitygroups = require("./activitygroups.model.js")(sequelize, Sequelize);
 db.activities = require("./activities.model.js")(sequelize, Sequelize);
 db.activitytypes = require("./activitytype.model")(sequelize, Sequelize);
 db.mediaactivities = require("./mediaactivity.model")(sequelize, Sequelize);
+db.exerciseactivities = require("./exerciseactivity.model")(sequelize, Sequelize);
+db.exerciseactivitystatus = require("./exerciseactivitystatus.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -69,6 +71,23 @@ db.activities.belongsTo(db.activitytypes, {
 db.activities.hasOne(db.mediaactivities, {
   foreignKey: "activity_id",
   onDelete: "CASCADE"
+})
+
+// ExerciseActivity 1 - 1 Activity
+db.activities.hasOne(db.exerciseactivities, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// ExerciseActivityStatus 1 - 1 ExerciseActivity
+db.exerciseactivities.hasOne(db.exerciseactivitystatus, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// ExerciseActivityStatus * - 1 User
+db.exerciseactivitystatus.belongsTo(db.users, {
+  foreignKey: "user_id",
 })
 
 db.ROLES = ["student", "teacher"];

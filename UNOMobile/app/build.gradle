@@ -83,4 +83,5 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-okhttp:2.18.3'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.18.3'
 
+    implementation 'com.google.android.material:material:1.8.0'
 }
