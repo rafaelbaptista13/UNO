@@ -12,6 +12,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -180,6 +181,12 @@ class ActivitiesFragment : Fragment() {
 
     private fun updateActivityStatusCard(number_text: TextView, progressBar: ProgressBar, completed: Int, total: Int) {
         number_text.text = completed.toString() + "/" + total.toString()
+        val progress = ((completed.toFloat() / total.toFloat()) * 100).toInt()
+        if (progress == 100) {
+            progressBar.progressDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.greenprogress)
+        } else {
+            progressBar.progressDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.yellowprogress)
+        }
         progressBar.progress = ((completed.toFloat() / total.toFloat()) * 100).toInt()
     }
 
