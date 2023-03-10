@@ -17,6 +17,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
     mediaactivities.createMedia
   );
+  // Content saw
+  router.post(
+    "/:class_id/:activity_id/media/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass],
+    mediaactivities.submit
+  );
   // Update a Media activity
   router.put(
     "/:class_id/media/:id",

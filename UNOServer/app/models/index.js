@@ -27,6 +27,7 @@ db.activitygroups = require("./activitygroups.model.js")(sequelize, Sequelize);
 db.activities = require("./activities.model.js")(sequelize, Sequelize);
 db.activitytypes = require("./activitytype.model")(sequelize, Sequelize);
 db.mediaactivities = require("./mediaactivity.model")(sequelize, Sequelize);
+db.mediaactivitystatus = require("./mediaactivitystatus.model")(sequelize, Sequelize);
 db.exerciseactivities = require("./exerciseactivity.model")(sequelize, Sequelize);
 db.exerciseactivitystatus = require("./exerciseactivitystatus.model")(sequelize, Sequelize);
 
@@ -71,6 +72,17 @@ db.activities.belongsTo(db.activitytypes, {
 db.activities.hasOne(db.mediaactivities, {
   foreignKey: "activity_id",
   onDelete: "CASCADE"
+})
+
+// MediaActivityStatus 1 - 1 MediaActivity
+db.mediaactivities.hasOne(db.mediaactivitystatus, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// mediaactivitystatus * - 1 User
+db.exerciseactivitystatus.belongsTo(db.users, {
+  foreignKey: "user_id",
 })
 
 // ExerciseActivity 1 - 1 Activity

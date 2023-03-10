@@ -7,15 +7,12 @@ module.exports = (sequelize, Sequelize) => {
         },
         media_id: {
             type: Sequelize.STRING,
-            allowNull: false
         },
         media_type: {
             type: Sequelize.STRING,
-            allowNull: false
         },
         media_secret: {
             type: Sequelize.STRING,
-            allowNull: false
         }
     });
 

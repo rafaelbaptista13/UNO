@@ -68,14 +68,16 @@
             android:layout_height="wrap_content"
             android:src="@drawable/content_icon"
             android:layout_gravity="center"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            android:visibility="gone"/>
 
         <com.google.android.exoplayer2.ui.StyledPlayerView
             android:id="@+id/video_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:show_buffering="when_playing"
-            app:show_shuffle_button="true" />
+            app:show_shuffle_button="true"
+            android:visibility="gone"/>
 
 
     </FrameLayout>

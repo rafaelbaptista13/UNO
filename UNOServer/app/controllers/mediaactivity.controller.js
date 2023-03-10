@@ -6,14 +6,15 @@ const { v4: uuidv4 } = require("uuid");
 const Activity = db.activities;
 const ActivityGroup = db.activitygroups;
 const MediaActivity = db.mediaactivities;
+const MediaActivityStatus = db.mediaactivitystatus;
 
 // Create and Save a new Activity of type Media
 exports.createMedia = async (req, res) => {
   // Validate request
-  if (!req.body.activitygroup_id || !req.body.title || !req.file) {
+  if (!req.body.activitygroup_id || !req.body.title) {
     res.status(400).send({
       message:
-        "Content can not be empty! Define a activitygroup_id, title and media in form-data.",
+        "Content can not be empty! Define a activitygroup_id, title in form-data.",
     });
     return;
   }
@@ -55,30 +56,39 @@ exports.createMedia = async (req, res) => {
   if (activities_data.length !== 0)
     order = activities_data[0].dataValues.order + 1;
 
-  // Save media type
-  const media_type = req.file.mimetype;
-  const secret_key = crypto.randomBytes(16).toString("hex");
-  // Encrypt file
-  const encryptedFile = CryptoJS.AES.encrypt(
-    req.file.buffer.toString("base64"),
-    secret_key
-  );
+  let media_type;
+  let secret_key;
+  let file_name;
+  if (req.file) {
+    // Save media type
+    media_type = req.file.mimetype;
+    secret_key = crypto.randomBytes(16).toString("hex");
+    // Encrypt file
+    const encryptedFile = CryptoJS.AES.encrypt(
+      req.file.buffer.toString("base64"),
+      secret_key
+    );
 
-  // Generate file name
-  const file_name = uuidv4();
-  try {
-    // Upload file in AWS S3 bucket
-    const params = {
-      Bucket: "violuno",
-      Key: file_name,
-      Body: encryptedFile.toString(),
-    };
+    // Generate file name
+    file_name = uuidv4();
+    try {
+      // Upload file in AWS S3 bucket
+      const params = {
+        Bucket: "violuno",
+        Key: file_name,
+        Body: encryptedFile.toString(),
+      };
 
-    await req.s3.upload(params).promise();
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error uploading file");
-    return;
+      await req.s3.upload(params).promise();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error uploading file");
+      return;
+    }
+  } else {
+    media_type = null;
+    secret_key = null;
+    file_name = null;
   }
 
   // Create a Activity
@@ -115,13 +125,72 @@ exports.createMedia = async (req, res) => {
     });
 };
 
+// Set activity to completed
+exports.submit = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activity_id = req.params.activity_id;
+  const user_id = req.userId;
+
+  // Check if Activity exists
+  let activity = await Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: [
+      {
+        model: MediaActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id,
+        },
+      },
+    ],
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "Activity not found!",
+    });
+    return;
+  }
+
+  // Check activity type
+  if (activity.activitytype_id !== 1) {
+    res.status(400).send({
+      message: "Activity is not of type Media!",
+    });
+    return;
+  }
+
+  const media_activity_status = {
+    activity_id: activity_id,
+    user_id: user_id,
+  };
+
+  MediaActivityStatus.create(media_activity_status)
+    .then(() => {
+      res.send({
+        message: "Media activity submitted successfully",
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while creating the MediaActivityStatus.",
+      });
+    });
+};
+
 // Update an Activity of type Media
 exports.updateMedia = async (req, res) => {
   const id = req.params.id;
   const class_id = req.params.class_id;
 
   // Validate request
-  if (!req.body.title || !req.body.description || !req.file) {
+  if (!req.body.title || !req.body.description) {
     res.status(400).send({
       message:
         "Content can not be empty! Define a title, description and media in form-data.",
@@ -149,65 +218,102 @@ exports.updateMedia = async (req, res) => {
     return;
   }
 
-  const media_type = req.file.mimetype;
-  const secret_key = crypto.randomBytes(16).toString("hex");
-  // Encrypt file
-  const encryptedFile = CryptoJS.AES.encrypt(
-    req.file.buffer.toString("base64"),
-    secret_key
-  );
-
-  // Generate file name
-  const file_name = uuidv4();
-  try {
-    // Upload file in AWS S3 bucket
-    const params = {
-      Bucket: "violuno",
-      Key: file_name,
-      Body: encryptedFile.toString(),
-    };
-
-    await req.s3.upload(params).promise();
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error uploading file");
+  // Check activity type
+  if (activity.activitytype_id !== 1) {
+    res.status(400).send({
+      message: "Activity is not of type Media!",
+    });
     return;
   }
 
-  const new_activity = {
-    title: req.body.title,
-    description: req.body.description,
-    MediaActivity: {
-      media_id: file_name,
-      media_type: media_type,
-      media_secret: secret_key,
-    },
-  };
+  let media_type;
+  let secret_key;
+  let file_name;
+  if (req.file) {
+    media_type = req.file.mimetype;
+    secret_key = crypto.randomBytes(16).toString("hex");
+    // Encrypt file
+    const encryptedFile = CryptoJS.AES.encrypt(
+      req.file.buffer.toString("base64"),
+      secret_key
+    );
 
-  try {
-    await sequelize.transaction(async (t) => {
-      await Activity.update(new_activity, {
-        where: {
-          id: id,
-        },
-        transaction: t,
-      });
+    // Generate file name
+    file_name = uuidv4();
+    try {
+      // Upload file in AWS S3 bucket
+      const params = {
+        Bucket: "violuno",
+        Key: file_name,
+        Body: encryptedFile.toString(),
+      };
 
-      await MediaActivity.update(new_activity.MediaActivity, {
-        where: {
-          activity_id: id,
-        },
-        transaction: t,
+      await req.s3.upload(params).promise();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error uploading file");
+      return;
+    }
+
+    const new_activity = {
+      title: req.body.title,
+      description: req.body.description,
+      MediaActivity: {
+        media_id: file_name,
+        media_type: media_type,
+        media_secret: secret_key,
+      },
+    };
+
+    try {
+      await sequelize.transaction(async (t) => {
+        await Activity.update(new_activity, {
+          where: {
+            id: id,
+          },
+          transaction: t,
+        });
+
+        await MediaActivity.update(new_activity.MediaActivity, {
+          where: {
+            activity_id: id,
+          },
+          transaction: t,
+        });
       });
-    });
-    res.send({
-      message: "Activity was updated successfully.",
-    });
-  } catch (err) {
-    res.status(500).send({
-      message:
-        err.message || "Some error occurred while updating the Activity.",
-    });
+      res.send({
+        message: "Activity was updated successfully.",
+      });
+    } catch (err) {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while updating the Activity.",
+      });
+    }
+  } else {
+    // No need to update the media file
+    const new_activity = {
+      title: req.body.title,
+      description: req.body.description,
+    };
+
+    Activity.update(new_activity, {
+      where: {
+        id: id,
+      },
+      transaction: t,
+    })
+      .then(() => {
+        res.send({
+          message: "Activity was updated successfully.",
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while updating the Activity.",
+        });
+      });
   }
 };
 
@@ -229,8 +335,8 @@ exports.getMedia = async (req, res) => {
         model: ActivityGroup,
         as: "activitygroup",
         where: {
-          class_id: class_id
-        }
+          class_id: class_id,
+        },
       },
     ],
   });
@@ -245,6 +351,13 @@ exports.getMedia = async (req, res) => {
   if (activity.activitytype_id !== 1) {
     res.status(400).send({
       message: "Activity is not of type Media!",
+    });
+    return;
+  }
+
+  if (activity.MediaActivity.media_type === null) {
+    res.status(400).send({
+      message: "This activity does not contain any media associated!",
     });
     return;
   }

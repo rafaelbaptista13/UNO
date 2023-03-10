@@ -1,11 +1,8 @@
 package com.example.unomobile.network
 
-import android.content.Context
 import com.example.unomobile.models.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.squareup.picasso.OkHttp3Downloader
-import com.squareup.picasso.Picasso
 import okhttp3.JavaNetCookieJar
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -48,9 +45,12 @@ interface ApiService {
     @GET("activities/{class_id}/{activity_id}")
     fun getActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Int?): Call<Activity>
 
+    @POST("activities/{class_id}/{activity_id}/media/submit")
+    fun submitMediaActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number): Call<ResponseBody>
+
     @Multipart
     @POST("activities/{class_id}/{activity_id}/exercise/submit")
-    fun submitExercise(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number, @Part media: MultipartBody.Part): Call<ResponseBody>
+    fun submitExerciseActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number, @Part media: MultipartBody.Part): Call<ResponseBody>
 
     @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>

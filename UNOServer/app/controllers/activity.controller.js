@@ -1,11 +1,9 @@
-const { sequelize, exerciseactivitystatus } = require("../models");
+const { sequelize } = require("../models");
 const db = require("../models");
-const CryptoJS = require("crypto-js");
-const crypto = require("crypto");
-const { v4: uuidv4 } = require("uuid");
 const Activity = db.activities;
 const ActivityGroup = db.activitygroups;
 const MediaActivity = db.mediaactivities;
+const MediaActivityStatus = db.mediaactivitystatus;
 const ActivityType = db.activitytypes;
 const ExerciseActivityStatus = db.exerciseactivitystatus;
 const ExerciseActivity = db.exerciseactivities;
@@ -135,6 +133,15 @@ exports.findOne = (req, res) => {
             },
             attributes: ["media_type"],
           });
+          let media_activity_status = await MediaActivityStatus.findOne({
+            where: {
+              activity_id: activity.id,
+              user_id: req.userId
+            }
+          })
+          if (media_activity_status !== null) {
+            activity.completed = true;
+          }
           activity.media = media;
           break;
         case 2:
@@ -199,17 +206,26 @@ exports.findAll = (req, res) => {
         
         switch (activity.activitytype.id) {
           case 1:
-            activity.completed = false;
-            break;
-          case 2:
-            let status = await ExerciseActivityStatus.findOne({
+            let media_activity_status = await MediaActivityStatus.findOne({
               where: {
                 activity_id: activity.id,
                 user_id: req.userId
               }
             })
-            console.log(status);
-            if (status === null) {
+            if (media_activity_status === null) {
+              activity.completed = false;
+            } else {
+              activity.completed = true;
+            }
+            break;
+          case 2:
+            let exercise_activity_status = await ExerciseActivityStatus.findOne({
+              where: {
+                activity_id: activity.id,
+                user_id: req.userId
+              }
+            })
+            if (exercise_activity_status === null) {
               activity.completed = false;
             } else {
               activity.completed = true;

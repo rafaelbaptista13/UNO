@@ -26,7 +26,6 @@ import com.example.unomobile.activities.FullScreenMediaActivity
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
-import com.example.unomobile.network.ApiService
 import com.example.unomobile.network.client
 import com.example.unomobile.utils.ImageLoader
 import com.google.android.exoplayer2.ExoPlayer
@@ -36,7 +35,6 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -97,7 +95,7 @@ class ExerciseFragment : Fragment() {
             val requestBody = video_file.asRequestBody(getMimeType(uri)!!.toMediaTypeOrNull())
             val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
 
-            val call = Api.retrofitService.submitExercise(user!!.class_id!!, activity_id!!, mediaPart)
+            val call = Api.retrofitService.submitExerciseActivity(user!!.class_id!!, activity_id!!, mediaPart)
 
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
@@ -105,13 +103,14 @@ class ExerciseFragment : Fragment() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
-                        Toast.makeText(requireContext(), "Vídeo submetido com sucesso.", Toast.LENGTH_SHORT)
+                        Toast.makeText(requireContext(), "Vídeo submetido com sucesso.", Toast.LENGTH_SHORT).show()
                         submitted_video_message!!.visibility = View.VISIBLE
                         submitted_player_view!!.visibility = View.VISIBLE
 
                         submitted_player_view?.setFullscreenButtonClickListener {
                             var intent = Intent(requireContext(), FullScreenMediaActivity::class.java)
                             var bundle = Bundle()
+                            Log.i("ExerciseFragment", submitted_media_path!!);
                             bundle.putString("media_path", submitted_media_path)
                             intent.putExtras(bundle)
                             startActivity(intent)
@@ -123,12 +122,12 @@ class ExerciseFragment : Fragment() {
                         submitted_player!!.setMediaItem(MediaItem.Builder().setUri(uri).build())
                         submitted_player!!.prepare()
                     } else {
-                        Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT)
+                        Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
                     Log.i("ExerciseFragment", t.message.toString())
                 }
 
@@ -214,34 +213,37 @@ class ExerciseFragment : Fragment() {
                         Log.i("ExerciseFragment", response.isSuccessful.toString());
                         if (response.isSuccessful) {
                             val activity_data = response.body()!!
-                            // Get media type
-                            media_type = activity_data.media!!.media_type.split("/")[0]
-
-                            Log.i("ActivityFragment", media_type!!);
                             media_path = com.example.unomobile.network.BASE_URL + "activities/" + user!!.class_id + "/" + activity_data.id + "/exercise/media"
+                            submitted_media_path = com.example.unomobile.network.BASE_URL + "activities/" + user!!.class_id + "/" + activity_data.id + "/exercise/submitted/media"
+                            if (activity_data.media!!.media_type != null) {
+                                // There is media to present
+                                // Get media type
+                                media_type = activity_data.media!!.media_type!!.split("/")[0]
 
-                            when (media_type) {
-                                "image" -> {
-                                    image.visibility = View.VISIBLE
-                                    video.visibility = View.GONE
+                                Log.i("ActivityFragment", media_type!!);
 
-                                    ImageLoader.picasso.load(media_path).into(image)
-                                }
-                                "video", "audio" -> {
-                                    image.visibility = View.GONE
-                                    video.visibility = View.VISIBLE
+                                when (media_type) {
+                                    "image" -> {
+                                        image.visibility = View.VISIBLE
+                                        video.visibility = View.GONE
 
-                                    player_view = video
-                                    setFullScreenListener(player_view, media_path!!)
-                                    initPlayer()
+                                        ImageLoader.picasso.load(media_path).into(image)
+                                    }
+                                    "video", "audio" -> {
+                                        image.visibility = View.GONE
+                                        video.visibility = View.VISIBLE
+
+                                        player_view = video
+                                        setFullScreenListener(player_view, media_path!!)
+                                        initPlayer()
+                                    }
                                 }
                             }
-
                             // Check if user already submitted the exercise
                             if (activity_data.completed == true) {
                                 submitted_player_view!!.visibility = View.VISIBLE
                                 submitted_video_message!!.visibility = View.VISIBLE
-                                submitted_media_path = com.example.unomobile.network.BASE_URL + "activities/" + user!!.class_id + "/" + activity_data.id + "/exercise/submitted/media"
+
                                 setFullScreenListener(submitted_player_view, submitted_media_path!!)
                                 initSubmittedPlayer()
                             }
@@ -251,7 +253,6 @@ class ExerciseFragment : Fragment() {
                     override fun onFailure(call: Call<Activity>, t: Throwable) {
                         Log.i("ExerciseFragment", "Failed request");
                         Log.i("ExerciseFragment", t.message!!)
-                        TODO("Not yet implemented")
                     }
                 })
             } catch (e: Exception) {
