@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.unomobile.R
@@ -27,7 +28,7 @@ class FullScreenMediaActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         media_path = bundle?.getString("media_path")
-
+        Log.i("FullscreenMediaActivity", media_path.toString())
         playerView = findViewById(R.id.video_view)
         playerView?.findViewById<ImageButton>(com.google.android.exoplayer2.ui.R.id.exo_fullscreen)
             ?.setImageResource(R.drawable.ic_fullscreen_shrink)

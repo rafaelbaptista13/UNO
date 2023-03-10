@@ -114,21 +114,21 @@ class MediaFragment : Fragment() {
                         Log.i("ActivityFragment", response.isSuccessful.toString());
                         if (response.isSuccessful) {
                             val activity_data = response.body()
-                            if (activity_data!!.activitytype.name == "Media") {
+                            media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data!!.id + "/media"
+                            if (activity_data.media!!.media_type != null) {
                                 // Get media type
-                                val media_type = activity_data.media!!.media_type.split("/")[0]
+                                val media_type = activity_data.media.media_type!!.split("/")[0]
 
                                 Log.i("ActivityFragment", media_type);
-                                media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data.activitygroup_id + "/" + activity_data.id + "/media"
 
-                                when {
-                                    media_type == "image" -> {
+                                when (media_type) {
+                                    "image" -> {
                                         image.visibility = View.VISIBLE
                                         video.visibility = View.GONE
 
                                         ImageLoader.picasso.load(media_path).into(image)
                                     }
-                                    media_type == "video" || media_type == "audio" -> {
+                                    "video", "audio" -> {
                                         image.visibility = View.GONE
                                         video.visibility = View.VISIBLE
 
@@ -145,7 +145,6 @@ class MediaFragment : Fragment() {
                     override fun onFailure(call: Call<Activity>, t: Throwable) {
                         Log.i("ActivityFragment", "Failed request");
                         Log.i("ActivityFrament", t.message!!)
-                        TODO("Not yet implemented")
 
                     }
                 })

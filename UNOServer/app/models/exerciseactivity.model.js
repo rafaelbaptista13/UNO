@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const MediaActivity = sequelize.define("MediaActivities", {
+    const ExerciseActivity = sequelize.define("ExerciseActivities", {
         activity_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
@@ -16,5 +16,5 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
 
-    return MediaActivity;
+    return ExerciseActivity;
 };

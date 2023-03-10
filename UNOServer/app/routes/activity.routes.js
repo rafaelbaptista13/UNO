@@ -3,28 +3,72 @@ const upload = require("../middleware/upload");
 
 module.exports = (app) => {
   const activities = require("../controllers/activity.controller.js");
+  const mediaactivities = require("../controllers/mediaactivity.controller.js");
+  const exerciseactivities = require("../controllers/exerciseactivity.controller.js");
 
   let router = require("express").Router();
 
+  /**
+   * Media Activities
+   */
   // Create a new Media activity
   router.post(
     "/:class_id/media",
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
-    activities.createMedia
+    mediaactivities.createMedia
   );
-
+  // Content saw
+  router.post(
+    "/:class_id/:activity_id/media/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass],
+    mediaactivities.submit
+  );
   // Update a Media activity
   router.put(
     "/:class_id/media/:id",
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
-    activities.updateMedia
+    mediaactivities.updateMedia
+  );
+  // Get the media from a Media activity
+  router.get(
+    "/:class_id/:activity_id/media",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    mediaactivities.getMedia
   );
 
-  // Get the media from a Media Activity
+
+  /**
+   * Exercise Activities
+   */
+  // Create a new Exercise activity
+  router.post(
+    "/:class_id/exercise",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    exerciseactivities.createExercise
+  );
+  // Submit a video to an exercise
+  router.post(
+    "/:class_id/:activity_id/exercise/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
+    exerciseactivities.submitExercise
+  );
+  // Update an Exercise activity
+  router.put(
+    "/:class_id/exercise/:id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    exerciseactivities.updateExercise
+  );
+  // Get the media from an Exercise activity
   router.get(
-    "/:class_id/:activitygroup_id/:activity_id/media",
+    "/:class_id/:activity_id/exercise/media",
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
-    activities.getMediaFromMediaActivity
+    exerciseactivities.getMedia
+  );
+  // Get the media submitted by an user to an Exercise activity
+  router.get(
+    "/:class_id/:activity_id/exercise/submitted/media",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    exerciseactivities.getSubmittedMedia
   );
 
   // Create a new activity

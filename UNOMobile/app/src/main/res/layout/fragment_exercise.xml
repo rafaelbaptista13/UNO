@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginHorizontal="20dp"
-    tools:context=".fragments.MediaFragment">
+    tools:context=".fragments.ExerciseFragment">
 
     <TextView
         android:id="@+id/type"
@@ -15,7 +15,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:text="1. Conteúdo"
+        android:text="1. Exercício"
         android:textColor="@color/primary_text"
         android:textSize="30sp"
         android:textStyle="bold" />
@@ -57,8 +57,9 @@
         android:gravity="center"/>
 
     <FrameLayout
+        android:id="@+id/media_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/description"
         android:gravity="center">
 
@@ -79,7 +80,61 @@
             app:show_shuffle_button="true"
             android:visibility="gone"/>
 
-
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/upload_video_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_below="@+id/media_view"
+        android:layout_marginTop="20dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/record_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/inverse_primary_button"
+            android:text="Gravar"
+            android:textColor="@color/primary_text"
+            android:layout_gravity="center"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/upload_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/inverse_primary_button"
+            android:text="Submeter"
+            android:textColor="@color/primary_text" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/uploaded_video_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vídeo submetido:"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/upload_video_buttons"/>
+
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/uploaded_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:show_buffering="when_playing"
+        app:show_shuffle_button="true"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/uploaded_video_message"
+        />
 
 </RelativeLayout>
