@@ -119,37 +119,38 @@ exports.createExercise = async (req, res) => {
 // Submit video for exercise
 exports.submitExercise = async (req, res) => {
   const class_id = req.params.class_id;
-  const activitygroup_id = req.params.activitygroup_id;
   const activity_id = req.params.activity_id;
   const user_id = req.userId;
-
-  // Check if ActivityGroup exists
-  let activitygroup = await ActivityGroup.findOne({
-    where: {
-      id: activitygroup_id,
-      class_id: class_id,
-    },
-  });
-  if (activitygroup === null) {
-    res.status(400).send({
-      message: "You're not student of this ActivityGroup.",
-    });
-    return;
-  }
 
   // Check if Activity exists
   let activity = await Activity.findOne({
     where: {
       id: activity_id,
-      activitygroup_id: activitygroup_id,
     },
-    include: {
-      model: ExerciseActivity,
-    },
+    include: [
+      {
+        model: ExerciseActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id,
+        },
+      },
+    ],
   });
   if (activity === null) {
     res.status(400).send({
       message: "Activity not found!",
+    });
+    return;
+  }
+
+  // Check activity type
+  if (activity.activitytype_id !== 2) {
+    res.status(400).send({
+      message: "Activity is not of type Exercise!",
     });
     return;
   }
@@ -180,29 +181,58 @@ exports.submitExercise = async (req, res) => {
     return;
   }
 
-  // Create ExerciseActivityStatus
-  const exercise_activity_status = {
-    activity_id: activity_id,
-    user_id: user_id,
-    media_id: file_name,
-    media_type: media_type,
-    media_secret: secret_key
+  const data = await ExerciseActivityStatus.findOne({
+    where: {
+      activity_id: activity_id,
+      user_id: user_id,
+    },
+  });
+  if (data === null) {
+    // Create new instance
+    // Create ExerciseActivityStatus
+    const exercise_activity_status = {
+      activity_id: activity_id,
+      user_id: user_id,
+      media_id: file_name,
+      media_type: media_type,
+      media_secret: secret_key,
+    };
+
+    ExerciseActivityStatus.create(exercise_activity_status)
+      .then(() => {
+        res.send({
+          message: "Exercise submitted successfully",
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while creating the ExerciseActivityStatus.",
+        });
+      });
+  } else {
+    // Update the video submitted
+    data
+      .update({
+        media_id: file_name,
+        media_type: media_type,
+        media_secret: secret_key,
+      })
+      .then(() => {
+        res.send({
+          message: "Exercise submitted successfully",
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while updating the ExerciseActivityStatus.",
+        });
+      });
   }
-
-  ExerciseActivityStatus.create(exercise_activity_status)
-    .then(() => {
-      res.send({
-        message: "Exercise submitted successfully"
-      })
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-        err.message || "Some error occurred while creating the ExerciseActivityStatus."
-      })
-    })
-
-}
+};
 
 // Update an Activity of type Exercise
 exports.updateExercise = async (req, res) => {
@@ -303,36 +333,37 @@ exports.updateExercise = async (req, res) => {
 // Get Media from Exercise Activity
 exports.getMedia = async (req, res) => {
   const class_id = req.params.class_id;
-  const activitygroup_id = req.params.activitygroup_id;
   const activity_id = req.params.activity_id;
-
-  // Check if ActivityGroup exists
-  let activitygroup = await ActivityGroup.findOne({
-    where: {
-      id: activitygroup_id,
-      class_id: class_id,
-    },
-  });
-  if (activitygroup === null) {
-    res.status(400).send({
-      message: "You're not the teacher of this ActivityGroup.",
-    });
-    return;
-  }
 
   // Get Activity
   let activity = await Activity.findOne({
     where: {
       id: activity_id,
-      activitygroup_id: activitygroup_id,
     },
-    include: {
-      model: ExerciseActivity,
-    },
+    include: [
+      {
+        model: ExerciseActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id,
+        },
+      },
+    ],
   });
   if (activity === null) {
     res.status(400).send({
       message: "Activity not found!",
+    });
+    return;
+  }
+
+  // Check activity type
+  if (activity.activitytype_id !== 2) {
+    res.status(400).send({
+      message: "Activity is not of type Exercise!",
     });
     return;
   }
@@ -349,6 +380,76 @@ exports.getMedia = async (req, res) => {
   const decryptedFile = CryptoJS.AES.decrypt(
     s3Object.Body.toString(),
     activity.ExerciseActivity.media_secret
+  );
+
+  res.set("Content-Type", media_type);
+  res
+    .status(200)
+    .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
+};
+
+// Get Media from Exercise Activity
+exports.getSubmittedMedia = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activity_id = req.params.activity_id;
+
+  // Check Activity
+  let activity = await Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: {
+      model: ActivityGroup,
+      as: "activitygroup",
+      where: {
+        class_id: class_id,
+      },
+    },
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "Activity not found!",
+    });
+    return;
+  }
+
+  // Get ExerciseActivityStatus
+  let activity_exercise = await ExerciseActivity.findOne({
+    where: {
+      activity_id: activity_id,
+    },
+    include: [
+      {
+        model: ExerciseActivityStatus,
+        where: {
+          activity_id: activity_id,
+          user_id: req.userId,
+        },
+      },
+    ],
+  });
+  if (activity_exercise === null) {
+    res.status(400).send({
+      message: "Activity not submitted!",
+    });
+    return;
+  }
+
+  // Save media type
+  const media_type = activity_exercise.ExerciseActivityStatus.media_type;
+
+  // Get Media from aws s3
+  const s3Object = await req.s3
+    .getObject({
+      Bucket: "violuno",
+      Key: activity_exercise.ExerciseActivityStatus.media_id,
+    })
+    .promise();
+
+  // Decrypt
+  const decryptedFile = CryptoJS.AES.decrypt(
+    s3Object.Body.toString(),
+    activity_exercise.ExerciseActivityStatus.media_secret
   );
 
   res.set("Content-Type", media_type);

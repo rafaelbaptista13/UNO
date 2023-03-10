@@ -214,36 +214,37 @@ exports.updateMedia = async (req, res) => {
 // Get Media from Media Activity
 exports.getMedia = async (req, res) => {
   const class_id = req.params.class_id;
-  const activitygroup_id = req.params.activitygroup_id;
   const activity_id = req.params.activity_id;
-
-  // Check if ActivityGroup exists
-  let activitygroup = await ActivityGroup.findOne({
-    where: {
-      id: activitygroup_id,
-      class_id: class_id,
-    },
-  });
-  if (activitygroup === null) {
-    res.status(400).send({
-      message: "You're not the teacher of this ActivityGroup.",
-    });
-    return;
-  }
 
   // Get Activity
   let activity = await Activity.findOne({
     where: {
       id: activity_id,
-      activitygroup_id: activitygroup_id,
     },
-    include: {
-      model: MediaActivity,
-    },
+    include: [
+      {
+        model: MediaActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id
+        }
+      },
+    ],
   });
   if (activity === null) {
     res.status(400).send({
       message: "Activity not found!",
+    });
+    return;
+  }
+
+  // Check activity type
+  if (activity.activitytype_id !== 1) {
+    res.status(400).send({
+      message: "Activity is not of type Media!",
     });
     return;
   }

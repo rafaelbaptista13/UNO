@@ -144,6 +144,15 @@ exports.findOne = (req, res) => {
             },
             attributes: ["media_type"],
           });
+          let exercise_activity_status = await ExerciseActivityStatus.findOne({
+            where: {
+              activity_id: activity.id,
+              user_id: req.userId
+            }
+          })
+          if (exercise_activity_status !== null) {
+            activity.completed = true;
+          }
           activity.media = media;
           break;
         case 3:

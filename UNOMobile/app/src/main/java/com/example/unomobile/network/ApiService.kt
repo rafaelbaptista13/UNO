@@ -7,6 +7,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import okhttp3.JavaNetCookieJar
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -46,6 +47,10 @@ interface ApiService {
 
     @GET("activities/{class_id}/{activity_id}")
     fun getActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Int?): Call<Activity>
+
+    @Multipart
+    @POST("activities/{class_id}/{activity_id}/exercise/submit")
+    fun submitExercise(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number, @Part media: MultipartBody.Part): Call<ResponseBody>
 
     @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>

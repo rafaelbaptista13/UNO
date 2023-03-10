@@ -119,7 +119,7 @@ class MediaFragment : Fragment() {
                                 val media_type = activity_data.media!!.media_type.split("/")[0]
 
                                 Log.i("ActivityFragment", media_type);
-                                media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data.activitygroup_id + "/" + activity_data.id + "/media"
+                                media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data.id + "/media"
 
                                 when (media_type) {
                                     "image" -> {

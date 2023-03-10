@@ -25,7 +25,7 @@ module.exports = (app) => {
   );
   // Get the media from a Media activity
   router.get(
-    "/:class_id/:activitygroup_id/:activity_id/media",
+    "/:class_id/:activity_id/media",
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     mediaactivities.getMedia
   );
@@ -40,8 +40,9 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
     exerciseactivities.createExercise
   );
+  // Submit a video to an exercise
   router.post(
-    "/:class_id/:activitygroup_id/:activity_id/exercise/submit",
+    "/:class_id/:activity_id/exercise/submit",
     [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
     exerciseactivities.submitExercise
   );
@@ -53,9 +54,15 @@ module.exports = (app) => {
   );
   // Get the media from an Exercise activity
   router.get(
-    "/:class_id/:activitygroup_id/:activity_id/exercise/media",
+    "/:class_id/:activity_id/exercise/media",
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     exerciseactivities.getMedia
+  );
+  // Get the media submitted by an user to an Exercise activity
+  router.get(
+    "/:class_id/:activity_id/exercise/submitted/media",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    exerciseactivities.getSubmittedMedia
   );
 
   // Create a new activity
