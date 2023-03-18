@@ -7,6 +7,10 @@ const MediaActivityStatus = db.mediaactivitystatus;
 const ActivityType = db.activitytypes;
 const ExerciseActivityStatus = db.exerciseactivitystatus;
 const ExerciseActivity = db.exerciseactivities;
+const QuestionActivity = db.questionactivities;
+const QuestionActivityStatus = db.questionactivitystatus;
+const UserAnswered = db.useranswered;
+const Answer = db.answers;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -124,10 +128,9 @@ exports.findOne = (req, res) => {
   })
     .then(async (activity) => {
       activity = activity.toJSON();
-      let media;
       switch (activity.activitytype.id) {
         case 1:
-          media = await MediaActivity.findOne({
+          let media_info = await MediaActivity.findOne({
             where: {
               activity_id: activity.id,
             },
@@ -136,16 +139,16 @@ exports.findOne = (req, res) => {
           let media_activity_status = await MediaActivityStatus.findOne({
             where: {
               activity_id: activity.id,
-              user_id: req.userId
-            }
-          })
+              user_id: req.userId,
+            },
+          });
           if (media_activity_status !== null) {
             activity.completed = true;
           }
-          activity.media = media;
+          activity.media_activity = media_info;
           break;
         case 2:
-          media = await ExerciseActivity.findOne({
+          let exercise_info = await ExerciseActivity.findOne({
             where: {
               activity_id: activity.id,
             },
@@ -154,16 +157,56 @@ exports.findOne = (req, res) => {
           let exercise_activity_status = await ExerciseActivityStatus.findOne({
             where: {
               activity_id: activity.id,
-              user_id: req.userId
-            }
-          })
+              user_id: req.userId,
+            },
+          });
           if (exercise_activity_status !== null) {
             activity.completed = true;
           }
-          activity.media = media;
+          activity.exercise_activity = exercise_info;
           break;
         case 3:
-
+          let question_info = await QuestionActivity.findOne({
+            where: {
+              activity_id: activity.id,
+            },
+            include: [
+              {
+                model: Answer,
+                attributes: ["order", "answer", "media_type"],
+              },
+            ],
+          });
+          let question_activity_status = await QuestionActivityStatus.findOne({
+            where: {
+              activity_id: activity.id,
+              user_id: req.userId,
+            },
+          });
+          let answers = question_info.Answers.map((item) => item.toJSON());
+          if (question_activity_status !== null) {
+            let chosen_answers = await UserAnswered.findAll({
+              where: {
+                status_id: question_activity_status.id,
+              },
+            });
+            activity.completed = true;
+            for (let idx in chosen_answers) {
+              let chosen_answer = chosen_answers[idx];
+              const itemToUpdate = answers.find(
+                (item) => item.order == chosen_answer.order
+              );
+              if (itemToUpdate) {
+                itemToUpdate.chosen = true;
+              }
+            }
+          }
+          activity.question_activity = {
+            question: question_info.question,
+            answers: answers,
+            media_type: question_info.media_type,
+          };
+          break;
         case 4:
       }
 
@@ -199,19 +242,18 @@ exports.findAll = (req, res) => {
     order: [["order", "ASC"]],
   })
     .then(async (_data) => {
-      
-      let data = []
+      let data = [];
       for (let idx in _data) {
         let activity = _data[idx].toJSON();
-        
+
         switch (activity.activitytype.id) {
           case 1:
             let media_activity_status = await MediaActivityStatus.findOne({
               where: {
                 activity_id: activity.id,
-                user_id: req.userId
-              }
-            })
+                user_id: req.userId,
+              },
+            });
             if (media_activity_status === null) {
               activity.completed = false;
             } else {
@@ -219,12 +261,14 @@ exports.findAll = (req, res) => {
             }
             break;
           case 2:
-            let exercise_activity_status = await ExerciseActivityStatus.findOne({
-              where: {
-                activity_id: activity.id,
-                user_id: req.userId
+            let exercise_activity_status = await ExerciseActivityStatus.findOne(
+              {
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
               }
-            })
+            );
             if (exercise_activity_status === null) {
               activity.completed = false;
             } else {
@@ -232,7 +276,19 @@ exports.findAll = (req, res) => {
             }
             break;
           case 3:
-            activity.completed = false;
+            let question_activity_status = await QuestionActivityStatus.findOne(
+              {
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              }
+            );
+            if (question_activity_status === null) {
+              activity.completed = false;
+            } else {
+              activity.completed = true;
+            }
             break;
           case 4:
             activity.completed = false;

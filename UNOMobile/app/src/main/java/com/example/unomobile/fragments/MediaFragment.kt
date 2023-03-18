@@ -1,10 +1,7 @@
 package com.example.unomobile.fragments
 
 import android.annotation.SuppressLint
-import android.app.Dialog
-import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -12,16 +9,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.unomobile.MainActivity
 import com.example.unomobile.R
-import com.example.unomobile.activities.FullScreenMediaActivity
+import com.example.unomobile.activities.FullScreenActivity
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
@@ -42,7 +37,6 @@ class MediaFragment : Fragment() {
 
     private var player: ExoPlayer? = null
     private var playerView: StyledPlayerView? = null
-    private var currentPlayer: StyledPlayerView? = null
     private var media_path: String? = null
 
     private var title: String? = null
@@ -51,7 +45,7 @@ class MediaFragment : Fragment() {
     private var activity_id: Int? = null
 
     companion object {
-        fun newInstance(activity_id: Int, order: Int, title: String, description: String) = MediaFragment().apply {
+        fun newInstance(activity_id: Int, order: Int, title: String, description: String?) = MediaFragment().apply {
             arguments = bundleOf(
                 "activity_id" to activity_id,
                 "order" to order,
@@ -115,9 +109,9 @@ class MediaFragment : Fragment() {
                         if (response.isSuccessful) {
                             val activity_data = response.body()
                             media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data!!.id + "/media"
-                            if (activity_data.media!!.media_type != null) {
+                            if (activity_data.media_activity!!.media_type != null) {
                                 // Get media type
-                                val media_type = activity_data.media.media_type!!.split("/")[0]
+                                val media_type = activity_data.media_activity.media_type!!.split("/")[0]
 
                                 Log.i("ActivityFragment", media_type);
 
@@ -133,7 +127,6 @@ class MediaFragment : Fragment() {
                                         video.visibility = View.VISIBLE
 
                                         playerView = video
-                                        currentPlayer = playerView
                                         setFullScreenListener()
                                     }
                                 }
@@ -144,7 +137,7 @@ class MediaFragment : Fragment() {
 
                     override fun onFailure(call: Call<Activity>, t: Throwable) {
                         Log.i("ActivityFragment", "Failed request");
-                        Log.i("ActivityFrament", t.message!!)
+                        Log.i("ActivityFragment", t.message!!)
 
                     }
                 })
@@ -182,7 +175,7 @@ class MediaFragment : Fragment() {
     fun setFullScreenListener() {
         // Adding Full Screen Button Click Listeners.
         playerView?.setFullscreenButtonClickListener {
-            var intent = Intent(requireContext(), FullScreenMediaActivity::class.java)
+            var intent = Intent(requireContext(), FullScreenActivity::class.java)
             var bundle = Bundle()
             bundle.putString("media_path", media_path)
             intent.putExtras(bundle)
@@ -195,7 +188,7 @@ class MediaFragment : Fragment() {
         super.onStart()
         if (Build.VERSION.SDK_INT > 23 && media_path != null) {
             initPlayer()
-            currentPlayer?.onResume()
+            playerView?.onResume()
         }
     }
 
@@ -203,14 +196,14 @@ class MediaFragment : Fragment() {
         super.onResume()
         if (Build.VERSION.SDK_INT <= 23 && media_path != null) {
             initPlayer()
-            currentPlayer?.onResume()
+            playerView?.onResume()
         }
     }
 
     override fun onPause() {
         super.onPause()
         if (Build.VERSION.SDK_INT <= 23) {
-            currentPlayer?.player = null
+            playerView?.player = null
             player?.release()
             player = null
         }
@@ -219,7 +212,7 @@ class MediaFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         if (Build.VERSION.SDK_INT > 23) {
-            currentPlayer?.player = null
+            playerView?.player = null
             player?.release()
             player = null
         }

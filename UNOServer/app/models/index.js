@@ -30,6 +30,10 @@ db.mediaactivities = require("./mediaactivity.model")(sequelize, Sequelize);
 db.mediaactivitystatus = require("./mediaactivitystatus.model")(sequelize, Sequelize);
 db.exerciseactivities = require("./exerciseactivity.model")(sequelize, Sequelize);
 db.exerciseactivitystatus = require("./exerciseactivitystatus.model")(sequelize, Sequelize);
+db.questionactivities = require("./questionactivity.model")(sequelize, Sequelize);
+db.answers = require("./answer.model")(sequelize, Sequelize);
+db.questionactivitystatus = require("./questionactivitystatus.model")(sequelize, Sequelize);
+db.useranswered = require("./useranswered.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -81,7 +85,7 @@ db.mediaactivities.hasOne(db.mediaactivitystatus, {
 })
 
 // mediaactivitystatus * - 1 User
-db.exerciseactivitystatus.belongsTo(db.users, {
+db.mediaactivitystatus.belongsTo(db.users, {
   foreignKey: "user_id",
 })
 
@@ -100,6 +104,51 @@ db.exerciseactivities.hasOne(db.exerciseactivitystatus, {
 // ExerciseActivityStatus * - 1 User
 db.exerciseactivitystatus.belongsTo(db.users, {
   foreignKey: "user_id",
+})
+
+// QuestionActivity 1 - 1 Activity
+db.activities.hasOne(db.questionactivities, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// Answer * - 1 QuestionActivity
+db.answers.belongsTo(db.questionactivities, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// QuestionActivity 1 - * Answer
+db.questionactivities.hasMany(db.answers, {
+  foreignKey: "activity_id"
+})
+
+// QuestionActivityStatus 1 - 1 QuestionActivity 
+db.questionactivities.hasOne(db.questionactivitystatus, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// QuestionActivityStatus * - 1 User
+db.questionactivitystatus.belongsTo(db.users, {
+  foreignKey: "user_id",
+})
+
+db.answers.belongsToMany(db.questionactivitystatus, {
+  through: db.useranswered,
+  foreignKey: "order",
+  otherKey: "status_id",
+  sourceKey: "order",
+  targetKey: "id"
+})
+
+// QuestionActivityStatus 1 - * Answer
+db.questionactivitystatus.belongsToMany(db.answers, {
+  through: db.useranswered,
+  foreignKey: "status_id",
+  otherKey: "order",
+  sourceKey: "id",
+  targetKey: "order"
 })
 
 db.ROLES = ["student", "teacher"];

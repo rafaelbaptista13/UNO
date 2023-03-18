@@ -5,6 +5,7 @@ module.exports = (app) => {
   const activities = require("../controllers/activity.controller.js");
   const mediaactivities = require("../controllers/mediaactivity.controller.js");
   const exerciseactivities = require("../controllers/exerciseactivity.controller.js");
+  const questionactivities = require("../controllers/questionactivity.controller.js")
 
   let router = require("express").Router();
 
@@ -69,6 +70,38 @@ module.exports = (app) => {
     "/:class_id/:activity_id/exercise/submitted/media",
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     exerciseactivities.getSubmittedMedia
+  );
+
+
+  /**
+   * Question Activities
+   */
+  // Create a new Question activity
+  router.post(
+    "/:class_id/question",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.fields([
+      { name: "question_media", maxCount: 1},
+      { name: "answers_media", maxCount: 10}
+    ])],
+    questionactivities.createQuestion
+  );
+  // Submit an question
+  router.post(
+    "/:class_id/:activity_id/question/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass],
+    questionactivities.submitQuestion
+  );
+  // Get the media from a Question activity
+  router.get(
+    "/:class_id/:activity_id/question/media",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    questionactivities.getMedia
+  );
+  // Get the media from an answer
+  router.get(
+    "/:class_id/:activity_id/question/answers/:order/media",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    questionactivities.getMediaFromAnswer
   );
 
   // Create a new activity

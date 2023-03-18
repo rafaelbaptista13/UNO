@@ -52,6 +52,9 @@ interface ApiService {
     @POST("activities/{class_id}/{activity_id}/exercise/submit")
     fun submitExerciseActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number, @Part media: MultipartBody.Part): Call<ResponseBody>
 
+    @POST("activities/{class_id}/{activity_id}/question/submit")
+    fun submitQuestionActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number, @Body chosen_answers: Map<String, Array<Int>>): Call<ResponseBody>
+
     @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>
 

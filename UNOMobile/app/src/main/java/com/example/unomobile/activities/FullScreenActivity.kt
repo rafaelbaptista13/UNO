@@ -2,11 +2,11 @@ package com.example.unomobile.activities
 
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.unomobile.R
 import com.example.unomobile.network.client
 import com.google.android.exoplayer2.ExoPlayer
@@ -15,11 +15,10 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 
-class FullScreenMediaActivity : AppCompatActivity() {
+class FullScreenActivity : AppCompatActivity() {
 
     private var player: ExoPlayer? = null
     private var playerView: StyledPlayerView? = null
-    private var currentPlayer: StyledPlayerView? = null
     private var media_path: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +27,7 @@ class FullScreenMediaActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         media_path = bundle?.getString("media_path")
-        Log.i("FullscreenMediaActivity", media_path.toString())
+        Log.i("FullscreenActivity", media_path.toString())
         playerView = findViewById(R.id.video_view)
         playerView?.findViewById<ImageButton>(com.google.android.exoplayer2.ui.R.id.exo_fullscreen)
             ?.setImageResource(R.drawable.ic_fullscreen_shrink)
@@ -66,6 +65,32 @@ class FullScreenMediaActivity : AppCompatActivity() {
 
         // Set Player Properties
         player!!.playWhenReady = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT <= 23 && media_path != null) {
+            initPlayer()
+            playerView?.onResume()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (Build.VERSION.SDK_INT <= 23) {
+            playerView?.player = null
+            player?.release()
+            player = null
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (Build.VERSION.SDK_INT > 23) {
+            playerView?.player = null
+            player?.release()
+            player = null
+        }
     }
 
 }

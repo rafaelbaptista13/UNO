@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="0dp"
+    tools:context=".fragments.questions.QuestionFragment"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="1. Pergunta"
+        android:textColor="@color/primary_text"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/line_break"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/primary_text"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="50dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/question_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/question"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginVertical="20dp"
+                        android:gravity="center"
+                        android:text="Como te sentes?"
+                        android:textColor="@color/primary_text"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:layout_centerHorizontal="true"/>
+
+                    <FrameLayout
+                        android:id="@+id/question_frame_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/question"
+                        android:gravity="center"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/image_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/content_icon"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:visibility="gone"/>
+
+                        <com.google.android.exoplayer2.ui.StyledPlayerView
+                            android:id="@+id/video_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:show_buffering="when_playing"
+                            app:show_shuffle_button="true"
+                            android:visibility="gone"/>
+
+                    </FrameLayout>
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"/>
+
+            <TextView
+                android:id="@+id/submitted_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Resposta submetida"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginTop="5dp"
+                />
+
+            <LinearLayout
+                android:id="@+id/submit_buttons"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginVertical="15dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/edit_submission"
+                    android:layout_width="match_parent"
+                    android:text="Alterar resposta"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="@color/primary_text"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/change_button"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/submit"
+                    android:layout_width="match_parent"
+                    android:text="Responder"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="#fff"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/submit_button"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>
