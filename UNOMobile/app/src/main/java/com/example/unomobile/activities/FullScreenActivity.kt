@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.unomobile.R
 import com.example.unomobile.network.client
 import com.google.android.exoplayer2.ExoPlayer
@@ -20,6 +21,7 @@ class FullScreenActivity : AppCompatActivity() {
     private var player: ExoPlayer? = null
     private var playerView: StyledPlayerView? = null
     private var media_path: String? = null
+    private var uri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +29,12 @@ class FullScreenActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         media_path = bundle?.getString("media_path")
-        Log.i("FullscreenActivity", media_path.toString())
+        if (media_path == null) {
+            uri = intent.getParcelableExtra("uri")
+            Log.i("FullscreenActivity", uri!!.path!!)
+        }
+
+
         playerView = findViewById(R.id.video_view)
         playerView?.findViewById<ImageButton>(com.google.android.exoplayer2.ui.R.id.exo_fullscreen)
             ?.setImageResource(R.drawable.ic_fullscreen_shrink)
@@ -52,15 +59,20 @@ class FullScreenActivity : AppCompatActivity() {
         player = ExoPlayer.Builder(this).build()
         playerView?.player = player
 
-        val uri = Uri.parse(media_path)
-        val dataSourceFactory = OkHttpDataSource.Factory(
-            client
-        )
-        val mediaSource = ProgressiveMediaSource.Factory(
-            dataSourceFactory
-        ).createMediaSource(MediaItem.Builder().setUri(uri).build())
+        if (media_path != null) {
+            val uri = Uri.parse(media_path)
+            val dataSourceFactory = OkHttpDataSource.Factory(
+                client
+            )
+            val mediaSource = ProgressiveMediaSource.Factory(
+                dataSourceFactory
+            ).createMediaSource(MediaItem.Builder().setUri(uri).build())
 
-        player!!.setMediaSource(mediaSource)
+            player!!.setMediaSource(mediaSource)
+        } else {
+            player!!.setMediaItem(MediaItem.Builder().setUri(uri).build())
+        }
+
         player!!.prepare()
 
         // Set Player Properties

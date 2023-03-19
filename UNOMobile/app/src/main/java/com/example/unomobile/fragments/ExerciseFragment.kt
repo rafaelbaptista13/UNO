@@ -2,10 +2,13 @@ package com.example.unomobile.fragments
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.content.ActivityNotFoundException
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,12 +16,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +42,8 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -47,6 +54,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 private val REQUEST_CODE = 123
@@ -71,11 +81,19 @@ class ExerciseFragment : Fragment() {
     private var activity_id: Int? = null
     private var user: UserInfo? = null
 
-    private lateinit var chosen_file: Uri
+    private var chosen_file: Uri? = null
     private lateinit var edit_submission_btn: AppCompatButton
     private lateinit var submit_btn: AppCompatButton
+    private lateinit var record_video_button : AppCompatButton
+    private lateinit var upload_video_button : AppCompatButton
+    private lateinit var upload_video_buttons : LinearLayout
     // To handle if the user can change their answers or not
     private var editMode: Boolean = true
+
+    private var videoUriForAddingCaptureVideo : Uri? = null
+    private var videoPathForAddingCaptureVideo : String? = null
+
+    private val REQUEST_VIDEO_CAPTURE = 123
 
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String) = ExerciseFragment().apply {
@@ -85,34 +103,6 @@ class ExerciseFragment : Fragment() {
                 "title" to title,
                 "description" to description,
             )
-        }
-    }
-
-    private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        if (uri != null) {
-            chosen_file = uri
-
-            submitted_video_message!!.visibility = View.VISIBLE
-            submitted_player_view!!.visibility = View.INVISIBLE
-
-            submitted_player_view?.setFullscreenButtonClickListener {
-                var intent = Intent(requireContext(), FullScreenActivity::class.java)
-                var bundle = Bundle()
-                Log.i("ExerciseFragment", submitted_media_path!!);
-                bundle.putString("media_path", submitted_media_path)
-                intent.putExtras(bundle)
-                startActivity(intent)
-            }
-
-            submitted_player = ExoPlayer.Builder(requireContext()).build()
-            submitted_player_view?.player = submitted_player
-
-            submitted_player!!.setMediaItem(MediaItem.Builder().setUri(uri).build())
-            submitted_player!!.prepare()
-
-            submitted_player_view!!.visibility = View.VISIBLE
-        } else {
-            Log.i("ExerciseFragment", "URI was null")
         }
     }
 
@@ -153,10 +143,13 @@ class ExerciseFragment : Fragment() {
             editMode = true
             submit_btn.visibility = View.VISIBLE
             edit_submission_btn.visibility = View.GONE
+            upload_video_buttons.visibility = View.VISIBLE
         }
         submit_btn = view.findViewById(R.id.submit)
         submit_btn.setOnClickListener {
-            submitQuestion()
+            if (chosen_file != null) {
+                submitQuestion()
+            }
         }
 
         Log.i("ExerciseFragment", order.toString())
@@ -170,8 +163,9 @@ class ExerciseFragment : Fragment() {
         submitted_video_message = view.findViewById(R.id.uploaded_video_message)
 
         // Place icon in submit buttons
-        val record_video_button = view.findViewById<AppCompatButton>(R.id.record_video)
-        val upload_video_button = view.findViewById<AppCompatButton>(R.id.upload_video)
+        upload_video_buttons = view.findViewById(R.id.upload_video_buttons)
+        record_video_button = view.findViewById(R.id.record_video)
+        upload_video_button = view.findViewById(R.id.upload_video)
         val record_icon = ContextCompat.getDrawable(requireContext(), R.drawable.record_icon)
         record_icon!!.setBounds(30, 0, 110, 80)
         record_video_button.setCompoundDrawables(record_icon, null, null, null)
@@ -247,11 +241,14 @@ class ExerciseFragment : Fragment() {
                                 submitted_player_view!!.visibility = View.VISIBLE
                                 submitted_video_message!!.visibility = View.VISIBLE
                                 editMode = false
+                                upload_video_buttons.visibility = View.GONE
                                 submit_btn.visibility = View.GONE
                                 edit_submission_btn.visibility = View.VISIBLE
 
                                 setFullScreenListener(submitted_player_view, submitted_media_path!!)
                                 initSubmittedPlayer()
+                            } else {
+                                upload_video_buttons.visibility = View.VISIBLE
                             }
                         }
                     }
@@ -271,10 +268,10 @@ class ExerciseFragment : Fragment() {
 
     private fun submitQuestion() {
         // Do something with the selected video file URI
-        Log.i("ExerciseFragment", chosen_file.path!!)
+        Log.i("ExerciseFragment", chosen_file!!.path!!)
 
-        val video_file = getFileFromUri(chosen_file)
-        val requestBody = video_file.asRequestBody(getMimeType(chosen_file)!!.toMediaTypeOrNull())
+        val video_file = getFileFromUri(chosen_file!!)
+        val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!)!!.toMediaTypeOrNull())
         val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
 
         val call = Api.retrofitService.submitExerciseActivity(user!!.class_id!!, activity_id!!, mediaPart)
@@ -294,6 +291,7 @@ class ExerciseFragment : Fragment() {
                     editMode = false
                     submit_btn.visibility = View.GONE
                     edit_submission_btn.visibility = View.VISIBLE
+                    upload_video_buttons.visibility = View.GONE
                 } else {
                     Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
                 }
@@ -423,4 +421,33 @@ class ExerciseFragment : Fragment() {
         }
         return tempFile
     }
+
+    private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if (uri != null) {
+            chosen_file = uri
+
+            submitted_video_message!!.visibility = View.VISIBLE
+            submitted_player_view!!.visibility = View.INVISIBLE
+
+            submitted_player_view?.setFullscreenButtonClickListener {
+                var intent = Intent(requireContext(), FullScreenActivity::class.java)
+                var bundle = Bundle()
+                Log.i("ExerciseFragment", chosen_file!!.path!!);
+                bundle.putParcelable("uri", chosen_file)
+                intent.putExtras(bundle)
+                startActivity(intent)
+            }
+
+            submitted_player = ExoPlayer.Builder(requireContext()).build()
+            submitted_player_view?.player = submitted_player
+
+            submitted_player!!.setMediaItem(MediaItem.Builder().setUri(chosen_file).build())
+            submitted_player!!.prepare()
+
+            submitted_player_view!!.visibility = View.VISIBLE
+        } else {
+            Log.i("ExerciseFragment", "URI was null")
+        }
+    }
+
 }

@@ -59,7 +59,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/previous_activity"
             android:layout_width="match_parent"
-            android:text="Retroceder"
+            android:text="Anterior"
             android:layout_marginHorizontal="10dp"
             android:textColor="@color/primary_text"
             android:layout_height="wrap_content"

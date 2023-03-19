@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.unomobile.R
+import com.example.unomobile.fragments.activitygroups.ActivityGroupsFragment
 import com.example.unomobile.models.UserInfo
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
@@ -37,7 +39,9 @@ class HomeFragment : Fragment() {
 
         activitygroups_card = view.findViewById(R.id.activitygroups_card)
         activitygroups_card.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_activitygroupsFragment)
+            val navController = findNavController()
+            navController.navigate(R.id.action_homeFragment_to_activitygroupsFragment)
+            navController.popBackStack(R.id.homeFragment, true)
         }
 
         return view
