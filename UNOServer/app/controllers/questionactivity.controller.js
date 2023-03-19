@@ -123,6 +123,10 @@ exports.createQuestion = async (req, res) => {
     if (answer.hasMedia) {
       // Save media type
       media_type = req.files.answers_media[answer_media_counter].mimetype;
+      if (media_type.split("/")[0] !== "image") {
+        res.status(400).send("Invalid answer media file. It must be an image.");
+        return;
+      }
       secret_key = crypto.randomBytes(16).toString("hex");
       // Encrypt file
       const encryptedFile = CryptoJS.AES.encrypt(
@@ -146,6 +150,7 @@ exports.createQuestion = async (req, res) => {
         res.status(500).send("Error uploading file");
         return;
       }
+      answer_media_counter++;
     } else {
       media_type = null;
       secret_key = null;

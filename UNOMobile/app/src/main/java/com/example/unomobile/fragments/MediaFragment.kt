@@ -38,6 +38,7 @@ class MediaFragment : Fragment() {
     private var player: ExoPlayer? = null
     private var playerView: StyledPlayerView? = null
     private var media_path: String? = null
+    private var media_type: String? = null
 
     private var title: String? = null
     private var description: String? = null
@@ -111,9 +112,9 @@ class MediaFragment : Fragment() {
                             media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data!!.id + "/media"
                             if (activity_data.media_activity!!.media_type != null) {
                                 // Get media type
-                                val media_type = activity_data.media_activity.media_type!!.split("/")[0]
+                                media_type = activity_data.media_activity.media_type!!.split("/")[0]
 
-                                Log.i("ActivityFragment", media_type);
+                                Log.i("ActivityFragment", media_type!!);
 
                                 when (media_type) {
                                     "image" -> {
@@ -166,9 +167,6 @@ class MediaFragment : Fragment() {
 
         player!!.setMediaSource(mediaSource)
         player!!.prepare()
-
-        // Set Player Properties
-        player!!.playWhenReady = true
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -186,7 +184,7 @@ class MediaFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (Build.VERSION.SDK_INT > 23 && media_path != null) {
+        if (Build.VERSION.SDK_INT > 23 && media_path != null && (media_type == "video" || media_type == "audio")) {
             initPlayer()
             playerView?.onResume()
         }
@@ -194,7 +192,7 @@ class MediaFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (Build.VERSION.SDK_INT <= 23 && media_path != null) {
+        if (Build.VERSION.SDK_INT <= 23 && media_path != null && (media_type == "video" || media_type == "audio")) {
             initPlayer()
             playerView?.onResume()
         }
@@ -202,7 +200,7 @@ class MediaFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        if (Build.VERSION.SDK_INT <= 23) {
+        if (Build.VERSION.SDK_INT <= 23 && media_path != null && (media_type == "video" || media_type == "audio")) {
             playerView?.player = null
             player?.release()
             player = null
@@ -211,7 +209,7 @@ class MediaFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        if (Build.VERSION.SDK_INT > 23) {
+        if (Build.VERSION.SDK_INT <= 23 && media_path != null && (media_type == "video" || media_type == "audio")) {
             playerView?.player = null
             player?.release()
             player = null

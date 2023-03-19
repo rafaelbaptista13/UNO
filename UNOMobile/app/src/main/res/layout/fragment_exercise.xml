@@ -162,6 +162,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/change_button"
                     android:layout_weight="1"
+                    android:layout_marginBottom="10dp"
                     android:visibility="gone"
                     />
 
@@ -173,6 +174,7 @@
                     android:textColor="#fff"
                     android:layout_height="wrap_content"
                     android:background="@drawable/submit_button"
+                    android:layout_marginBottom="10dp"
                     android:layout_weight="1"
                     />
 
