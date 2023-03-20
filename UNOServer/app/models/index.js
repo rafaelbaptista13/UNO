@@ -34,6 +34,10 @@ db.questionactivities = require("./questionactivity.model")(sequelize, Sequelize
 db.answers = require("./answer.model")(sequelize, Sequelize);
 db.questionactivitystatus = require("./questionactivitystatus.model")(sequelize, Sequelize);
 db.useranswered = require("./useranswered.model")(sequelize, Sequelize);
+db.gamemodes = require("./gamemode.model")(sequelize, Sequelize);
+db.gameactivities = require("./gameactivity.model")(sequelize, Sequelize);
+db.playmode = require("./playmode.model")(sequelize, Sequelize);
+db.musicalnotes = require("./musicalnote.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -149,6 +153,36 @@ db.questionactivitystatus.belongsToMany(db.answers, {
   otherKey: "order",
   sourceKey: "id",
   targetKey: "order"
+})
+
+// GameActivity 1 - 1 Activity
+db.activities.hasOne(db.gameactivities, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// GameActivity * - 1 GameMode
+db.gameactivities.belongsTo(db.gamemodes, {
+  through: "gamemode",
+  foreignKey: { name: "gamemode_id", allowNull: false },
+  as: "gamemode",
+});
+
+// PlayMode 1 - 1 GameActivity
+db.gameactivities.hasOne(db.playmode, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// MusicalNote * - 1 PlayMode
+db.musicalnotes.belongsTo(db.playmode, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// PlayMode 1 - * MusicalNote
+db.playmode.hasMany(db.musicalnotes, {
+  foreignKey: "activity_id"
 })
 
 db.ROLES = ["student", "teacher"];

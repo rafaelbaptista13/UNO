@@ -5,7 +5,8 @@ module.exports = (app) => {
   const activities = require("../controllers/activity.controller.js");
   const mediaactivities = require("../controllers/mediaactivity.controller.js");
   const exerciseactivities = require("../controllers/exerciseactivity.controller.js");
-  const questionactivities = require("../controllers/questionactivity.controller.js")
+  const questionactivities = require("../controllers/questionactivity.controller.js");
+  const gameactivities = require("../controllers/gameactivity.controller.js");
 
   let router = require("express").Router();
 
@@ -103,6 +104,17 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     questionactivities.getMediaFromAnswer
   );
+
+
+  /**
+   * Game Activities
+   */
+  router.post(
+    "/:class_id/game",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    gameactivities.createGame
+  );
+
 
   // Create a new activity
   router.post(

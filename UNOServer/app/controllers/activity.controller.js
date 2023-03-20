@@ -11,6 +11,9 @@ const QuestionActivity = db.questionactivities;
 const QuestionActivityStatus = db.questionactivitystatus;
 const UserAnswered = db.useranswered;
 const Answer = db.answers;
+const GameActivity = db.gameactivities;
+const PlayMode = db.playmode;
+const MusicalNote = db.musicalnotes;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -208,6 +211,37 @@ exports.findOne = (req, res) => {
           };
           break;
         case 4:
+          let game_info = await GameActivity.findOne({
+            where: {
+              activity_id: activity.id
+            }
+          })
+
+          switch (game_info.gamemode_id) {
+            case 1:
+              break;
+            case 2:
+              let playmode = await PlayMode.findOne({
+                where: {
+                  activity_id: activity.id
+                },
+                include: [
+                  {
+                    model: MusicalNote,
+                    attributes: ["order", "name", "violin_string", "violin_finger", "viola_string", "viola_finger"]
+                  }
+                ]
+              })
+              activity.game_activity = {
+                mode: "Play",
+                notes: playmode.MusicalNotes
+              }
+              break;
+            case 3:
+              break;
+          }
+
+          break;
       }
 
       res.send(activity);
