@@ -55,6 +55,9 @@ class ActivitiesAdapter(private val data: List<Activity>, val context: Context) 
         if (currentItem.completed == false) {
             holder.card.strokeWidth = 0
             holder.completed_icon.setImageResource(context.resources.getIdentifier("incompleted_icon", "drawable", context.packageName))
+        } else {
+            holder.card.strokeWidth = 5
+            holder.completed_icon.setImageResource(context.resources.getIdentifier("completed_icon", "drawable", context.packageName))
         }
 
     }

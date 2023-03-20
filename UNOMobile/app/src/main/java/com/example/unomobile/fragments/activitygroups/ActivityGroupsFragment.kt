@@ -61,12 +61,10 @@ class ActivityGroupsFragment : Fragment() {
                     (adapter as ActivityGroupsAdapter).setOnItemClickListener(object : ActivityGroupsAdapter.onItemClickListener{
                         override fun onItemClick(position: Int) {
                             val activitygroup = response.body()!![position]
-                            Log.i("ActivityGroupsFragment", "Clicked")
                             val bundle = Bundle()
                             bundle.putInt("id", activitygroup.id)
                             bundle.putInt("order", activitygroup.order)
                             bundle.putString("name", activitygroup.name)
-                            Log.i("ActivityGroupsFragment", "Clicked")
                             findNavController().navigate(R.id.action_activitygroupFragment_to_activitiesFragment, bundle)
                         }
                     })

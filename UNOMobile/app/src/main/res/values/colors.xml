@@ -10,4 +10,6 @@
     <color name="background">#FCFDEB</color>
     <color name="grey">#3B3B3B</color>
     <color name="primary_text">#611F07</color>
+    <color name="green">#00B761</color>
+    <color name="yellow">#F4DB62</color>
 </resources>

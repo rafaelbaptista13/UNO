@@ -8,15 +8,12 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.navigation.fragment.findNavController
 import com.example.unomobile.R
 import com.example.unomobile.fragments.ExerciseFragment
 import com.example.unomobile.fragments.MediaFragment
+import com.example.unomobile.fragments.questions.QuestionFragment
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
 import com.google.gson.Gson
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -71,6 +68,9 @@ class ActivityPageActivity : AppCompatActivity() {
             if (activities_type!![active_activity] == "Exercise") {
                 launchExerciseFragment()
             }
+            if (activities_type!![active_activity] == "Question") {
+                launchQuestionFragment()
+            }
         }
 
         next_activity.setOnClickListener {
@@ -112,6 +112,10 @@ class ActivityPageActivity : AppCompatActivity() {
                             if (activities_type!![active_activity] == "Exercise") {
                                 launchExerciseFragment()
                             }
+                            if (activities_type!![active_activity] == "Question") {
+                                launchQuestionFragment()
+                            }
+
 
                         }
                     }
@@ -146,6 +150,9 @@ class ActivityPageActivity : AppCompatActivity() {
                 if (activities_type!![active_activity] == "Exercise") {
                     launchExerciseFragment()
                 }
+                if (activities_type!![active_activity] == "Question") {
+                    launchQuestionFragment()
+                }
             }
         }
 
@@ -172,6 +179,9 @@ class ActivityPageActivity : AppCompatActivity() {
         if (activities_type!![active_activity] == "Exercise") {
             launchExerciseFragment()
         }
+        if (activities_type!![active_activity] == "Question") {
+            launchQuestionFragment()
+        }
     }
 
     override fun onBackPressed() {
@@ -181,7 +191,11 @@ class ActivityPageActivity : AppCompatActivity() {
     private fun sendBackToActivitiesFragment() {
         val resultIntent = Intent()
         val bundle = Bundle()
+
+        Log.i("ActivityPageActivity", activities_status!![activities_status!!.size-2].toString())
+        Log.i("ActivityPageActivity", activities_status!![activities_status!!.size-1].toString())
         if (activities_status!!.isNotEmpty()) {
+
             bundle.putBooleanArray("activities_status", activities_status!!.toBooleanArray())
             resultIntent.putExtras(bundle)
         }
@@ -199,6 +213,14 @@ class ActivityPageActivity : AppCompatActivity() {
 
     private fun launchExerciseFragment() {
         val fragment = ExerciseFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    private fun launchQuestionFragment() {
+        val fragment = QuestionFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity])
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

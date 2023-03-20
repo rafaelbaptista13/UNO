@@ -20,7 +20,7 @@ import com.google.gson.Gson
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController
+    lateinit var navController: NavController
     private var isLoggedIn = false
     private var cookies = cookieHandler.cookieStore.cookies
 
