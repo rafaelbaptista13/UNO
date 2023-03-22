@@ -131,6 +131,7 @@ class ActivitiesFragment : Fragment() {
                             bundle.putStringArray("activities_type", response.body()!!.map { it.activitytype.name }.toTypedArray())
                             bundle.putStringArray("activities_description", response.body()!!.map { it.description }.toTypedArray())
                             bundle.putBooleanArray("activities_status", response.body()!!.map { it.completed ?: false }.toBooleanArray())
+                            bundle.putStringArray("activities_game_mode", response.body()!!.map { it.game_activity?.mode ?: "" }.toTypedArray())
                             bundle.putInt("active_activity", position)
 
                             var intent = Intent(requireContext(), ActivityPageActivity::class.java)

@@ -11,5 +11,6 @@ data class Activity(
     var completed: Boolean?,
     val media_activity: MediaActivity?,
     val exercise_activity: ExerciseActivity?,
-    val question_activity: QuestionActivity?
+    val question_activity: QuestionActivity?,
+    val game_activity: GameActivity?
     )

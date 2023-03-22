@@ -14,6 +14,7 @@ const Answer = db.answers;
 const GameActivity = db.gameactivities;
 const PlayMode = db.playmode;
 const MusicalNote = db.musicalnotes;
+const GameMode = db.gamemodes;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -213,9 +214,9 @@ exports.findOne = (req, res) => {
         case 4:
           let game_info = await GameActivity.findOne({
             where: {
-              activity_id: activity.id
-            }
-          })
+              activity_id: activity.id,
+            },
+          });
 
           switch (game_info.gamemode_id) {
             case 1:
@@ -223,19 +224,26 @@ exports.findOne = (req, res) => {
             case 2:
               let playmode = await PlayMode.findOne({
                 where: {
-                  activity_id: activity.id
+                  activity_id: activity.id,
                 },
                 include: [
                   {
                     model: MusicalNote,
-                    attributes: ["order", "name", "violin_string", "violin_finger", "viola_string", "viola_finger"]
-                  }
-                ]
-              })
+                    attributes: [
+                      "order",
+                      "name",
+                      "violin_string",
+                      "violin_finger",
+                      "viola_string",
+                      "viola_finger",
+                    ],
+                  },
+                ],
+              });
               activity.game_activity = {
                 mode: "Play",
-                notes: playmode.MusicalNotes
-              }
+                notes: playmode.MusicalNotes,
+              };
               break;
             case 3:
               break;
@@ -325,6 +333,19 @@ exports.findAll = (req, res) => {
             }
             break;
           case 4:
+            let game_activity_type = await GameActivity.findOne({
+              where: {
+                activity_id: activity.id,
+              },
+              include: [
+                {
+                  model: GameMode,
+                  as: "gamemode",
+                },
+              ],
+            });
+
+            activity.game_activity = { mode: game_activity_type.gamemode.name};
             activity.completed = false;
             break;
         }
