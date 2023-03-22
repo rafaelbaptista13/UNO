@@ -1,8 +1,8 @@
 package com.example.unomobile.fragments
 
 import android.animation.ValueAnimator
-import android.content.Context
-import android.media.midi.MidiManager
+import android.media.AudioManager
+import android.media.SoundPool
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,13 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.HorizontalScrollView
 import android.widget.ImageView
-import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.example.unomobile.R
@@ -31,7 +28,11 @@ import com.example.unomobile.utils.FinalNoteView
 import com.example.unomobile.utils.MusicalNoteView
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.billthefarmer.mididriver.MidiDriver
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -48,6 +49,7 @@ class GamePlayModeFragment : Fragment() {
     private var vertical_game_line: View? = null
     private var game_card: MaterialCardView? = null
 
+    private lateinit var midiDriver: MidiDriver
 
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String?) = GamePlayModeFragment().apply {
@@ -68,6 +70,8 @@ class GamePlayModeFragment : Fragment() {
             order = arguments?.getInt("order")
             activity_id = arguments?.getInt("activity_id")
         }
+        midiDriver = MidiDriver.getInstance()
+
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -110,14 +114,31 @@ class GamePlayModeFragment : Fragment() {
             val childView = horizontal_scroll_view.getChildAt(0)
             val maxScrollX = childView.width - horizontal_scroll_view.width
 
-            // Create a value animator to animate the scroll position
-            val animator = ValueAnimator.ofInt(horizontal_scroll_view.scrollX, maxScrollX)
-            animator.duration = 2000 // replace with the desired duration in milliseconds
-            animator.addUpdateListener { valueAnimator ->
-                val value = valueAnimator.animatedValue as Int
-                horizontal_scroll_view.scrollTo(value, 0)
+            midiDriver.start()
+            midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
+
+            lifecycleScope.launch {
+                for (note in notes!!) {
+                    midiDriver.write(byteArrayOf(0x90.toByte(), 60, 127))   // Note on
+
+                    withContext(Dispatchers.Main) {
+                        horizontal_scroll_view.smoothScrollBy(60.dpToPx(), 0)
+                    }
+
+                    delay(1000)
+
+                    midiDriver.write(byteArrayOf(0x80.toByte(),60,0)) // Note off, middle C, zero velocity
+                }
             }
-            animator.start()
+
+            // Create a value animator to animate the scroll position
+            //val animator = ValueAnimator.ofInt(horizontal_scroll_view.scrollX, maxScrollX)
+            //animator.duration = 2000 // replace with the desired duration in milliseconds
+            //animator.addUpdateListener { valueAnimator ->
+            //    val value = valueAnimator.animatedValue as Int
+            //    horizontal_scroll_view.scrollTo(value, 0)
+            //}
+            //animator.start()
         }
         pause_button.setOnClickListener {
             it.visibility = View.GONE
@@ -197,6 +218,12 @@ class GamePlayModeFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Release MIDI driver resources
+        midiDriver.stop()
     }
 
     fun addInvisibleView(string: TableRow) {
