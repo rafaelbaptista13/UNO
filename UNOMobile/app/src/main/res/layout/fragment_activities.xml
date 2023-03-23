@@ -98,6 +98,18 @@
                     android:layout_weight="1"
                     android:visibility="gone"/>
 
+                <TextView
+                    android:id="@+id/game_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:gravity="center"
+                    android:text="Jogos"
+                    android:textColor="@color/primary_text"
+                    android:textSize="14sp"
+                    android:layout_weight="1"
+                    android:visibility="gone"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -150,6 +162,21 @@
                     android:layout_weight="1"
                     android:visibility="gone"/>
 
+                <ProgressBar
+                    android:id="@+id/game_progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="10dp"
+                    android:layout_marginHorizontal="15dp"
+                    android:progress="50"
+                    android:progressDrawable="@drawable/greenprogress"
+                    app:layout_constraintBottom_toTopOf="@+id/status"
+                    app:layout_constraintTop_toBottomOf="@+id/image"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_weight="1"
+                    android:visibility="gone"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -184,6 +211,18 @@
 
                 <TextView
                     android:id="@+id/question_number_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:gravity="center"
+                    android:text="3/4"
+                    android:textColor="@color/primary_text"
+                    android:textSize="14sp"
+                    android:layout_weight="1"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/game_number_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"

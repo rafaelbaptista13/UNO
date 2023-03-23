@@ -73,6 +73,11 @@ class ActivityPageActivity : AppCompatActivity() {
             if (activities_type!![active_activity] == "Question") {
                 launchQuestionFragment()
             }
+            if (activities_type!![active_activity] == "Game") {
+                if (activities_game_mode!![active_activity] == "Play") {
+                    launchGamePlayModeFragment()
+                }
+            }
         }
 
         next_activity.setOnClickListener {
@@ -117,6 +122,11 @@ class ActivityPageActivity : AppCompatActivity() {
                             if (activities_type!![active_activity] == "Question") {
                                 launchQuestionFragment()
                             }
+                            if (activities_type!![active_activity] == "Game") {
+                                if (activities_game_mode!![active_activity] == "Play") {
+                                    launchGamePlayModeFragment()
+                                }
+                            }
 
 
                         }
@@ -154,6 +164,11 @@ class ActivityPageActivity : AppCompatActivity() {
                 }
                 if (activities_type!![active_activity] == "Question") {
                     launchQuestionFragment()
+                }
+                if (activities_type!![active_activity] == "Game") {
+                    if (activities_game_mode!![active_activity] == "Play") {
+                        launchGamePlayModeFragment()
+                    }
                 }
             }
         }

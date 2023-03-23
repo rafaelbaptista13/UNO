@@ -343,6 +343,7 @@ class GamePlayModeFragment : Fragment() {
         if (submitted_media_path != null) {
             initSubmittedPlayer()
         }
+        pause_state = false
     }
 
     override fun onPause() {
