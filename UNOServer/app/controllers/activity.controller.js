@@ -15,6 +15,7 @@ const GameActivity = db.gameactivities;
 const PlayMode = db.playmode;
 const MusicalNote = db.musicalnotes;
 const GameMode = db.gamemodes;
+const PlayModeStatus = db.playmodestatus;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -236,6 +237,7 @@ exports.findOne = (req, res) => {
                       "violin_finger",
                       "viola_string",
                       "viola_finger",
+                      "note_code",
                     ],
                   },
                 ],
@@ -244,6 +246,15 @@ exports.findOne = (req, res) => {
                 mode: "Play",
                 notes: playmode.MusicalNotes,
               };
+              let play_mode_status = await PlayModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (play_mode_status !== null) {
+                activity.completed = true;
+              }
               break;
             case 3:
               break;
@@ -345,8 +356,24 @@ exports.findAll = (req, res) => {
               ],
             });
 
-            activity.game_activity = { mode: game_activity_type.gamemode.name};
-            activity.completed = false;
+            activity.game_activity = { mode: game_activity_type.gamemode.name };
+            if (game_activity_type.gamemode.id === 1) {
+              // TODO
+            } else if (game_activity_type.gamemode.id === 2) {
+              let play_mode_status = await PlayModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (play_mode_status === null) {
+                activity.completed = false;
+              } else {
+                activity.completed = true;
+              }
+            } else if (game_activity_type.gamemode.id === 3) {
+              // TODO
+            }
             break;
         }
         data.push(activity);

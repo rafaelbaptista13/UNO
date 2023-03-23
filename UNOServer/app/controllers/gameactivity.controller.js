@@ -1,20 +1,20 @@
 const { sequelize } = require("../models");
 const db = require("../models");
+const CryptoJS = require("crypto-js");
+const crypto = require("crypto");
+const { v4: uuidv4 } = require("uuid");
 const Activity = db.activities;
 const ActivityGroup = db.activitygroups;
 const PlayMode = db.playmode;
 const GameActivity = db.gameactivities;
 const MusicalNote = db.musicalnotes;
+const PlayModeStatus = db.playmodestatus;
 
 // Create and Save a new Activity of type Game
 exports.createGame = async (req, res) => {
   const gamemode = req.body.mode;
   // Validate request
-  if (
-    !req.body.activitygroup_id ||
-    !req.body.mode ||
-    !req.body.notes
-  ) {
+  if (!req.body.activitygroup_id || !req.body.mode || !req.body.notes) {
     res.status(400).send({
       message:
         "Content can not be empty! Define a activitygroup_id, mode and notes body.",
@@ -23,8 +23,7 @@ exports.createGame = async (req, res) => {
   }
   if (gamemode !== "Identify" && gamemode !== "Play" && gamemode !== "Build") {
     res.status(400).send({
-      message:
-        "Invalid game mode. It must be Identify, Play or Build.",
+      message: "Invalid game mode. It must be Identify, Play or Build.",
     });
     return;
   }
@@ -75,8 +74,9 @@ exports.createGame = async (req, res) => {
       violin_string: note.violin_string,
       violin_finger: note.violin_finger,
       viola_string: note.viola_string,
-      viola_finger: note.viola_finger
-    }
+      viola_finger: note.viola_finger,
+      note_code: note.note_code,
+    };
     notes.push(_note);
   }
 
@@ -95,8 +95,8 @@ exports.createGame = async (req, res) => {
       GameActivity: {
         gamemode_id: 2, // PlayMode
         PlayMode: {
-          MusicalNotes: notes
-        }
+          MusicalNotes: notes,
+        },
       },
     };
     GameModeModel = PlayMode;
@@ -111,8 +111,8 @@ exports.createGame = async (req, res) => {
       include: [
         {
           model: GameModeModel,
-          include: [MusicalNote]
-        }
+          include: [MusicalNote],
+        },
       ],
     },
   })
@@ -134,16 +134,15 @@ exports.createGame = async (req, res) => {
     });
 };
 
-// Submit question
-exports.submitQuestion = async (req, res) => {
+// Submit Game of type Play
+exports.submitGamePlay = async (req, res) => {
   const class_id = req.params.class_id;
   const activity_id = req.params.activity_id;
   const user_id = req.userId;
-  const chosen_answers = req.body.chosen_answers;
 
-  if (!chosen_answers) {
+  if (!req.file) {
     res.status(400).send({
-      message: "Content can not be empty! Define a chosen_answers in body.",
+      message: "Content can not be empty! Define a media in form-data.",
     });
     return;
   }
@@ -155,8 +154,7 @@ exports.submitQuestion = async (req, res) => {
     },
     include: [
       {
-        model: QuestionActivity,
-        include: [Answer],
+        model: GameActivity,
       },
       {
         model: ActivityGroup,
@@ -173,232 +171,112 @@ exports.submitQuestion = async (req, res) => {
     });
     return;
   }
-
   // Check activity type
-  if (activity.activitytype_id !== 3) {
+  if (activity.activitytype_id !== 4) {
     res.status(400).send({
-      message: "Activity is not of type Question!",
+      message: "Activity is not of type Game!",
+    });
+    return;
+  }
+  if (activity.GameActivity.gamemode_id !== 2) {
+    res.status(400).send({
+      message: "GameActivity is not of type Play!",
     });
     return;
   }
 
-  if (activity.QuestionActivity.one_answer_only) {
-    if (chosen_answers.length > 1) {
-      res.status(400).send({
-        message: "Can only choose one answer.",
-      });
-      return;
-    }
-  }
-  const answers = await Answer.findAll({
-    where: { order: chosen_answers, activity_id: activity_id },
-  });
+  // Save media type
+  const media_type = req.file.mimetype;
+  const secret_key = crypto.randomBytes(16).toString("hex");
+  // Encrypt file
+  const encryptedFile = CryptoJS.AES.encrypt(
+    req.file.buffer.toString("base64"),
+    secret_key
+  );
 
-  if (answers.length == 0) {
-    res.status(400).send({
-      message: "Invalid answer.",
-    });
+  // Generate file name
+  const file_name = uuidv4();
+  try {
+    // Upload file in AWS S3 bucket
+    const params = {
+      Bucket: "violuno",
+      Key: file_name,
+      Body: encryptedFile.toString(),
+    };
+
+    await req.s3.upload(params).promise();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error uploading file");
     return;
   }
-  console.log(answers);
-  const question_activity_status = {
-    activity_id: activity_id,
-    user_id: user_id,
-  };
 
-  const data = await QuestionActivityStatus.findOne({
+  const data = await PlayModeStatus.findOne({
     where: {
       activity_id: activity_id,
       user_id: user_id,
     },
   });
   if (data === null) {
+    // Create new instance
+    // Create PlayModeStatus
+    const play_mode_status = {
+      activity_id: activity_id,
+      user_id: user_id,
+      media_id: file_name,
+      media_type: media_type,
+      media_secret: secret_key,
+    };
 
-    try {
-      const result = await sequelize.transaction(async (t) => {
-
-        const status = await QuestionActivityStatus.create(question_activity_status, {transaction: t});
-        await status.addAnswers(answers, {transaction: t});
-
-        return status;
-      })
-      res.send({
-        message: "Question submitted successfully",
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while creating the QuestionActivityStatus.",
-      });
-    }
-  } else {
-    // Update the answers submitted
-    const answersToRemove = await data.getAnswers();
-    await data.removeAnswers(answersToRemove);
-    data.addAnswers(answers)
-      .then(async () => {
+    PlayModeStatus.create(play_mode_status)
+      .then(() => {
         res.send({
-          message: "Question submitted successfully",
+          message: "Game submitted successfully",
         });
       })
       .catch((err) => {
         res.status(500).send({
           message:
             err.message ||
-            "Some error occurred while updating the QuestionActivityStatus.",
+            "Some error occurred while creating the PlayModeStatus.",
         });
       });
-  }
-};
-
-// Update an Activity of type Question
-exports.updateQuestion = async (req, res) => {
-  const id = req.params.id;
-  const class_id = req.params.class_id;
-
-  // Validate request
-  if (!req.body.title || !req.body.description) {
-    res.status(400).send({
-      message:
-        "Content can not be empty! Define a title, description in form-data.",
-    });
-    return;
-  }
-
-  // Check if user has access to activity
-  const activity = Activity.findOne({
-    where: {
-      id: id,
-    },
-    include: [
-      {
-        model: ActivityGroup,
-        as: "activitygroup",
-        where: { class_id: class_id },
-      },
-    ],
-  });
-  if (activity === null) {
-    res.status(400).send({
-      message: "You're not the teacher of this Activity.",
-    });
-    return;
-  }
-
-  // Check activity type
-  if (activity.activitytype_id !== 2) {
-    res.status(400).send({
-      message: "Activity is not of type Exercise!",
-    });
-    return;
-  }
-
-  let media_type;
-  let secret_key;
-  let file_name;
-  if (req.file) {
-    media_type = req.file.mimetype;
-    secret_key = crypto.randomBytes(16).toString("hex");
-    // Encrypt file
-    const encryptedFile = CryptoJS.AES.encrypt(
-      req.file.buffer.toString("base64"),
-      secret_key
-    );
-
-    // Generate file name
-    file_name = uuidv4();
-    try {
-      // Upload file in AWS S3 bucket
-      const params = {
-        Bucket: "violuno",
-        Key: file_name,
-        Body: encryptedFile.toString(),
-      };
-
-      await req.s3.upload(params).promise();
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Error uploading file");
-      return;
-    }
-
-    const new_activity = {
-      title: req.body.title,
-      description: req.body.description,
-      ExerciseActivity: {
+  } else {
+    // Update the video submitted
+    data
+      .update({
         media_id: file_name,
         media_type: media_type,
         media_secret: secret_key,
-      },
-    };
-
-    try {
-      await sequelize.transaction(async (t) => {
-        await Activity.update(new_activity, {
-          where: {
-            id: id,
-          },
-          transaction: t,
-        });
-
-        await ExerciseActivity.update(new_activity.ExerciseActivity, {
-          where: {
-            activity_id: id,
-          },
-          transaction: t,
-        });
-      });
-      res.send({
-        message: "Activity was updated successfully.",
-      });
-    } catch (err) {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while updating the Activity.",
-      });
-    }
-  } else {
-    // No need to update the media file
-    const new_activity = {
-      title: req.body.title,
-      description: req.body.description,
-    };
-
-    Activity.update(new_activity, {
-      where: {
-        id: id,
-      },
-      transaction: t,
-    })
+      })
       .then(() => {
         res.send({
-          message: "Activity was updated successfully.",
+          message: "Game submitted successfully",
         });
       })
       .catch((err) => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while updating the Activity.",
+            err.message ||
+            "Some error occurred while updating the PlayModeStatus.",
         });
       });
   }
 };
 
-// Get Media from Question Activity
-exports.getMedia = async (req, res) => {
+// Get Media from Game Activity
+exports.getSubmittedMedia = async (req, res) => {
   const class_id = req.params.class_id;
   const activity_id = req.params.activity_id;
 
-  // Get Activity
+  // Check if Activity exists
   let activity = await Activity.findOne({
     where: {
       id: activity_id,
     },
     include: [
       {
-        model: QuestionActivity,
+        model: GameActivity,
       },
       {
         model: ActivityGroup,
@@ -415,112 +293,63 @@ exports.getMedia = async (req, res) => {
     });
     return;
   }
-
   // Check activity type
-  if (activity.activitytype_id !== 3) {
+  if (activity.activitytype_id !== 4) {
     res.status(400).send({
-      message: "Activity is not of type Question!",
+      message: "Activity is not of type Game!",
+    });
+    return;
+  }
+  if (activity.GameActivity.gamemode_id !== 2 && activity.GameActivity.gamemode_id !== 3) {
+    res.status(400).send({
+      message: "GameActivity is not of type Play or Build. So, there's no media submitted!",
     });
     return;
   }
 
-  if (activity.QuestionActivity.media_type === null) {
-    res.status(400).send({
-      message: "This activity does not contain any media associated!",
-    });
-    return;
-  }
+  let media_type;
+  let media_id;
+  let media_secret;
 
-  // Save media type
-  const media_type = activity.QuestionActivity.media_type;
-
-  // Get Media from aws s3
-  const s3Object = await req.s3
-    .getObject({ Bucket: "violuno", Key: activity.QuestionActivity.media_id })
-    .promise();
-
-  // Decrypt
-  const decryptedFile = CryptoJS.AES.decrypt(
-    s3Object.Body.toString(),
-    activity.QuestionActivity.media_secret
-  );
-
-  res.set("Content-Type", media_type);
-  res
-    .status(200)
-    .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
-};
-
-// Get Media from Question Activity
-exports.getMediaFromAnswer = async (req, res) => {
-  const class_id = req.params.class_id;
-  const activity_id = req.params.activity_id;
-  const order = req.params.order;
-
-  // Get Activity
-  let activity = await Activity.findOne({
-    where: {
-      id: activity_id,
-    },
-    include: [
-      {
-        model: QuestionActivity,
+  if (activity.GameActivity.gamemode_id === 2) {
+    let play_mode_activity = await PlayMode.findOne({
+      where: {
+        activity_id: activity_id
       },
-      {
-        model: ActivityGroup,
-        as: "activitygroup",
+      include: [{
+        model: PlayModeStatus,
         where: {
-          class_id: class_id,
-        },
-      },
-    ],
-  });
-  if (activity === null) {
-    res.status(400).send({
-      message: "Activity not found!",
-    });
-    return;
-  }
-
-  // Check activity type
-  if (activity.activitytype_id !== 3) {
-    res.status(400).send({
-      message: "Activity is not of type Question!",
-    });
-    return;
-  }
-
-  let answer = await Answer.findOne({
-    where: {
-      activity_id: activity_id,
-      order: order
+          activity_id: activity_id,
+          user_id: req.userId
+        }
+      }]
+    })
+    if (play_mode_activity === null) {
+      res.status(400).send({
+        message: "Activity not submitted!",
+      });
+      return;
     }
-  })
-  if (answer == null) {
-    res.status(400).send({
-      message: "Answer not found!",
-    });
-    return;
-  }
-  if (answer.media_type == null) {
-    res.status(400).send({
-      message: "Answer does not have any media!",
-    });
-    return;
-  }
 
-  // Save media type
-  const media_type = answer.media_type;
+    media_type = play_mode_activity.PlayModeStatus.media_type;
+    media_id = play_mode_activity.PlayModeStatus.media_id;
+    media_secret = play_mode_activity.PlayModeStatus.media_secret;
+  } else if (activity.GameActivity.gamemode_id === 3) {
+    // TODO
+  }
 
   // Get Media from aws s3
   const s3Object = await req.s3
-    .getObject({ Bucket: "violuno", Key: answer.media_id })
+    .getObject({
+      Bucket: "violuno",
+      Key: media_id,
+    })
     .promise();
 
   // Decrypt
   const decryptedFile = CryptoJS.AES.decrypt(
     s3Object.Body.toString(),
-    answer.media_secret
+    media_secret
   );
 
   res.set("Content-Type", media_type);
@@ -528,4 +357,3 @@ exports.getMediaFromAnswer = async (req, res) => {
     .status(200)
     .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
 };
-

@@ -114,7 +114,18 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     gameactivities.createGame
   );
-
+  // Get the media submitted by an user to a Game activity
+  router.get(
+    "/:class_id/:activity_id/game/submitted/media",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    gameactivities.getSubmittedMedia
+  );
+  // Submit activity of type Play
+  router.post(
+    "/:class_id/:activity_id/game/play/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
+    gameactivities.submitGamePlay
+  );
 
   // Create a new activity
   router.post(

@@ -87,7 +87,7 @@ class ExerciseFragment : Fragment() {
     private lateinit var record_video_button : AppCompatButton
     private lateinit var upload_video_button : AppCompatButton
     private lateinit var upload_video_buttons : LinearLayout
-    // To handle if the user can change their answers or not
+    // To handle if the user can change their submission or not
     private var editMode: Boolean = true
 
     private var videoUriForAddingCaptureVideo : Uri? = null
