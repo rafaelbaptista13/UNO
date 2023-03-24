@@ -76,6 +76,7 @@ exports.createGame = async (req, res) => {
       viola_string: note.viola_string,
       viola_finger: note.viola_finger,
       note_code: note.note_code,
+      type: note.type
     };
     notes.push(_note);
   }

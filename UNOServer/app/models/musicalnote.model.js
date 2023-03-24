@@ -33,6 +33,10 @@ module.exports = (sequelize, Sequelize) => {
         note_code: {
             type: Sequelize.STRING,
             allowNull: false,
+        },
+        type: {
+            type: Sequelize.STRING,
+            allowNull: false,
         }
     });
 

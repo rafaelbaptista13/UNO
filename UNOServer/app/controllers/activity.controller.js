@@ -238,6 +238,7 @@ exports.findOne = (req, res) => {
                       "viola_string",
                       "viola_finger",
                       "note_code",
+                      "type"
                     ],
                   },
                 ],

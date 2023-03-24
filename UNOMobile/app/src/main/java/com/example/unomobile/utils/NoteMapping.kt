@@ -93,6 +93,7 @@ val noteToMidiMap = mapOf<String, Int>(
     "C8" to 108
 )
 
+/*
 val noteToColorMap = mapOf(
     "A0" to R.color.musical_note_purple,
     "A#0/Bb0" to R.color.musical_note_purple,
@@ -182,4 +183,4 @@ val noteToColorMap = mapOf(
     "A#7/Bb7" to R.color.musical_note_purple,
     "B7" to R.color.musical_note_blue,
     "C8" to R.color.musical_note_orange
-)
+)*/
