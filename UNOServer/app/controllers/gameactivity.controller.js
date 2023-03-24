@@ -68,6 +68,19 @@ exports.createGame = async (req, res) => {
   let notes = [];
   for (let idx in req.body.notes) {
     let note = req.body.notes[idx];
+
+    // Validate note
+    if ( (note.violin_string < 1 || note.violin_string > 4) ||
+         (note.violin_finger < 1 || note.violin_finger > 5) || 
+         (note.viola_finger < 1 || note.viola_finger > 5) ||
+         (note.viola_string < 1 || note.viola_string > 4) || 
+         (note.type !== "Circle" && note.type !== "RightTriangle" && note.type !== "LeftTriangle") ) {
+      res.status(400).send({
+        message: "Invalid note.",
+      });
+      return;
+    }
+
     const _note = {
       order: idx,
       name: note.name,

@@ -132,6 +132,13 @@ exports.findOne = (req, res) => {
     ],
   })
     .then(async (activity) => {
+      if (activity === null) {
+        res.status(400).send({
+          message: "Activity not found.",
+        });
+        return;
+      }
+
       activity = activity.toJSON();
       switch (activity.activitytype.id) {
         case 1:
