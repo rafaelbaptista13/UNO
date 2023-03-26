@@ -59,6 +59,9 @@ interface ApiService {
     @POST("activities/{class_id}/{activity_id}/game/play/submit")
     fun submitGamePlayModeActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number, @Part media: MultipartBody.Part): Call<ResponseBody>
 
+    @POST("activities/{class_id}/{activity_id}/game/identify/submit")
+    fun submitGameIdentifyModeActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number): Call<ResponseBody>
+
     @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>
 

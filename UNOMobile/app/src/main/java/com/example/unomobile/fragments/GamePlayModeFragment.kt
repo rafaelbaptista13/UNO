@@ -511,7 +511,7 @@ class GamePlayModeFragment : Fragment() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
-                Log.i("ExerciseFragment", t.message.toString())
+                Log.i("GamePlayModeFragment", t.message.toString())
             }
 
         })

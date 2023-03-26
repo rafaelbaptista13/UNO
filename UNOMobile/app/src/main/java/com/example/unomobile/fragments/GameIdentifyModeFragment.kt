@@ -8,16 +8,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.HorizontalScrollView
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TableRow
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.example.unomobile.R
+import com.example.unomobile.activities.ActivityPageActivity
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.MusicalNote
 import com.example.unomobile.models.UserInfo
@@ -31,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
 import org.billthefarmer.mididriver.MidiDriver
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,12 +46,29 @@ class GameIdentifyModeFragment : Fragment() {
     private var notes: Array<MusicalNote>? = null
     private var notes_views: Array<MusicalNoteView>? = null
     private var available_notes: Set<MusicalNote>? = null
+    private var chosen_notes: Array<MusicalNote?> = arrayOf()
+    private var chosen_notes_views: Array<MusicalNoteView?> = arrayOf()
     private var pause_state: Boolean = false
 
     private var vertical_game_line: View? = null
     private var game_card: MaterialCardView? = null
     private var play_button: ImageView? = null
     private var pause_button: ImageView? = null
+
+    private var selected_note: MusicalNote? = null
+    private var selected_note_cardview: MaterialCardView? = null
+
+    // Game Interface Elements
+    private lateinit var notes_available: LinearLayout
+    private lateinit var string1: LinearLayout
+    private lateinit var string2: LinearLayout
+    private lateinit var string3: LinearLayout
+    private lateinit var string4: LinearLayout
+
+    // Game Status Elements
+    private lateinit var submit_btn: AppCompatButton
+    private lateinit var correct_card: MaterialCardView
+    private lateinit var incorrect_message: TextView
 
     private lateinit var midiDriver: MidiDriver
 
@@ -106,12 +122,12 @@ class GameIdentifyModeFragment : Fragment() {
             description_text.visibility = View.GONE
         }
 
-        val string1 = view.findViewById<LinearLayout>(R.id.row1)
-        val string2 = view.findViewById<LinearLayout>(R.id.row2)
-        val string3 = view.findViewById<LinearLayout>(R.id.row3)
-        val string4 = view.findViewById<LinearLayout>(R.id.row4)
+        string1 = view.findViewById(R.id.row1)
+        string2 = view.findViewById(R.id.row2)
+        string3 = view.findViewById(R.id.row3)
+        string4 = view.findViewById(R.id.row4)
         val middle_row = view.findViewById<LinearLayout>(R.id.middle_row)
-        val notes_available = view.findViewById<LinearLayout>(R.id.notes_available)
+        notes_available = view.findViewById(R.id.notes_available)
         game_card = view.findViewById(R.id.game_card)
         vertical_game_line = view.findViewById(R.id.vertical_game_line)
 
@@ -121,9 +137,6 @@ class GameIdentifyModeFragment : Fragment() {
         play_button!!.setOnClickListener {
             it.visibility = View.GONE
             pause_button!!.visibility = View.VISIBLE
-            // Calculate the maximum scroll position
-            val childView = horizontal_scroll_view.getChildAt(0)
-
             midiDriver.start()
             midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
 
@@ -169,6 +182,13 @@ class GameIdentifyModeFragment : Fragment() {
         Log.i("GameIdentifyFragment", title.toString())
         Log.i("GameIdentifyFragment", description.toString())
 
+        submit_btn = view.findViewById(R.id.submit)
+        correct_card = view.findViewById(R.id.correct_card)
+        incorrect_message = view.findViewById(R.id.incorrect_text)
+        submit_btn.setOnClickListener {
+            submitAnswer()
+        }
+
         lifecycleScope.launch {
             try {
                 val call = Api.retrofitService.getActivity(
@@ -183,6 +203,8 @@ class GameIdentifyModeFragment : Fragment() {
                             val activity_data = response.body()!!
                             notes = activity_data.game_activity!!.notes
                             available_notes = notes!!.toSet()
+                            chosen_notes = arrayOfNulls(notes!!.size)
+                            chosen_notes_views = arrayOfNulls(notes!!.size)
 
                             addInitialItems(string1)
                             addInitialItems(string2)
@@ -190,139 +212,50 @@ class GameIdentifyModeFragment : Fragment() {
                             addInitialItems(string4)
                             addInitialItems(middle_row)
 
-                            for (note in available_notes!!) {
-                                val note_view = MusicalNoteView(requireContext(), null)
-                                val circle_drawable = ContextCompat.getDrawable(requireContext(), R.drawable.circle_note) as GradientDrawable
-                                circle_drawable.let {
-                                    var string_color = 0
-                                    when (note.violin_string) {
-                                        1 -> string_color = R.color.musical_note_blue
-                                        2 -> string_color = R.color.musical_note_yellow
-                                        3 -> string_color = R.color.musical_note_red
-                                        4 -> string_color = R.color.musical_note_green
-                                    }
-                                    it.setColor(ContextCompat.getColor(requireContext(), string_color))
-                                    it.setStroke(0, ContextCompat.getColor(requireContext(), R.color.black))
-                                    note_view.background = it
-                                    note_view.setText(note.name)
-                                }
-                                val card_view = MaterialCardView(requireContext())
-                                val params = LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                                )
-                                params.setMargins(10.dpToPx(), 10.dpToPx(), 0, 15.dpToPx())
-                                card_view.layoutParams = params
-                                card_view.cardElevation = 10.dpToPx().toFloat()
-                                card_view.radius = 20.dpToPx().toFloat()
-                                card_view.addView(note_view)
-                                notes_available.addView(card_view)
-                            }
+                            // Check if user already submitted the exercise
+                            if (activity_data.completed == true) {
 
-                            for (note in notes!!) {
-                                val note_view = MusicalNoteView(requireContext(), null)
-                                notes_views = notes_views?.plus(note_view)
+                                showSolution(notes!!)
 
-                                Log.i("GameIdentifyFragment", note.toString())
+                                selected_note = null
+                                notes_available.visibility = View.GONE
+                                submit_btn.visibility = View.GONE
+                                incorrect_message.visibility = View.GONE
+                                correct_card.visibility = View.VISIBLE
+                            } else {
 
-                                val circle_drawable = ContextCompat.getDrawable(requireContext(), R.drawable.circle_note) as GradientDrawable
-                                circle_drawable.let {
-                                    it.setColor(ContextCompat.getColor(requireContext(), R.color.light_light_grey))
-                                    it.setStroke(1.dpToPx(), ContextCompat.getColor(requireContext(), R.color.light_grey))
-                                    note_view.background = it
-                                }
+                                showPossibleNotes()
 
-                                middle_row.addView(note_view)
-                                addHiddenItem(string1)
-                                addHiddenItem(string2)
-                                addHiddenItem(string3)
-                                addHiddenItem(string4)
+                                for (note in notes!!) {
+                                    val note_view = MusicalNoteView(requireContext(), null)
+                                    notes_views = notes_views?.plus(note_view)
 
-                                /*
-                                if (note.violin_string == 1) {
-                                    string1.addView(note_view)
-                                    addInvisibleView(string2)
-                                    addInvisibleView(string3)
-                                    addInvisibleView(string4)
-                                    if (note.type == "LeftTriangle") {
-                                        updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_blue)
+                                    Log.i("GameIdentifyFragment", note.toString())
+
+                                    val circle_drawable = ContextCompat.getDrawable(requireContext(), R.drawable.circle_note) as GradientDrawable
+                                    circle_drawable.let {
+                                        it.setColor(ContextCompat.getColor(requireContext(), R.color.light_light_grey))
+                                        it.setStroke(1.dpToPx(), ContextCompat.getColor(requireContext(), R.color.light_grey))
+                                        note_view.background = it
                                     }
-                                    if (note.type == "RightTriangle") {
-                                        updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_blue)
-                                    }
-                                    if (note.type == "Circle") {
-                                        updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_blue)
-                                    }
-                                }
-                                if (note.violin_string == 2) {
-                                    string2.addView(note_view)
-                                    addInvisibleView(string1)
-                                    addInvisibleView(string3)
-                                    addInvisibleView(string4)
-                                    if (note.type == "LeftTriangle") {
-                                        updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_yellow)
-                                    }
-                                    if (note.type == "RightTriangle") {
-                                        updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_yellow)
-                                    }
-                                    if (note.type == "Circle") {
-                                        updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_yellow)
-                                    }
-                                }
-                                if (note.violin_string == 3) {
-                                    string3.addView(note_view)
-                                    addInvisibleView(string2)
-                                    addInvisibleView(string1)
-                                    addInvisibleView(string4)
-                                    if (note.type == "LeftTriangle") {
-                                        updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_red)
-                                    }
-                                    if (note.type == "RightTriangle") {
-                                        updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_red)
-                                    }
-                                    if (note.type == "Circle") {
-                                        updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_red)
-                                    }
-                                }
-                                if (note.violin_string == 4) {
-                                    string4.addView(note_view)
-                                    addInvisibleView(string2)
-                                    addInvisibleView(string3)
-                                    addInvisibleView(string1)
-                                    if (note.type == "LeftTriangle") {
-                                        updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_green)
-                                    }
-                                    if (note.type == "RightTriangle") {
-                                        updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_green)
-                                    }
-                                    if (note.type == "Circle") {
-                                        updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_green)
+
+                                    middle_row.addView(note_view)
+                                    addHiddenItem(string1, note.order)
+                                    addHiddenItem(string2, note.order)
+                                    addHiddenItem(string3, note.order)
+                                    addHiddenItem(string4, note.order)
+
+                                    note_view.setOnClickListener {
+                                        defaultMusicalNoteClickListener(note_view, note.order)
                                     }
                                 }
 
-                                 */
                             }
 
                             addFinalItems(string1)
                             addFinalItems(string2)
                             addFinalItems(string3)
                             addFinalItems(string4)
-
-                            // Check if user already submitted the exercise
-                            if (activity_data.completed == true) {
-                                //submitted_media_path = com.example.unomobile.network.BASE_URL + "activities/" + user!!.class_id + "/" + activity_data.id + "/game/submitted/media"
-                                //submitted_player_view!!.visibility = View.VISIBLE
-                                //submitted_video_message!!.visibility = View.VISIBLE
-                                //editMode = false
-                                //upload_video_buttons.visibility = View.GONE
-                                //submit_btn.visibility = View.GONE
-                                //edit_submission_btn.visibility = View.VISIBLE
-
-                                //setFullScreenListener(submitted_player_view, submitted_media_path!!)
-                                //initSubmittedPlayer()
-                            } else {
-                                //upload_video_buttons.visibility = View.VISIBLE
-                            }
 
                         }
                     }
@@ -376,11 +309,14 @@ class GameIdentifyModeFragment : Fragment() {
         string.addView(initial_item)
     }
 
-    fun addHiddenItem(string: LinearLayout) {
+    fun addHiddenItem(string: LinearLayout, note_order: Int) {
         val item = MusicalNoteView(requireContext(), null)
         item.visibility = View.INVISIBLE
         val layoutParams = item.layoutParams
         item.layoutParams = layoutParams
+        item.setOnClickListener {
+            defaultMusicalNoteClickListener(item, note_order)
+        }
         string.addView(item)
     }
 
@@ -391,5 +327,289 @@ class GameIdentifyModeFragment : Fragment() {
         layoutParams.width = game_card!!.right - vertical_game_line!!.left - 15.dpToPx()
         end_item.layoutParams = layoutParams
         string.addView(end_item)
+    }
+
+    private fun updateMusicalNoteViewToCircle(note_view: MusicalNoteView, note: MusicalNote, color: Int) {
+        note_view.setText(note.violin_finger.toString())
+        val circle_drawable = ContextCompat.getDrawable(requireContext(), R.drawable.circle_note) as GradientDrawable
+        circle_drawable.let {
+            it.setColor(ContextCompat.getColor(requireContext(), color))
+            note_view.background = it
+        }
+    }
+
+    private fun updateMusicalNoteViewToLeftTriangle(note_view: MusicalNoteView, note: MusicalNote, drawable: Int) {
+        note_view.setTextLeftTriangle(note.violin_finger.toString())
+        val drawable = ContextCompat.getDrawable(requireContext(), drawable)
+        note_view.background = drawable
+    }
+
+    private fun updateMusicalNoteViewToRightTriangle(note_view: MusicalNoteView, note: MusicalNote, drawable: Int) {
+        note_view.setTextRightTriangle(note.violin_finger.toString())
+        val drawable = ContextCompat.getDrawable(requireContext(), drawable)
+        note_view.background = drawable
+    }
+
+    fun defaultMusicalNoteClickListener(clicked_note_view: MusicalNoteView, note_order: Int) {
+        if (selected_note != chosen_notes[note_order] && selected_note != null) {
+            clicked_note_view.visibility = View.INVISIBLE
+            var note_view: MusicalNoteView? = null
+            when (selected_note!!.violin_string) {
+                1 -> {
+                    note_view = string1.getChildAt(note_order + 1) as MusicalNoteView
+                    if (selected_note!!.type == "LeftTriangle") {
+                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_blue)
+                    }
+                    if (selected_note!!.type == "RightTriangle") {
+                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_blue)
+                    }
+                    if (selected_note!!.type == "Circle") {
+                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.musical_note_blue)
+                    }
+                    note_view.visibility = View.VISIBLE
+                }
+                2 -> {
+                    note_view = string2.getChildAt(note_order + 1) as MusicalNoteView
+                    if (selected_note!!.type == "LeftTriangle") {
+                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_yellow)
+                    }
+                    if (selected_note!!.type == "RightTriangle") {
+                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_yellow)
+                    }
+                    if (selected_note!!.type == "Circle") {
+                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.musical_note_yellow)
+                    }
+                    note_view.visibility = View.VISIBLE
+                }
+                3 -> {
+                    note_view = string3.getChildAt(note_order + 1) as MusicalNoteView
+                    if (selected_note!!.type == "LeftTriangle") {
+                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_red)
+                    }
+                    if (selected_note!!.type == "RightTriangle") {
+                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_red)
+                    }
+                    if (selected_note!!.type == "Circle") {
+                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.musical_note_red)
+                    }
+                    note_view.visibility = View.VISIBLE
+                }
+                4 -> {
+                    note_view = string4.getChildAt(note_order + 1) as MusicalNoteView
+                    if (selected_note!!.type == "LeftTriangle") {
+                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_green)
+                    }
+                    if (selected_note!!.type == "RightTriangle") {
+                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_green)
+                    }
+                    if (selected_note!!.type == "Circle") {
+                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.musical_note_green)
+                    }
+
+                }
+            }
+
+            note_view!!.visibility = View.VISIBLE
+            chosen_notes[note_order] = selected_note
+            chosen_notes_views[note_order] = note_view
+
+        }
+    }
+
+    private fun submitAnswer() {
+        if (notes.contentEquals(chosen_notes)) {
+
+            val call = Api.retrofitService.submitGameIdentifyModeActivity(user!!.class_id!!, activity_id!!)
+
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(requireContext(), "Jogo concluído com sucesso.", Toast.LENGTH_SHORT).show()
+
+                        var activitypageactivity = activity as? ActivityPageActivity
+                        if (activitypageactivity != null) {
+                            activitypageactivity.activities_status?.set(order!!-1, true)
+                        }
+
+                        selected_note = null
+                        notes_available.visibility = View.GONE
+                        submit_btn.visibility = View.GONE
+                        incorrect_message.visibility = View.GONE
+                        correct_card.visibility = View.VISIBLE
+                    } else {
+                        Toast.makeText(requireContext(), "Ocorreu um erro ao submeter a sequência.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Ocorreu um erro ao submeter a sequência.", Toast.LENGTH_SHORT).show()
+                    Log.i("GameIdentifyFragment", t.message.toString())
+                }
+            })
+
+        } else {
+            incorrect_message.visibility = View.VISIBLE
+        }
+    }
+
+    private fun addInvisibleView(string: LinearLayout) {
+        val dummyView = MusicalNoteView(requireContext(), null)
+        dummyView.visibility = View.INVISIBLE
+        string.addView(dummyView)
+    }
+
+    private fun showSolution(notes: Array<MusicalNote>) {
+        for (note in notes) {
+            val note_view = MusicalNoteView(requireContext(), null)
+            notes_views = notes_views?.plus(note_view)
+
+            if (note.violin_string == 1) {
+                string1.addView(note_view)
+                addInvisibleView(string2)
+                addInvisibleView(string3)
+                addInvisibleView(string4)
+                if (note.type == "LeftTriangle") {
+                    updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_blue)
+                }
+                if (note.type == "RightTriangle") {
+                    updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_blue)
+                }
+                if (note.type == "Circle") {
+                    updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_blue)
+                }
+            }
+            if (note.violin_string == 2) {
+                string2.addView(note_view)
+                addInvisibleView(string1)
+                addInvisibleView(string3)
+                addInvisibleView(string4)
+                if (note.type == "LeftTriangle") {
+                    updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_yellow)
+                }
+                if (note.type == "RightTriangle") {
+                    updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_yellow)
+                }
+                if (note.type == "Circle") {
+                    updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_yellow)
+                }
+            }
+            if (note.violin_string == 3) {
+                string3.addView(note_view)
+                addInvisibleView(string2)
+                addInvisibleView(string1)
+                addInvisibleView(string4)
+                if (note.type == "LeftTriangle") {
+                    updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_red)
+                }
+                if (note.type == "RightTriangle") {
+                    updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_red)
+                }
+                if (note.type == "Circle") {
+                    updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_red)
+                }
+            }
+            if (note.violin_string == 4) {
+                string4.addView(note_view)
+                addInvisibleView(string2)
+                addInvisibleView(string3)
+                addInvisibleView(string1)
+                if (note.type == "LeftTriangle") {
+                    updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_green)
+                }
+                if (note.type == "RightTriangle") {
+                    updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_green)
+                }
+                if (note.type == "Circle") {
+                    updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_green)
+                }
+            }
+        }
+    }
+
+    private fun showPossibleNotes() {
+        for (note in available_notes!!) {
+            val note_view = MusicalNoteView(requireContext(), null)
+            var string_color = 0
+            var left_triangle_drawable = 0
+            var right_triangle_drawable = 0
+            when (note.violin_string) {
+                1 -> {
+                    string_color = R.color.musical_note_blue
+                    left_triangle_drawable = R.drawable.left_triangle_blue
+                    right_triangle_drawable = R.drawable.right_triangle_blue
+                }
+                2 -> {
+                    string_color = R.color.musical_note_yellow
+                    left_triangle_drawable = R.drawable.left_triangle_yellow
+                    right_triangle_drawable = R.drawable.right_triangle_yellow
+                }
+                3 -> {
+                    string_color = R.color.musical_note_red
+                    left_triangle_drawable = R.drawable.left_triangle_red
+                    right_triangle_drawable = R.drawable.right_triangle_red
+                }
+                4 -> {
+                    string_color = R.color.musical_note_green
+                    left_triangle_drawable = R.drawable.left_triangle_green
+                    right_triangle_drawable = R.drawable.right_triangle_green
+                }
+            }
+
+            when (note.type) {
+                "Circle" -> {
+                    val circle_drawable = ContextCompat.getDrawable(requireContext(), R.drawable.circle_note) as GradientDrawable
+                    circle_drawable.let {
+                        it.setColor(ContextCompat.getColor(requireContext(), string_color))
+                        it.setStroke(0, ContextCompat.getColor(requireContext(), R.color.black))
+                        note_view.background = it
+                        note_view.setText(note.name)
+                    }
+                }
+                "RightTriangle" -> {
+                    note_view.setTextRightTriangle(note.name)
+                    val drawable = ContextCompat.getDrawable(requireContext(), right_triangle_drawable)
+                    note_view.background = drawable
+                }
+                "LeftTriangle" -> {
+                    note_view.setTextLeftTriangle(note.name)
+                    val drawable = ContextCompat.getDrawable(requireContext(), left_triangle_drawable)
+                    note_view.background = drawable
+                }
+            }
+
+            val card_view = MaterialCardView(requireContext())
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(10.dpToPx(), 10.dpToPx(), 0, 15.dpToPx())
+            card_view.layoutParams = params
+            card_view.cardElevation = 10.dpToPx().toFloat()
+            card_view.radius = 20.dpToPx().toFloat()
+            card_view.setOnClickListener {
+                Log.i("GameIdentifyFragment", it.toString())
+                if (selected_note_cardview == null) {
+                    selected_note_cardview = card_view
+                    selected_note = note
+                    card_view.strokeWidth = 2.dpToPx()
+                    card_view.strokeColor = ContextCompat.getColor(requireContext(), R.color.primary_text)
+                } else if (selected_note_cardview != card_view) {
+                    selected_note_cardview!!.strokeWidth = 0
+                    selected_note_cardview = card_view
+                    selected_note = note
+                    card_view.strokeWidth = 2.dpToPx()
+                    card_view.strokeColor = ContextCompat.getColor(requireContext(), R.color.primary_text)
+                } else {
+                    selected_note_cardview!!.strokeWidth = 0
+                    selected_note_cardview = null
+                    selected_note = null
+                }
+            }
+            card_view.addView(note_view)
+            notes_available.addView(card_view)
+        }
     }
 }

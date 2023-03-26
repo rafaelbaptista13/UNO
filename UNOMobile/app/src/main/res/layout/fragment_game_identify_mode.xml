@@ -217,41 +217,49 @@
                 android:layout_marginVertical="10dp"
                 android:visibility="gone"/>
 
-            <LinearLayout
-                android:id="@+id/submit_buttons"
-                android:layout_height="wrap_content"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/correct_card"
                 android:layout_width="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginVertical="15dp">
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="10dp"
+                android:backgroundTint="@color/green"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="20dp"
+                android:visibility="gone">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/edit_submission"
+                <TextView
                     android:layout_width="match_parent"
-                    android:text="Alterar submissão"
-                    android:layout_marginHorizontal="10dp"
-                    android:textColor="@color/primary_text"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/change_button"
-                    android:layout_weight="1"
-                    android:layout_marginBottom="10dp"
-                    android:visibility="gone"
-                    />
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:layout_margin="10dp"
+                    android:text="Correto! Muitos parabéns!" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/submit"
-                    android:layout_width="match_parent"
-                    android:text="Submeter"
-                    android:layout_marginHorizontal="10dp"
-                    android:textColor="#fff"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/submit_button"
-                    android:layout_marginBottom="10dp"
-                    android:layout_weight="1"
-                    />
+            </com.google.android.material.card.MaterialCardView>
 
-            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/submit"
+                android:layout_width="match_parent"
+                android:text="Submeter"
+                android:layout_marginHorizontal="10dp"
+                android:textColor="#fff"
+                android:layout_height="wrap_content"
+                android:background="@drawable/submit_button"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:id="@+id/incorrect_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Incorreto. Tenta outra sequência."
+                android:visibility="gone"/>
 
         </LinearLayout>
 

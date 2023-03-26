@@ -407,13 +407,6 @@ exports.submitGameIdentify = async (req, res) => {
   const activity_id = req.params.activity_id;
   const user_id = req.userId;
 
-  if (!req.file) {
-    res.status(400).send({
-      message: "Content can not be empty! Define a media in form-data.",
-    });
-    return;
-  }
-
   // Check if Activity exists
   let activity = await Activity.findOne({
     where: {
