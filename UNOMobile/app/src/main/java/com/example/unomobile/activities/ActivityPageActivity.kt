@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.example.unomobile.R
 import com.example.unomobile.fragments.ExerciseFragment
+import com.example.unomobile.fragments.GameIdentifyModeFragment
 import com.example.unomobile.fragments.GamePlayModeFragment
 import com.example.unomobile.fragments.MediaFragment
 import com.example.unomobile.fragments.questions.QuestionFragment
@@ -77,6 +78,9 @@ class ActivityPageActivity : AppCompatActivity() {
                 if (activities_game_mode!![active_activity] == "Play") {
                     launchGamePlayModeFragment()
                 }
+                if (activities_game_mode!![active_activity] == "Identify") {
+                    launchGameIdentifyModeFragment()
+                }
             }
         }
 
@@ -126,6 +130,9 @@ class ActivityPageActivity : AppCompatActivity() {
                                 if (activities_game_mode!![active_activity] == "Play") {
                                     launchGamePlayModeFragment()
                                 }
+                                if (activities_game_mode!![active_activity] == "Identify") {
+                                    launchGameIdentifyModeFragment()
+                                }
                             }
 
 
@@ -169,6 +176,9 @@ class ActivityPageActivity : AppCompatActivity() {
                     if (activities_game_mode!![active_activity] == "Play") {
                         launchGamePlayModeFragment()
                     }
+                    if (activities_game_mode!![active_activity] == "Identify") {
+                        launchGameIdentifyModeFragment()
+                    }
                 }
             }
         }
@@ -203,6 +213,9 @@ class ActivityPageActivity : AppCompatActivity() {
         if (activities_type!![active_activity] == "Game") {
             if (activities_game_mode!![active_activity] == "Play") {
                 launchGamePlayModeFragment()
+            }
+            if (activities_game_mode!![active_activity] == "Identify") {
+                launchGameIdentifyModeFragment()
             }
         }
     }
@@ -250,6 +263,14 @@ class ActivityPageActivity : AppCompatActivity() {
 
     private fun launchGamePlayModeFragment() {
         val fragment = GamePlayModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    private fun launchGameIdentifyModeFragment() {
+        val fragment = GameIdentifyModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

@@ -28,7 +28,7 @@ class MusicalNoteView(context: Context?, attrs: AttributeSet?) : View(context, a
         background = AppCompatResources.getDrawable(context!!, R.drawable.circle_note)
 
         val layoutParams = TableRow.LayoutParams(30.dpToPx(), 30.dpToPx())
-        layoutParams.setMargins(15.dpToPx(), 0, 15.dpToPx(), 0)
+        layoutParams.setMargins(15.dpToPx(), 15.dpToPx(), 15.dpToPx(), 15.dpToPx())
         this.layoutParams = layoutParams
     }
 

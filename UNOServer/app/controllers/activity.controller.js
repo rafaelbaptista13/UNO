@@ -16,6 +16,8 @@ const PlayMode = db.playmode;
 const MusicalNote = db.musicalnotes;
 const GameMode = db.gamemodes;
 const PlayModeStatus = db.playmodestatus;
+const IdentifyMode = db.identifymode;
+const IdentifyModeStatus = db.identifymodestatus;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -224,35 +226,43 @@ exports.findOne = (req, res) => {
             where: {
               activity_id: activity.id,
             },
+            include: [
+              {
+                model: MusicalNote,
+                attributes: [
+                  "order",
+                  "name",
+                  "violin_string",
+                  "violin_finger",
+                  "viola_string",
+                  "viola_finger",
+                  "note_code",
+                  "type"
+                ],
+              },
+            ],
           });
 
           switch (game_info.gamemode_id) {
             case 1:
-              break;
-            case 2:
-              let playmode = await PlayMode.findOne({
+              activity.game_activity = {
+                mode: "Identify",
+                notes: game_info.MusicalNotes,
+              };
+              let identify_mode_status = await IdentifyModeStatus.findOne({
                 where: {
                   activity_id: activity.id,
+                  user_id: req.userId,
                 },
-                include: [
-                  {
-                    model: MusicalNote,
-                    attributes: [
-                      "order",
-                      "name",
-                      "violin_string",
-                      "violin_finger",
-                      "viola_string",
-                      "viola_finger",
-                      "note_code",
-                      "type"
-                    ],
-                  },
-                ],
               });
+              if (identify_mode_status !== null) {
+                activity.completed = true;
+              }
+              break;
+            case 2:
               activity.game_activity = {
                 mode: "Play",
-                notes: playmode.MusicalNotes,
+                notes: game_info.MusicalNotes,
               };
               let play_mode_status = await PlayModeStatus.findOne({
                 where: {
@@ -366,7 +376,17 @@ exports.findAll = (req, res) => {
 
             activity.game_activity = { mode: game_activity_type.gamemode.name };
             if (game_activity_type.gamemode.id === 1) {
-              // TODO
+              let identify_mode_status = await IdentifyModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (identify_mode_status === null) {
+                activity.completed = false;
+              } else {
+                activity.completed = true;
+              }
             } else if (game_activity_type.gamemode.id === 2) {
               let play_mode_status = await PlayModeStatus.findOne({
                 where: {

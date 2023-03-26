@@ -126,6 +126,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
     gameactivities.submitGamePlay
   );
+  // Submit activity of type Identify
+  router.post(
+    "/:class_id/:activity_id/game/identify/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass],
+    gameactivities.submitGameIdentify
+  );
 
   // Create a new activity
   router.post(

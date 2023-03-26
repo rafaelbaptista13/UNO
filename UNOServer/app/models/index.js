@@ -27,18 +27,38 @@ db.activitygroups = require("./activitygroups.model.js")(sequelize, Sequelize);
 db.activities = require("./activities.model.js")(sequelize, Sequelize);
 db.activitytypes = require("./activitytype.model")(sequelize, Sequelize);
 db.mediaactivities = require("./mediaactivity.model")(sequelize, Sequelize);
-db.mediaactivitystatus = require("./mediaactivitystatus.model")(sequelize, Sequelize);
-db.exerciseactivities = require("./exerciseactivity.model")(sequelize, Sequelize);
-db.exerciseactivitystatus = require("./exerciseactivitystatus.model")(sequelize, Sequelize);
-db.questionactivities = require("./questionactivity.model")(sequelize, Sequelize);
+db.mediaactivitystatus = require("./mediaactivitystatus.model")(
+  sequelize,
+  Sequelize
+);
+db.exerciseactivities = require("./exerciseactivity.model")(
+  sequelize,
+  Sequelize
+);
+db.exerciseactivitystatus = require("./exerciseactivitystatus.model")(
+  sequelize,
+  Sequelize
+);
+db.questionactivities = require("./questionactivity.model")(
+  sequelize,
+  Sequelize
+);
 db.answers = require("./answer.model")(sequelize, Sequelize);
-db.questionactivitystatus = require("./questionactivitystatus.model")(sequelize, Sequelize);
+db.questionactivitystatus = require("./questionactivitystatus.model")(
+  sequelize,
+  Sequelize
+);
 db.useranswered = require("./useranswered.model")(sequelize, Sequelize);
 db.gamemodes = require("./gamemode.model")(sequelize, Sequelize);
 db.gameactivities = require("./gameactivity.model")(sequelize, Sequelize);
 db.playmode = require("./playmode.model")(sequelize, Sequelize);
 db.musicalnotes = require("./musicalnote.model")(sequelize, Sequelize);
 db.playmodestatus = require("./playmodestatus.model")(sequelize, Sequelize);
+db.identifymodestatus = require("./identifymodestatus.model")(
+  sequelize,
+  Sequelize
+);
+db.identifymode = require("./identifymode.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -80,72 +100,72 @@ db.activities.belongsTo(db.activitytypes, {
 // MediaActivity 1 - 1 Activity
 db.activities.hasOne(db.mediaactivities, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // MediaActivityStatus 1 - 1 MediaActivity
 db.mediaactivities.hasOne(db.mediaactivitystatus, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // mediaactivitystatus * - 1 User
 db.mediaactivitystatus.belongsTo(db.users, {
   foreignKey: "user_id",
-})
+});
 
 // ExerciseActivity 1 - 1 Activity
 db.activities.hasOne(db.exerciseactivities, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // ExerciseActivityStatus 1 - 1 ExerciseActivity
 db.exerciseactivities.hasOne(db.exerciseactivitystatus, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // ExerciseActivityStatus * - 1 User
 db.exerciseactivitystatus.belongsTo(db.users, {
   foreignKey: "user_id",
-})
+});
 
 // QuestionActivity 1 - 1 Activity
 db.activities.hasOne(db.questionactivities, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // Answer * - 1 QuestionActivity
 db.answers.belongsTo(db.questionactivities, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // QuestionActivity 1 - * Answer
 db.questionactivities.hasMany(db.answers, {
-  foreignKey: "activity_id"
-})
+  foreignKey: "activity_id",
+});
 
-// QuestionActivityStatus 1 - 1 QuestionActivity 
+// QuestionActivityStatus 1 - 1 QuestionActivity
 db.questionactivities.hasOne(db.questionactivitystatus, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // QuestionActivityStatus * - 1 User
 db.questionactivitystatus.belongsTo(db.users, {
   foreignKey: "user_id",
-})
+});
 
 db.answers.belongsToMany(db.questionactivitystatus, {
   through: db.useranswered,
   foreignKey: "order",
   otherKey: "status_id",
   sourceKey: "order",
-  targetKey: "id"
-})
+  targetKey: "id",
+});
 
 // QuestionActivityStatus 1 - * Answer
 db.questionactivitystatus.belongsToMany(db.answers, {
@@ -153,14 +173,14 @@ db.questionactivitystatus.belongsToMany(db.answers, {
   foreignKey: "status_id",
   otherKey: "order",
   sourceKey: "id",
-  targetKey: "order"
-})
+  targetKey: "order",
+});
 
 // GameActivity 1 - 1 Activity
 db.activities.hasOne(db.gameactivities, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // GameActivity * - 1 GameMode
 db.gameactivities.belongsTo(db.gamemodes, {
@@ -169,34 +189,72 @@ db.gameactivities.belongsTo(db.gamemodes, {
   as: "gamemode",
 });
 
+// GameActivity 1 - * MusicalNote
+db.gameactivities.hasMany(db.musicalnotes, {
+  foreignKey: "activity_id",
+});
+
+// MusicalNote * - 1 GameActivity
+db.musicalnotes.belongsTo(db.gameactivities, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE",
+});
+
 // PlayMode 1 - 1 GameActivity
 db.gameactivities.hasOne(db.playmode, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // MusicalNote * - 1 PlayMode
-db.musicalnotes.belongsTo(db.playmode, {
-  foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+//db.musicalnotes.belongsTo(db.playmode, {
+//  foreignKey: "activity_id",
+//  onDelete: "CASCADE",
+//});
 
 // PlayMode 1 - * MusicalNote
-db.playmode.hasMany(db.musicalnotes, {
-  foreignKey: "activity_id"
-})
+//db.playmode.hasMany(db.musicalnotes, {
+//  foreignKey: "activity_id",
+//});
 
 // PlayModeStatus 1 - 1 PlayMode
 db.playmode.hasOne(db.playmodestatus, {
   foreignKey: "activity_id",
-  onDelete: "CASCADE"
-})
+  onDelete: "CASCADE",
+});
 
 // PlayModeStatus * - 1 User
 db.playmodestatus.belongsTo(db.users, {
   foreignKey: "user_id",
-})
+});
 
+// IdentifyMode 1 - 1 GameActivity
+db.gameactivities.hasOne(db.identifymode, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE",
+});
+
+// IdentifyMode 1 - * MusicalNote
+//db.identifymode.hasMany(db.musicalnotes, {
+//  foreignKey: "activity_id",
+//});
+
+// MusicalNote * - 1 IdentifyMode
+//db.musicalnotes.belongsTo(db.identifymode, {
+//  foreignKey: "activity_id",
+//  onDelete: "CASCADE",
+//});
+
+// IdentifyModeStatus 1 - 1 IdentifyMode
+db.identifymode.hasOne(db.identifymodestatus, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE",
+});
+
+// IdentifyModeStatus * - 1 User
+db.identifymodestatus.belongsTo(db.users, {
+  foreignKey: "user_id",
+});
 
 db.ROLES = ["student", "teacher"];
 

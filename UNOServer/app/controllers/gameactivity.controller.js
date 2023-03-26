@@ -9,6 +9,8 @@ const PlayMode = db.playmode;
 const GameActivity = db.gameactivities;
 const MusicalNote = db.musicalnotes;
 const PlayModeStatus = db.playmodestatus;
+const IdentifyMode = db.identifymode;
+const IdentifyModeStatus = db.identifymodestatus;
 
 // Create and Save a new Activity of type Game
 exports.createGame = async (req, res) => {
@@ -70,11 +72,19 @@ exports.createGame = async (req, res) => {
     let note = req.body.notes[idx];
 
     // Validate note
-    if ( (note.violin_string < 1 || note.violin_string > 4) ||
-         (note.violin_finger < 1 || note.violin_finger > 5) || 
-         (note.viola_finger < 1 || note.viola_finger > 5) ||
-         (note.viola_string < 1 || note.viola_string > 4) || 
-         (note.type !== "Circle" && note.type !== "RightTriangle" && note.type !== "LeftTriangle") ) {
+    if (
+      note.violin_string < 1 ||
+      note.violin_string > 4 ||
+      note.violin_finger < 1 ||
+      note.violin_finger > 5 ||
+      note.viola_finger < 1 ||
+      note.viola_finger > 5 ||
+      note.viola_string < 1 ||
+      note.viola_string > 4 ||
+      (note.type !== "Circle" &&
+        note.type !== "RightTriangle" &&
+        note.type !== "LeftTriangle")
+    ) {
       res.status(400).send({
         message: "Invalid note.",
       });
@@ -89,28 +99,39 @@ exports.createGame = async (req, res) => {
       viola_string: note.viola_string,
       viola_finger: note.viola_finger,
       note_code: note.note_code,
-      type: note.type
+      type: note.type,
     };
     notes.push(_note);
   }
-
+  
   let GameModeModel;
   let activity;
   // Create an Activity
   if (gamemode === "Identify") {
-    // TODO
+    activity = {
+      order: order,
+      activitygroup_id: req.body.activitygroup_id,
+      title: "A Cor do Som",
+      description: req.body.description,
+      activitytype_id: 4, // Game
+      GameActivity: {
+        gamemode_id: 1, // IdentifyMode
+        IdentifyMode: {},
+        MusicalNotes: notes,
+      },
+    };
+    GameModeModel = IdentifyMode;
   } else if (gamemode === "Play") {
     activity = {
       order: order,
       activitygroup_id: req.body.activitygroup_id,
       title: "A Cor do Som",
-      description: null,
+      description: req.body.description,
       activitytype_id: 4, // Game
       GameActivity: {
         gamemode_id: 2, // PlayMode
-        PlayMode: {
-          MusicalNotes: notes,
-        },
+        PlayMode: {},
+        MusicalNotes: notes,
       },
     };
     GameModeModel = PlayMode;
@@ -125,8 +146,10 @@ exports.createGame = async (req, res) => {
       include: [
         {
           model: GameModeModel,
-          include: [MusicalNote],
         },
+        {
+          model: MusicalNote
+        }
       ],
     },
   })
@@ -314,9 +337,13 @@ exports.getSubmittedMedia = async (req, res) => {
     });
     return;
   }
-  if (activity.GameActivity.gamemode_id !== 2 && activity.GameActivity.gamemode_id !== 3) {
+  if (
+    activity.GameActivity.gamemode_id !== 2 &&
+    activity.GameActivity.gamemode_id !== 3
+  ) {
     res.status(400).send({
-      message: "GameActivity is not of type Play or Build. So, there's no media submitted!",
+      message:
+        "GameActivity is not of type Play or Build. So, there's no media submitted!",
     });
     return;
   }
@@ -328,16 +355,18 @@ exports.getSubmittedMedia = async (req, res) => {
   if (activity.GameActivity.gamemode_id === 2) {
     let play_mode_activity = await PlayMode.findOne({
       where: {
-        activity_id: activity_id
+        activity_id: activity_id,
       },
-      include: [{
-        model: PlayModeStatus,
-        where: {
-          activity_id: activity_id,
-          user_id: req.userId
-        }
-      }]
-    })
+      include: [
+        {
+          model: PlayModeStatus,
+          where: {
+            activity_id: activity_id,
+            user_id: req.userId,
+          },
+        },
+      ],
+    });
     if (play_mode_activity === null) {
       res.status(400).send({
         message: "Activity not submitted!",
@@ -370,4 +399,79 @@ exports.getSubmittedMedia = async (req, res) => {
   res
     .status(200)
     .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
+};
+
+// Submit Game of type Identify
+exports.submitGameIdentify = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activity_id = req.params.activity_id;
+  const user_id = req.userId;
+
+  if (!req.file) {
+    res.status(400).send({
+      message: "Content can not be empty! Define a media in form-data.",
+    });
+    return;
+  }
+
+  // Check if Activity exists
+  let activity = await Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: [
+      {
+        model: GameActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id,
+        },
+      },
+    ],
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "Activity not found!",
+    });
+    return;
+  }
+  // Check activity type
+  if (activity.activitytype_id !== 4) {
+    res.status(400).send({
+      message: "Activity is not of type Game!",
+    });
+    return;
+  }
+  if (activity.GameActivity.gamemode_id !== 1) {
+    res.status(400).send({
+      message: "GameActivity is not of type Identify!",
+    });
+    return;
+  }
+
+  IdentifyModeStatus.findOrCreate({
+    where: {
+      activity_id: activity_id,
+      user_id: user_id,
+    },
+    defaults: {
+      activity_id: activity_id,
+      user_id: user_id,
+    },
+  })
+    .then(() => {
+      res.send({
+        message: "Game submitted successfully",
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while creating the IdentifyModeStatus.",
+      });
+    });
 };

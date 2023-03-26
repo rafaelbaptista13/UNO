@@ -13,6 +13,7 @@
     <color name="green">#00B761</color>
     <color name="yellow">#F4DB62</color>
     <color name="light_grey">#D0D0D0</color>
+    <color name="light_light_grey">#ECECEC</color>
     <color name="musical_note_red">#ff0000</color>
     <color name="musical_note_green">#339966</color>
     <color name="musical_note_blue">#0000ff</color>
