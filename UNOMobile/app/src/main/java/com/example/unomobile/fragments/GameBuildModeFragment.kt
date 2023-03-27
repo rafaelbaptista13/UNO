@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.example.unomobile.R
+import com.example.unomobile.activities.ActivityPageActivity
 import com.example.unomobile.activities.FullScreenActivity
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.MusicalNote
@@ -33,6 +34,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.ResponseBody
 import org.billthefarmer.mididriver.MidiDriver
 import retrofit2.Call
 import retrofit2.Callback
@@ -267,11 +272,7 @@ class GameBuildModeFragment : Fragment() {
         submit_btn.setOnClickListener {
             if (chosen_file != null) {
                 Log.i("GameBuildFragment", "Submitted")
-                //submitGame()
-                submit_btn.visibility = View.GONE
-                edit_submission_btn.visibility = View.VISIBLE
-                edit_sequence_button.visibility = View.GONE
-                upload_video_buttons.visibility = View.GONE
+                submitGame()
             }
         }
 
@@ -310,9 +311,13 @@ class GameBuildModeFragment : Fragment() {
 
                             // Check if user already submitted the game
                             if (activity_data.completed == true) {
+                                var submitted_notes = arrayOf<MusicalNote>()
+                                for (note in activity_data.game_activity.chosen_notes!!) {
+                                    chosen_notes[note.order] = notes!!.find { it.id == note.note_id }
+                                    submitted_notes = submitted_notes.plus(chosen_notes[note.order]!!)
+                                }
 
-                                // TODO UPDATE THIS LINE TO USE THE CHOSEN NOTES RETRIEVED
-                                notes_views = showSolution(notes!!, string1, string2, string3, string4, context)
+                                notes_views = showChosenNotes(submitted_notes, string1, string2, string3, string4)
 
                                 selected_note = null
                                 notes_available.visibility = View.GONE
@@ -511,6 +516,126 @@ class GameBuildModeFragment : Fragment() {
         } else {
             Log.i("GamePlayModeFragment", "URI was null")
         }
+    }
+
+    private fun submitGame() {
+        // Do something with the selected video file URI
+        Log.i("GameBuildFragment", chosen_file!!.path!!)
+        val context = requireContext()
+
+        val video_file = getFileFromUri(chosen_file!!, context)
+        val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!, context)!!.toMediaTypeOrNull())
+        val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
+        val chosen_notes_ids = chosen_notes.map { it!!.id }.toTypedArray()
+
+        val call = Api.retrofitService.submitGameBuildModeActivity(user!!.class_id!!, activity_id!!, mediaPart, chosen_notes_ids)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Jogo submetido com sucesso.", Toast.LENGTH_SHORT).show()
+
+                    var activitypageactivity = activity as? ActivityPageActivity
+                    if (activitypageactivity != null) {
+                        activitypageactivity.activities_status?.set(order!!-1, true)
+                    }
+                    editSubmissionMode = false
+                    submit_btn.visibility = View.GONE
+                    edit_submission_btn.visibility = View.VISIBLE
+                    upload_video_buttons.visibility = View.GONE
+                    edit_sequence_button.visibility = View.GONE
+                } else {
+                    Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o jogo.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o jogo.", Toast.LENGTH_SHORT).show()
+                Log.i("GameBuildFragment", t.message.toString())
+            }
+
+        })
+
+    }
+
+
+    private fun showChosenNotes(notes: Array<MusicalNote>, string1: LinearLayout, string2: LinearLayout, string3: LinearLayout, string4: LinearLayout): Array<MusicalNoteView>? {
+        val context = requireContext()
+        var notes_views = arrayOf<MusicalNoteView>()
+        for ((index, note) in notes.withIndex()) {
+            val note_view = MusicalNoteView(context, null)
+            notes_views = notes_views.plus(note_view)
+
+            if (note.violin_string == 1) {
+                string1.addView(note_view)
+                addHiddenItem(string2, index, context)
+                addHiddenItem(string3, index, context)
+                addHiddenItem(string4, index, context)
+                if (note.type == "LeftTriangle") {
+                    updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_blue, context)
+                }
+                if (note.type == "RightTriangle") {
+                    updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_blue, context)
+                }
+                if (note.type == "Circle") {
+                    updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_blue, context)
+                }
+            }
+            if (note.violin_string == 2) {
+                string2.addView(note_view)
+                addHiddenItem(string1, index, context)
+                addHiddenItem(string3, index, context)
+                addHiddenItem(string4, index, context)
+                if (note.type == "LeftTriangle") {
+                    updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_yellow, context)
+                }
+                if (note.type == "RightTriangle") {
+                    updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_yellow, context)
+                }
+                if (note.type == "Circle") {
+                    updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_yellow, context)
+                }
+            }
+            if (note.violin_string == 3) {
+                string3.addView(note_view)
+                addHiddenItem(string2, index, context)
+                addHiddenItem(string1, index, context)
+                addHiddenItem(string4, index, context)
+                if (note.type == "LeftTriangle") {
+                    updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_red, context)
+                }
+                if (note.type == "RightTriangle") {
+                    updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_red, context)
+                }
+                if (note.type == "Circle") {
+                    updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_red, context)
+                }
+            }
+            if (note.violin_string == 4) {
+                string4.addView(note_view)
+                addHiddenItem(string2, index, context)
+                addHiddenItem(string3, index, context)
+                addHiddenItem(string1, index, context)
+                if (note.type == "LeftTriangle") {
+                    updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_green, context)
+                }
+                if (note.type == "RightTriangle") {
+                    updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_green, context)
+                }
+                if (note.type == "Circle") {
+                    updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_green, context)
+                }
+            }
+
+            chosen_notes_views[index] = note_view
+            note_view.setOnClickListener {
+                defaultMusicalNoteClickListener(note_view, index)
+            }
+        }
+        return notes_views
     }
 
 }

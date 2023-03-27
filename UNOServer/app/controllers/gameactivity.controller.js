@@ -13,6 +13,7 @@ const IdentifyMode = db.identifymode;
 const IdentifyModeStatus = db.identifymodestatus;
 const BuildMode = db.buildmode;
 const BuildModeStatus = db.buildmodestatus;
+const UserChosenNotes = db.userchosennotes;
 
 // Create and Save a new Activity of type Game
 exports.createGame = async (req, res) => {
@@ -105,7 +106,7 @@ exports.createGame = async (req, res) => {
     };
     notes.push(_note);
   }
-  
+
   let GameModeModel;
   let activity;
   // Create an Activity
@@ -140,7 +141,8 @@ exports.createGame = async (req, res) => {
   } else if (gamemode === "Build") {
     if (!req.body.sequence_length) {
       res.status(400).send({
-        message: "No sequence_length found in body. In Build game mode you need to define a sequence_length.",
+        message:
+          "No sequence_length found in body. In Build game mode you need to define a sequence_length.",
       });
       return;
     }
@@ -153,7 +155,7 @@ exports.createGame = async (req, res) => {
       GameActivity: {
         gamemode_id: 3, // BuildMode
         BuildMode: {
-          sequence_length: req.body.sequence_length
+          sequence_length: req.body.sequence_length,
         },
         MusicalNotes: notes,
       },
@@ -170,8 +172,8 @@ exports.createGame = async (req, res) => {
           model: GameModeModel,
         },
         {
-          model: MusicalNote
-        }
+          model: MusicalNote,
+        },
       ],
     },
   })
@@ -402,18 +404,18 @@ exports.getSubmittedMedia = async (req, res) => {
   } else if (activity.GameActivity.gamemode_id === 3) {
     let build_mode_activity = await BuildMode.findOne({
       where: {
-        activity_id: activity_id
+        activity_id: activity_id,
       },
       include: [
         {
           model: BuildModeStatus,
           where: {
             activity_id: activity_id,
-            user_id: req.userId
-          }
-        }
-      ]
-    })
+            user_id: req.userId,
+          },
+        },
+      ],
+    });
     if (build_mode_activity === null) {
       res.status(400).send({
         message: "Activity not submitted!",
@@ -512,4 +514,181 @@ exports.submitGameIdentify = async (req, res) => {
           "Some error occurred while creating the IdentifyModeStatus.",
       });
     });
+};
+
+// Submit Game of type Build
+exports.submitGameBuild = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activity_id = req.params.activity_id;
+  const user_id = req.userId;
+  const chosen_notes = req.body.chosen_notes;
+
+  if (!req.file || !chosen_notes) {
+    res.status(400).send({
+      message:
+        "Content can not be empty! Define media and chosen_notes in form-data.",
+    });
+    return;
+  }
+
+  // Check if Activity exists
+  let activity = await Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: [
+      {
+        model: GameActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id,
+        },
+      },
+    ],
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "Activity not found!",
+    });
+    return;
+  }
+  // Check activity type
+  if (activity.activitytype_id !== 4) {
+    res.status(400).send({
+      message: "Activity is not of type Game!",
+    });
+    return;
+  }
+  if (activity.GameActivity.gamemode_id !== 3) {
+    res.status(400).send({
+      message: "GameActivity is not of type Build!",
+    });
+    return;
+  }
+
+  let notes = [];
+  for (let idx in chosen_notes) {
+    let note_id = chosen_notes[idx];
+
+    const musicalnote = await MusicalNote.findOne({
+      where: {
+        id: note_id,
+        activity_id: activity_id,
+      },
+    });
+    if (musicalnote === null) {
+      res.status(400).send({
+        message: "Invalid musical note with id=" + note_id,
+      });
+      return;
+    }
+
+    notes.push({ note_id: note_id, order: idx });
+  }
+
+  // Save media type
+  const media_type = req.file.mimetype;
+  const secret_key = crypto.randomBytes(16).toString("hex");
+  // Encrypt file
+  const encryptedFile = CryptoJS.AES.encrypt(
+    req.file.buffer.toString("base64"),
+    secret_key
+  );
+
+  // Generate file name
+  const file_name = uuidv4();
+  try {
+    // Upload file in AWS S3 bucket
+    const params = {
+      Bucket: "violuno",
+      Key: file_name,
+      Body: encryptedFile.toString(),
+    };
+
+    await req.s3.upload(params).promise();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error uploading file");
+    return;
+  }
+
+  const build_mode_status = {
+    activity_id: activity_id,
+    user_id: user_id,
+    media_id: file_name,
+    media_type: media_type,
+    media_secret: secret_key,
+  };
+
+  const data = await BuildModeStatus.findOne({
+    where: {
+      activity_id: activity_id,
+      user_id: user_id,
+    },
+  });
+  if (data === null) {
+    try {
+      const result = await sequelize.transaction(async (t) => {
+        const status = await BuildModeStatus.create(build_mode_status, {
+          transaction: t,
+        });
+
+        for (let idx in notes) {
+          let note = notes[idx];
+          note.status_id = status.id;
+          console.log(note);
+          await UserChosenNotes.create(note, { transaction: t });
+        }
+
+        return status;
+      });
+      res.send({
+        message: "Game submitted successfully",
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while creating the BuildModeStatus.",
+      });
+    }
+  } else {
+    // Update the video submitted
+    try {
+      const result = await sequelize.transaction(async (t) => {
+        const status = await BuildModeStatus.update(
+          {
+            media_id: file_name,
+            media_type: media_type,
+            media_secret: secret_key,
+          },
+          { where: { id: data.id }, transaction: t }
+        );
+
+        for (let idx in notes) {
+          let note = notes[idx];
+          note.status_id = status.id;
+          await UserChosenNotes.update(
+            { note_id: note.note_id },
+            { where: { status_id: data.id, order: note.order }, transaction: t }
+          );
+        }
+      });
+
+      res.send({
+        message: "Game submitted successfully",
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while updating the BuildModeStatus.",
+      });
+    }
+  }
 };

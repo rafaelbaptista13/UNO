@@ -393,7 +393,7 @@ class GamePlayModeFragment : Fragment() {
 
     private fun submitVideo() {
         // Do something with the selected video file URI
-        Log.i("ExerciseFragment", chosen_file!!.path!!)
+        Log.i("GamePlayFragment", chosen_file!!.path!!)
         val context = requireContext()
 
         val video_file = getFileFromUri(chosen_file!!, context)

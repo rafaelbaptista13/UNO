@@ -20,6 +20,7 @@ const IdentifyMode = db.identifymode;
 const IdentifyModeStatus = db.identifymodestatus;
 const BuildMode = db.buildmode;
 const BuildModeStatus = db.buildmodestatus;
+const UserChosenNotes = db.userchosennotes;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -232,6 +233,7 @@ exports.findOne = (req, res) => {
               {
                 model: MusicalNote,
                 attributes: [
+                  "id",
                   "order",
                   "name",
                   "violin_string",
@@ -295,6 +297,16 @@ exports.findOne = (req, res) => {
               });
               if (build_mode_status !== null) {
                 activity.completed = true;
+                let user_chosen_notes = await UserChosenNotes.findAll({
+                  where: {
+                    status_id: build_mode_status.id
+                  },
+                  attributes: [
+                    "order",
+                    "note_id"
+                  ]
+                })
+                activity.game_activity.chosen_notes = user_chosen_notes;
               }
               break;
           }

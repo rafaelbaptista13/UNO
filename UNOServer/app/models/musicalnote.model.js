@@ -1,14 +1,18 @@
 module.exports = (sequelize, Sequelize) => {
   const MusicalNote = sequelize.define("MusicalNotes", {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true
+    },
     activity_id: {
       type: Sequelize.INTEGER,
       allowNull: false,
-      primaryKey: true,
     },
     order: {
       type: Sequelize.INTEGER,
       allowNull: false,
-      primaryKey: true,
     },
     name: {
       type: Sequelize.STRING,

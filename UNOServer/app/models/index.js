@@ -255,20 +255,22 @@ db.buildmodestatus.belongsTo(db.users, {
 })
 
 db.musicalnotes.belongsToMany(db.buildmodestatus, {
-  through: db.userchosennotes,
+  through: {
+    model: db.userchosennotes,
+    unique: false
+  },
   foreignKey: "note_id",
   otherKey: "status_id",
-  onUpdate: 'CASCADE',
-  onDelete: 'CASCADE'
 });
 
 // BuildModeStatus * - * MusicalNotes
 db.buildmodestatus.belongsToMany(db.musicalnotes, {
-  through: db.userchosennotes,
+  through: {
+    model: db.userchosennotes,
+    unique: false
+  },
   foreignKey: "status_id",
   otherKey: "note_id",
-  onUpdate: 'CASCADE',
-  onDelete: 'CASCADE'
 });
 
 db.ROLES = ["student", "teacher"];
