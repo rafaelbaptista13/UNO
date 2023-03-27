@@ -40,9 +40,7 @@ import com.example.unomobile.models.MusicalNote
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.client
-import com.example.unomobile.utils.FinalNoteView
-import com.example.unomobile.utils.MusicalNoteView
-import com.example.unomobile.utils.noteToMidiMap
+import com.example.unomobile.utils.*
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
@@ -146,10 +144,10 @@ class GamePlayModeFragment : Fragment() {
         title_text.text = title
         val description_text = view.findViewById<TextView>(R.id.description)
         description_text.text = description
-        val string1 = view.findViewById<TableRow>(R.id.row1)
-        val string2 = view.findViewById<TableRow>(R.id.row2)
-        val string3 = view.findViewById<TableRow>(R.id.row3)
-        val string4 = view.findViewById<TableRow>(R.id.row4)
+        val string1 = view.findViewById<LinearLayout>(R.id.row1)
+        val string2 = view.findViewById<LinearLayout>(R.id.row2)
+        val string3 = view.findViewById<LinearLayout>(R.id.row3)
+        val string4 = view.findViewById<LinearLayout>(R.id.row4)
         game_card = view.findViewById(R.id.game_card)
         vertical_game_line = view.findViewById(R.id.vertical_game_line)
 
@@ -190,9 +188,6 @@ class GamePlayModeFragment : Fragment() {
         play_button!!.setOnClickListener {
             it.visibility = View.GONE
             pause_button!!.visibility = View.VISIBLE
-            // Calculate the maximum scroll position
-            val childView = horizontal_scroll_view.getChildAt(0)
-
             midiDriver.start()
             midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
 
@@ -214,7 +209,7 @@ class GamePlayModeFragment : Fragment() {
                     }   // Note on
 
                     withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order].x.toInt() - 5.dpToPx(), 0)
+                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order].x.toInt() - 5.dpToPx(requireContext()), 0)
                     }
 
                     delay(1000)
@@ -251,85 +246,22 @@ class GamePlayModeFragment : Fragment() {
                 call.enqueue(object : Callback<Activity> {
                     override fun onResponse(call: Call<Activity>, response: Response<Activity>) {
                         if (response.isSuccessful) {
+                            val context = requireContext()
                             Log.i("GamePlayModeFragment", response.body().toString())
                             val activity_data = response.body()!!
                             notes = activity_data.game_activity!!.notes
 
-                            addInitialItems(string1)
-                            addInitialItems(string2)
-                            addInitialItems(string3)
-                            addInitialItems(string4)
+                            addInitialItems(string1, context)
+                            addInitialItems(string2, context)
+                            addInitialItems(string3, context)
+                            addInitialItems(string4, context)
 
-                            for (note in notes!!) {
-                                val note_view = MusicalNoteView(requireContext(), null)
-                                notes_views = notes_views?.plus(note_view)
+                            notes_views = showSolution(notes!!, string1, string2, string3, string4, requireContext())
 
-                                if (note.violin_string == 1) {
-                                    string1.addView(note_view)
-                                    addInvisibleView(string2)
-                                    addInvisibleView(string3)
-                                    addInvisibleView(string4)
-                                    if (note.type == "LeftTriangle") {
-                                        updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_blue)
-                                    }
-                                    if (note.type == "RightTriangle") {
-                                        updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_blue)
-                                    }
-                                    if (note.type == "Circle") {
-                                        updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_blue)
-                                    }
-                                }
-                                if (note.violin_string == 2) {
-                                    string2.addView(note_view)
-                                    addInvisibleView(string1)
-                                    addInvisibleView(string3)
-                                    addInvisibleView(string4)
-                                    if (note.type == "LeftTriangle") {
-                                        updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_yellow)
-                                    }
-                                    if (note.type == "RightTriangle") {
-                                        updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_yellow)
-                                    }
-                                    if (note.type == "Circle") {
-                                        updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_yellow)
-                                    }
-                                }
-                                if (note.violin_string == 3) {
-                                    string3.addView(note_view)
-                                    addInvisibleView(string2)
-                                    addInvisibleView(string1)
-                                    addInvisibleView(string4)
-                                    if (note.type == "LeftTriangle") {
-                                        updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_red)
-                                    }
-                                    if (note.type == "RightTriangle") {
-                                        updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_red)
-                                    }
-                                    if (note.type == "Circle") {
-                                        updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_red)
-                                    }
-                                }
-                                if (note.violin_string == 4) {
-                                    string4.addView(note_view)
-                                    addInvisibleView(string2)
-                                    addInvisibleView(string3)
-                                    addInvisibleView(string1)
-                                    if (note.type == "LeftTriangle") {
-                                        updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_green)
-                                    }
-                                    if (note.type == "RightTriangle") {
-                                        updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_green)
-                                    }
-                                    if (note.type == "Circle") {
-                                        updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_green)
-                                    }
-                                }
-                            }
-
-                            addFinalItems(string1)
-                            addFinalItems(string2)
-                            addFinalItems(string3)
-                            addFinalItems(string4)
+                            addFinalItems(string1, context, game_card!!, vertical_game_line!!)
+                            addFinalItems(string2, context, game_card!!, vertical_game_line!!)
+                            addFinalItems(string3, context, game_card!!, vertical_game_line!!)
+                            addFinalItems(string4, context, game_card!!, vertical_game_line!!)
 
                             // Check if user already submitted the exercise
                             if (activity_data.completed == true) {
@@ -389,36 +321,6 @@ class GamePlayModeFragment : Fragment() {
         play_button!!.visibility = View.VISIBLE
         pause_state = true
         midiDriver.stop()
-    }
-
-    fun addInvisibleView(string: TableRow) {
-        val dummyView = MusicalNoteView(requireContext(), null)
-        dummyView.visibility = View.INVISIBLE
-        string.addView(dummyView)
-    }
-
-    fun addInitialItems(string: TableRow) {
-        val initial_item = FinalNoteView(requireContext(), null)
-        initial_item.visibility = View.INVISIBLE
-        val layoutParams = initial_item.layoutParams
-        layoutParams.width = 50.dpToPx()
-        initial_item.layoutParams = layoutParams
-        string.addView(initial_item)
-    }
-
-    fun addFinalItems(string: TableRow) {
-        val end_item = FinalNoteView(requireContext(), null)
-        end_item.visibility = View.INVISIBLE
-        val layoutParams = end_item.layoutParams
-        layoutParams.width = game_card!!.right - vertical_game_line!!.left - 15.dpToPx()
-        end_item.layoutParams = layoutParams
-        string.addView(end_item)
-    }
-
-    private fun Int.dpToPx(): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), resources.displayMetrics
-        ).toInt()
     }
 
     private fun initSubmittedPlayer() {
@@ -481,9 +383,10 @@ class GamePlayModeFragment : Fragment() {
     private fun submitVideo() {
         // Do something with the selected video file URI
         Log.i("ExerciseFragment", chosen_file!!.path!!)
+        val context = requireContext()
 
-        val video_file = getFileFromUri(chosen_file!!)
-        val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!)!!.toMediaTypeOrNull())
+        val video_file = getFileFromUri(chosen_file!!, context)
+        val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!, context)!!.toMediaTypeOrNull())
         val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
 
         val call = Api.retrofitService.submitGamePlayModeActivity(user!!.class_id!!, activity_id!!, mediaPart)
@@ -518,59 +421,4 @@ class GamePlayModeFragment : Fragment() {
 
     }
 
-    private fun getMimeType(uri: Uri): String? {
-        var mimeType: String? = null
-        mimeType = if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
-            val cr: ContentResolver = requireContext().contentResolver
-            cr.getType(uri)
-        } else {
-            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
-                uri
-                    .toString()
-            )
-            MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                fileExtension.lowercase(Locale.getDefault())
-            )
-        }
-        return mimeType
-    }
-
-    private fun getFileFromUri(uri: Uri): File {
-        val file = File(uri.path!!)
-        if (file.exists()) {
-            return file
-        }
-
-        val inputStream = requireContext().contentResolver.openInputStream(uri) ?: throw FileNotFoundException()
-        val mimeType = requireContext().contentResolver.getType(uri)
-        val fileExtension = mimeType?.let { MimeTypeMap.getSingleton().getExtensionFromMimeType(it) }
-        val tempFile = createTempFile("upload", fileExtension)
-        tempFile.outputStream().use { outputStream ->
-            inputStream.use { inputStream ->
-                inputStream.copyTo(outputStream)
-            }
-        }
-        return tempFile
-    }
-
-    private fun updateMusicalNoteViewToCircle(note_view: MusicalNoteView, note: MusicalNote, color: Int) {
-        note_view.setText(note.violin_finger.toString())
-        val circle_drawable = ContextCompat.getDrawable(requireContext(), R.drawable.circle_note) as GradientDrawable
-        circle_drawable.let {
-            it.setColor(ContextCompat.getColor(requireContext(), color))
-            note_view.background = it
-        }
-    }
-
-    private fun updateMusicalNoteViewToLeftTriangle(note_view: MusicalNoteView, note: MusicalNote, drawable: Int) {
-        note_view.setTextLeftTriangle(note.violin_finger.toString())
-        val drawable = ContextCompat.getDrawable(requireContext(), drawable)
-        note_view.background = drawable
-    }
-
-    private fun updateMusicalNoteViewToRightTriangle(note_view: MusicalNoteView, note: MusicalNote, drawable: Int) {
-        note_view.setTextRightTriangle(note.violin_finger.toString())
-        val drawable = ContextCompat.getDrawable(requireContext(), drawable)
-        note_view.background = drawable
-    }
 }
