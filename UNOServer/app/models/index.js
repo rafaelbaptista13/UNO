@@ -59,6 +59,9 @@ db.identifymodestatus = require("./identifymodestatus.model")(
   Sequelize
 );
 db.identifymode = require("./identifymode.model")(sequelize, Sequelize);
+db.buildmode = require("./buildmode.model")(sequelize, Sequelize);
+db.buildmodestatus = require("./buildmodestatus.model")(sequelize, Sequelize);
+db.userchosennotes = require("./userchosennotes.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -206,17 +209,6 @@ db.gameactivities.hasOne(db.playmode, {
   onDelete: "CASCADE",
 });
 
-// MusicalNote * - 1 PlayMode
-//db.musicalnotes.belongsTo(db.playmode, {
-//  foreignKey: "activity_id",
-//  onDelete: "CASCADE",
-//});
-
-// PlayMode 1 - * MusicalNote
-//db.playmode.hasMany(db.musicalnotes, {
-//  foreignKey: "activity_id",
-//});
-
 // PlayModeStatus 1 - 1 PlayMode
 db.playmode.hasOne(db.playmodestatus, {
   foreignKey: "activity_id",
@@ -234,17 +226,6 @@ db.gameactivities.hasOne(db.identifymode, {
   onDelete: "CASCADE",
 });
 
-// IdentifyMode 1 - * MusicalNote
-//db.identifymode.hasMany(db.musicalnotes, {
-//  foreignKey: "activity_id",
-//});
-
-// MusicalNote * - 1 IdentifyMode
-//db.musicalnotes.belongsTo(db.identifymode, {
-//  foreignKey: "activity_id",
-//  onDelete: "CASCADE",
-//});
-
 // IdentifyModeStatus 1 - 1 IdentifyMode
 db.identifymode.hasOne(db.identifymodestatus, {
   foreignKey: "activity_id",
@@ -254,6 +235,40 @@ db.identifymode.hasOne(db.identifymodestatus, {
 // IdentifyModeStatus * - 1 User
 db.identifymodestatus.belongsTo(db.users, {
   foreignKey: "user_id",
+});
+
+// BuildMode 1 - 1 GameActivity
+db.gameactivities.hasOne(db.buildmode, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE",
+});
+
+// BuildModeStatus 1 - BuildMode
+db.buildmode.hasOne(db.buildmodestatus, {
+  foreignKey: "activity_id",
+  onDelete: "CASCADE"
+})
+
+// BuildModeStatus * - 1 User
+db.buildmodestatus.belongsTo(db.users, {
+  foreignKey: "user_id",
+})
+
+db.musicalnotes.belongsToMany(db.buildmodestatus, {
+  through: db.userchosennotes,
+  foreignKey: "note_id",
+  otherKey: "status_id",
+  onUpdate: 'CASCADE',
+  onDelete: 'CASCADE'
+});
+
+// BuildModeStatus * - * MusicalNotes
+db.buildmodestatus.belongsToMany(db.musicalnotes, {
+  through: db.userchosennotes,
+  foreignKey: "status_id",
+  otherKey: "note_id",
+  onUpdate: 'CASCADE',
+  onDelete: 'CASCADE'
 });
 
 db.ROLES = ["student", "teacher"];

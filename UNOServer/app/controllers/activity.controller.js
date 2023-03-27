@@ -18,6 +18,8 @@ const GameMode = db.gamemodes;
 const PlayModeStatus = db.playmodestatus;
 const IdentifyMode = db.identifymode;
 const IdentifyModeStatus = db.identifymodestatus;
+const BuildMode = db.buildmode;
+const BuildModeStatus = db.buildmodestatus;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -275,6 +277,25 @@ exports.findOne = (req, res) => {
               }
               break;
             case 3:
+              let build_mode = await BuildMode.findOne({
+                where: {
+                  activity_id: activity.id
+                }
+              })
+              activity.game_activity = {
+                mode: "Build",
+                notes: game_info.MusicalNotes,
+                sequence_length: build_mode.sequence_length
+              };
+              let build_mode_status = await BuildModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (build_mode_status !== null) {
+                activity.completed = true;
+              }
               break;
           }
 
@@ -400,7 +421,17 @@ exports.findAll = (req, res) => {
                 activity.completed = true;
               }
             } else if (game_activity_type.gamemode.id === 3) {
-              // TODO
+              let build_mode_status = await BuildModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId
+                }
+              });
+              if (build_mode_status === null) {
+                activity.completed = false;
+              } else {
+                activity.completed = true;
+              }
             }
             break;
         }

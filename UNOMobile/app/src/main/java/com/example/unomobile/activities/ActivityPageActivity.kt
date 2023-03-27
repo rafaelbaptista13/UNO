@@ -9,10 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.example.unomobile.R
-import com.example.unomobile.fragments.ExerciseFragment
-import com.example.unomobile.fragments.GameIdentifyModeFragment
-import com.example.unomobile.fragments.GamePlayModeFragment
-import com.example.unomobile.fragments.MediaFragment
+import com.example.unomobile.fragments.*
 import com.example.unomobile.fragments.questions.QuestionFragment
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
@@ -81,6 +78,9 @@ class ActivityPageActivity : AppCompatActivity() {
                 if (activities_game_mode!![active_activity] == "Identify") {
                     launchGameIdentifyModeFragment()
                 }
+                if (activities_game_mode!![active_activity] == "Build") {
+                    launchGameBuildModeFragment()
+                }
             }
         }
 
@@ -133,6 +133,9 @@ class ActivityPageActivity : AppCompatActivity() {
                                 if (activities_game_mode!![active_activity] == "Identify") {
                                     launchGameIdentifyModeFragment()
                                 }
+                                if (activities_game_mode!![active_activity] == "Build") {
+                                    launchGameBuildModeFragment()
+                                }
                             }
 
 
@@ -179,6 +182,9 @@ class ActivityPageActivity : AppCompatActivity() {
                     if (activities_game_mode!![active_activity] == "Identify") {
                         launchGameIdentifyModeFragment()
                     }
+                    if (activities_game_mode!![active_activity] == "Build") {
+                        launchGameBuildModeFragment()
+                    }
                 }
             }
         }
@@ -216,6 +222,9 @@ class ActivityPageActivity : AppCompatActivity() {
             }
             if (activities_game_mode!![active_activity] == "Identify") {
                 launchGameIdentifyModeFragment()
+            }
+            if (activities_game_mode!![active_activity] == "Build") {
+                launchGameBuildModeFragment()
             }
         }
     }
@@ -271,6 +280,14 @@ class ActivityPageActivity : AppCompatActivity() {
 
     private fun launchGameIdentifyModeFragment() {
         val fragment = GameIdentifyModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    private fun launchGameBuildModeFragment() {
+        val fragment = GameBuildModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

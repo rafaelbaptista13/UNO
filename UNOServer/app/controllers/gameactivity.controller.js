@@ -1,4 +1,4 @@
-const { sequelize } = require("../models");
+const { sequelize, buildmodestatus } = require("../models");
 const db = require("../models");
 const CryptoJS = require("crypto-js");
 const crypto = require("crypto");
@@ -11,6 +11,8 @@ const MusicalNote = db.musicalnotes;
 const PlayModeStatus = db.playmodestatus;
 const IdentifyMode = db.identifymode;
 const IdentifyModeStatus = db.identifymodestatus;
+const BuildMode = db.buildmode;
+const BuildModeStatus = db.buildmodestatus;
 
 // Create and Save a new Activity of type Game
 exports.createGame = async (req, res) => {
@@ -136,7 +138,27 @@ exports.createGame = async (req, res) => {
     };
     GameModeModel = PlayMode;
   } else if (gamemode === "Build") {
-    // TODO
+    if (!req.body.sequence_length) {
+      res.status(400).send({
+        message: "No sequence_length found in body. In Build game mode you need to define a sequence_length.",
+      });
+      return;
+    }
+    activity = {
+      order: order,
+      activitygroup_id: req.body.activitygroup_id,
+      title: "A Cor do Som",
+      description: req.body.description,
+      activitytype_id: 4, // Game
+      GameActivity: {
+        gamemode_id: 3, // BuildMode
+        BuildMode: {
+          sequence_length: req.body.sequence_length
+        },
+        MusicalNotes: notes,
+      },
+    };
+    GameModeModel = BuildMode;
   }
 
   // Save Activity in the database
@@ -378,7 +400,30 @@ exports.getSubmittedMedia = async (req, res) => {
     media_id = play_mode_activity.PlayModeStatus.media_id;
     media_secret = play_mode_activity.PlayModeStatus.media_secret;
   } else if (activity.GameActivity.gamemode_id === 3) {
-    // TODO
+    let build_mode_activity = await BuildMode.findOne({
+      where: {
+        activity_id: activity_id
+      },
+      include: [
+        {
+          model: BuildModeStatus,
+          where: {
+            activity_id: activity_id,
+            user_id: req.userId
+          }
+        }
+      ]
+    })
+    if (build_mode_activity === null) {
+      res.status(400).send({
+        message: "Activity not submitted!",
+      });
+      return;
+    }
+
+    media_type = build_mode_activity.BuildModeStatus.media_type;
+    media_id = build_mode_activity.BuildModeStatus.media_id;
+    media_secret = build_mode_activity.BuildModeStatus.media_secret;
   }
 
   // Get Media from aws s3

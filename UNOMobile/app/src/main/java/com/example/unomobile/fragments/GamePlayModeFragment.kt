@@ -143,7 +143,11 @@ class GamePlayModeFragment : Fragment() {
         val title_text = view.findViewById<TextView>(R.id.title)
         title_text.text = title
         val description_text = view.findViewById<TextView>(R.id.description)
-        description_text.text = description
+        if (description != null) {
+            description_text.text = description
+        } else {
+            description_text.visibility = View.GONE
+        }
         val string1 = view.findViewById<LinearLayout>(R.id.row1)
         val string2 = view.findViewById<LinearLayout>(R.id.row2)
         val string3 = view.findViewById<LinearLayout>(R.id.row3)
@@ -195,9 +199,11 @@ class GamePlayModeFragment : Fragment() {
                 for (note in notes!!) {
 
                     if (pause_state) {
-                        pause_state = false
                         withContext(Dispatchers.Main) {
                             horizontal_scroll_view.scrollTo(0, 0)
+                            pause_button!!.visibility = View.GONE
+                            play_button!!.visibility = View.VISIBLE
+                            pause_state = false
                         }
                         return@launch
                     }
@@ -220,11 +226,16 @@ class GamePlayModeFragment : Fragment() {
                 }
                 pause_button!!.visibility = View.GONE
                 it.visibility = View.VISIBLE
+                if (pause_state) {
+                    withContext(Dispatchers.Main) {
+                        horizontal_scroll_view.scrollTo(0, 0)
+                        pause_state = false
+                    }
+                    return@launch
+                }
             }
         }
         pause_button!!.setOnClickListener {
-            it.visibility = View.GONE
-            play_button!!.visibility = View.VISIBLE
             pause_state = true
         }
 
