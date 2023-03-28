@@ -222,6 +222,7 @@ exports.findOne = (req, res) => {
             question: question_info.question,
             answers: answers,
             media_type: question_info.media_type,
+            one_answer_only: question_info.one_answer_only
           };
           break;
         case 4:

@@ -61,6 +61,8 @@ class QuestionFragment : Fragment() {
     private lateinit var submit_btn: AppCompatButton
     private lateinit var submitted_message: TextView
 
+    private var one_answer_only: Boolean = false
+
     private lateinit var user: UserInfo
 
     // To handle if the user can change their answers or not
@@ -141,6 +143,7 @@ class QuestionFragment : Fragment() {
                         if (response.isSuccessful) {
                             val activity_data = response.body()
                             media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data!!.id + "/question/media"
+                            one_answer_only = activity_data.question_activity!!.one_answer_only
                             Log.i("QuestionFragment", "Estou aqui")
                             Log.i("QuestionFragment", activity_data.question_activity!!.media_type.toString())
                             if (activity_data.question_activity!!.media_type != null) {
@@ -186,14 +189,43 @@ class QuestionFragment : Fragment() {
                                 AnswersAdapter.onItemClickListener {
                                 override fun onItemClick(position: Int) {
                                     if (editMode) {
-                                        data[position].chosen = data[position].chosen != true
-                                        chosen_answers = if (data[position].chosen == true) {
-                                            chosen_answers.plus(position)
+                                        if (one_answer_only) {
+
+                                            if (chosen_answers.size == 1 && data[position].chosen != true) {
+                                                // Get the answer that is chosen
+                                                var old_answer_id = chosen_answers[0]
+                                                var old_answer = data.find { it.order == old_answer_id }
+
+                                                // Remove from chosen answers
+                                                chosen_answers = chosen_answers.filter { it != old_answer_id }.toTypedArray()
+                                                old_answer!!.chosen = false
+
+                                                data[position].chosen = true
+                                                adapter.notifyItemChanged(position)
+                                                adapter.notifyItemChanged(data.indexOfFirst { it == old_answer })
+                                            }
+                                            if (chosen_answers.size == 1 && data[position].chosen == true) {
+                                                chosen_answers = emptyArray()
+
+                                                data[position].chosen = false
+                                                adapter.notifyItemChanged(position)
+                                            }
+                                            if (chosen_answers.isEmpty()) {
+                                                data[position].chosen = true
+                                                chosen_answers = chosen_answers.plus(position)
+                                                adapter.notifyItemChanged(position)
+                                            }
+                                            Log.i("QuestionFragment", chosen_answers.toString())
                                         } else {
-                                            chosen_answers.filter { it != position }.toTypedArray()
+                                            data[position].chosen = data[position].chosen != true
+                                            chosen_answers = if (data[position].chosen == true) {
+                                                chosen_answers.plus(position)
+                                            } else {
+                                                chosen_answers.filter { it != position }.toTypedArray()
+                                            }
+                                            Log.i("QuestionFragment", chosen_answers.contentToString())
+                                            adapter.notifyItemChanged(position)
                                         }
-                                        Log.i("QuestionFragment", chosen_answers.contentToString())
-                                        adapter.notifyItemChanged(position)
                                     }
                                 }
                             })
