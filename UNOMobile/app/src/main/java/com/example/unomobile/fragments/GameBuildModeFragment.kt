@@ -1,5 +1,6 @@
 package com.example.unomobile.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
@@ -24,9 +25,12 @@ import com.example.unomobile.models.Activity
 import com.example.unomobile.models.MusicalNote
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
+import com.example.unomobile.network.client
 import com.example.unomobile.utils.*
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
@@ -117,7 +121,6 @@ class GameBuildModeFragment : Fragment() {
             activity_id = arguments?.getInt("activity_id")
         }
         midiDriver = MidiDriver.getInstance()
-        midiDriver.start()
         midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
         notes_views = arrayOf()
     }
@@ -168,6 +171,7 @@ class GameBuildModeFragment : Fragment() {
                 edit_sequence_view = false
                 selected_note = null
                 selected_note_cardview?.strokeWidth = 0
+                selected_note_cardview = null
                 notes_available.visibility = View.GONE
                 submit_btn.visibility = View.VISIBLE
                 upload_video_buttons.visibility = View.VISIBLE
@@ -212,6 +216,7 @@ class GameBuildModeFragment : Fragment() {
 
                     // Get Midi Code
                     val midi_code = noteToMidiMap[note.note_code]
+                    Log.i("GameBuildFragment", midi_code.toString())
                     if (midi_code != null) {
                         midiDriver.write(byteArrayOf(0x90.toByte(), midi_code.toByte(), 127))
                     }   // Note on
@@ -271,8 +276,9 @@ class GameBuildModeFragment : Fragment() {
 
         submit_btn.setOnClickListener {
             if (chosen_file != null) {
-                Log.i("GameBuildFragment", "Submitted")
                 submitGame()
+            } else {
+                Toast.makeText(requireContext(), "Escolha um vídeo para submeter.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -311,6 +317,7 @@ class GameBuildModeFragment : Fragment() {
 
                             // Check if user already submitted the game
                             if (activity_data.completed == true) {
+                                showPossibleNotes()
                                 var submitted_notes = arrayOf<MusicalNote>()
                                 for (note in activity_data.game_activity.chosen_notes!!) {
                                     chosen_notes[note.order] = notes!!.find { it.id == note.note_id }
@@ -318,6 +325,17 @@ class GameBuildModeFragment : Fragment() {
                                 }
 
                                 notes_views = showChosenNotes(submitted_notes, string1, string2, string3, string4)
+
+                                submitted_media_path = com.example.unomobile.network.BASE_URL + "activities/" + user!!.class_id + "/" + activity_data.id + "/game/submitted/media"
+                                submitted_player_view!!.visibility = View.VISIBLE
+                                submitted_video_message!!.visibility = View.VISIBLE
+                                editSubmissionMode = false
+
+                                setFullScreenListener(submitted_player_view, submitted_media_path!!)
+                                initSubmittedPlayer()
+
+                                submit_sequence_button.visibility = View.GONE
+                                edit_submission_btn.visibility = View.VISIBLE
 
                                 selected_note = null
                                 notes_available.visibility = View.GONE
@@ -348,6 +366,39 @@ class GameBuildModeFragment : Fragment() {
         return view
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("GameBuildFragment", "OnDestroy called")
+        // Release MIDI driver resources
+        midiDriver.stop()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("GameBuildFragment", "OnResume called")
+        if (submitted_media_path != null && chosen_file == null) {
+            initSubmittedPlayer()
+        }
+        if (chosen_file != null) {
+            initChosenVideoPlayer()
+        }
+        midiDriver.start()
+        pause_state = false
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("GameBuildFragment", "OnPause called")
+        if (submitted_media_path != null || chosen_file != null) {
+            submitted_player?.release()
+            submitted_player = null
+        }
+        pause_button!!.visibility = View.GONE
+        play_button!!.visibility = View.VISIBLE
+        pause_state = true
+        midiDriver.stop()
+    }
+
     private fun addHiddenItem(string: LinearLayout, note_order: Int, context: Context) {
         val item = MusicalNoteView(context, null)
         item.visibility = View.INVISIBLE
@@ -369,12 +420,12 @@ class GameBuildModeFragment : Fragment() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            params.setMargins(10.dpToPx(context), 10.dpToPx(context), 0, 15.dpToPx(context))
+            params.setMargins(10.dpToPx(context), 10.dpToPx(context), 10.dpToPx(context), 15.dpToPx(context))
             card_view.layoutParams = params
             card_view.cardElevation = 10.dpToPx(context).toFloat()
             card_view.radius = 20.dpToPx(context).toFloat()
             card_view.setOnClickListener {
-                Log.i("GameIdentifyFragment", it.toString())
+                Log.i("GameBuildFragment", it.toString())
                 if (selected_note_cardview == null) {
                     selected_note_cardview = card_view
                     selected_note = note
@@ -506,11 +557,7 @@ class GameBuildModeFragment : Fragment() {
                 startActivity(intent)
             }
 
-            submitted_player = ExoPlayer.Builder(requireContext()).build()
-            submitted_player_view?.player = submitted_player
-
-            submitted_player!!.setMediaItem(MediaItem.Builder().setUri(chosen_file).build())
-            submitted_player!!.prepare()
+            initChosenVideoPlayer()
 
             submitted_player_view!!.visibility = View.VISIBLE
         } else {
@@ -638,4 +685,40 @@ class GameBuildModeFragment : Fragment() {
         return notes_views
     }
 
+    private fun initSubmittedPlayer() {
+        // Create an ExoPlayer and set it as the player for content.
+        submitted_player = ExoPlayer.Builder(requireContext()).build()
+        submitted_player_view?.player = submitted_player
+
+        val uri = Uri.parse(submitted_media_path)
+        val dataSourceFactory = OkHttpDataSource.Factory(
+            client
+        )
+        val mediaSource = ProgressiveMediaSource.Factory(
+            dataSourceFactory
+        ).createMediaSource(MediaItem.Builder().setUri(uri).build())
+
+        submitted_player!!.setMediaSource(mediaSource)
+        submitted_player!!.prepare()
+    }
+
+    @SuppressLint("SourceLockedOrientationActivity")
+    fun setFullScreenListener(view: StyledPlayerView?, path: String) {
+        // Adding Full Screen Button Click Listeners.
+        view?.setFullscreenButtonClickListener {
+            var intent = Intent(requireContext(), FullScreenActivity::class.java)
+            var bundle = Bundle()
+            bundle.putString("media_path", path)
+            intent.putExtras(bundle)
+            startActivity(intent)
+        }
+    }
+
+    private fun initChosenVideoPlayer() {
+        submitted_player = ExoPlayer.Builder(requireContext()).build()
+        submitted_player_view?.player = submitted_player
+
+        submitted_player!!.setMediaItem(MediaItem.Builder().setUri(chosen_file).build())
+        submitted_player!!.prepare()
+    }
 }

@@ -27,7 +27,7 @@ class MusicalNoteView(context: Context?, attrs: AttributeSet?) : View(context, a
         // Set the background color for the view
         background = AppCompatResources.getDrawable(context!!, R.drawable.circle_note)
 
-        val layoutParams = TableRow.LayoutParams(30.dpToPx(), 30.dpToPx())
+        val layoutParams = TableRow.LayoutParams(35.dpToPx(), 35.dpToPx())
         layoutParams.setMargins(15.dpToPx(), 15.dpToPx(), 15.dpToPx(), 15.dpToPx())
         this.layoutParams = layoutParams
     }

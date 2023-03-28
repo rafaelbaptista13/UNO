@@ -93,6 +93,7 @@ class GameIdentifyModeFragment : Fragment() {
             activity_id = arguments?.getInt("activity_id")
         }
         midiDriver = MidiDriver.getInstance()
+        midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
         notes_views = arrayOf()
     }
 
@@ -138,7 +139,6 @@ class GameIdentifyModeFragment : Fragment() {
         play_button!!.setOnClickListener {
             it.visibility = View.GONE
             pause_button!!.visibility = View.VISIBLE
-            midiDriver.start()
             midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
 
             lifecycleScope.launch {
@@ -266,6 +266,7 @@ class GameIdentifyModeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        midiDriver.start()
         pause_state = false
     }
 
@@ -403,7 +404,7 @@ class GameIdentifyModeFragment : Fragment() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            params.setMargins(10.dpToPx(context), 10.dpToPx(context), 0, 15.dpToPx(context))
+            params.setMargins(10.dpToPx(context), 10.dpToPx(context), 10.dpToPx(context), 15.dpToPx(context))
             card_view.layoutParams = params
             card_view.cardElevation = 10.dpToPx(context).toFloat()
             card_view.radius = 20.dpToPx(context).toFloat()

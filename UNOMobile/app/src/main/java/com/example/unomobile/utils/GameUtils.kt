@@ -90,6 +90,7 @@ fun updateMusicalNoteViewToCircle(note_view: MusicalNoteView, note: MusicalNote,
     val circle_drawable = ContextCompat.getDrawable(context, R.drawable.circle_note) as GradientDrawable
     circle_drawable.let {
         it.setColor(ContextCompat.getColor(context, color))
+        it.setStroke(2.dpToPx(context), ContextCompat.getColor(context, R.color.primary_text))
         note_view.background = it
     }
 }

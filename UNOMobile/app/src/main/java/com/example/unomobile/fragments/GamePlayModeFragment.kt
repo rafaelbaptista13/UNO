@@ -118,6 +118,7 @@ class GamePlayModeFragment : Fragment() {
             activity_id = arguments?.getInt("activity_id")
         }
         midiDriver = MidiDriver.getInstance()
+        midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
         notes_views = arrayOf()
     }
 
@@ -192,8 +193,8 @@ class GamePlayModeFragment : Fragment() {
         play_button!!.setOnClickListener {
             it.visibility = View.GONE
             pause_button!!.visibility = View.VISIBLE
-            midiDriver.start()
-            midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
+
+            horizontal_scroll_view.scrollTo(0, 0)
 
             lifecycleScope.launch {
                 for (note in notes!!) {
@@ -319,6 +320,7 @@ class GamePlayModeFragment : Fragment() {
         if (submitted_media_path != null) {
             initSubmittedPlayer()
         }
+        midiDriver.start()
         pause_state = false
     }
 
