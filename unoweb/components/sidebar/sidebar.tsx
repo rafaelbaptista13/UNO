@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import React from "react";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import styled from "styled-components";
 import {
-  resetActiveClass,
   setActiveClass,
 } from "../../redux/features/active_class";
 import { AuthState, logout } from "../../redux/features/auth";

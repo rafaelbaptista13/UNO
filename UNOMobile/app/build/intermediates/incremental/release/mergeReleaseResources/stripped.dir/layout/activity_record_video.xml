@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.RecordVideoActivity">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="90" />
+
+    <ImageView
+        android:tag="start_recording"
+        android:id="@+id/action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:src="@drawable/start_recording"/>
+
+</LinearLayout>

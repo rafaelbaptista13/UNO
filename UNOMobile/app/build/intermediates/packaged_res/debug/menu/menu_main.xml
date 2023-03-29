@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/home_icon"
+        android:title="Página Inicial"
+        android:checkable="true"/>
+
+    <item
+        android:id="@+id/activitygroupsFragment"
+        android:icon="@drawable/content_icon"
+        android:title="Conteúdos"
+        android:checkable="true"/>
+
+    <item
+        android:id="@+id/notificationFragment"
+        android:icon="@drawable/notification_icon"
+        android:title="Notificações"
+        android:checkable="true"/>
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/profile_icon"
+        android:title="Perfil"
+        android:checkable="true"/>
+
+</menu>

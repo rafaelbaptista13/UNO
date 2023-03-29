@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { AuthState } from "../../redux/features/auth";
 import { ActiveClassState } from "../../redux/features/active_class";
+import React from "react";
 
 const CloseIcon = styled(FontAwesomeIcon)`
   cursor: pointer;

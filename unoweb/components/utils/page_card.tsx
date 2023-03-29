@@ -8,6 +8,7 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 import { createRef, useEffect } from "react";
 import Link from "next/link";
+import React from "react";
 
 const CardDiv = styled.div`
   position: relative;

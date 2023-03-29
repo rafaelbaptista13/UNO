@@ -1,6 +1,7 @@
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import React from "react";
 import { useState } from "react";
 import ClassCard from "../components/classes/class_card";
 import NewCardWithTextInput from "../components/contents/new_card_with_text_input";

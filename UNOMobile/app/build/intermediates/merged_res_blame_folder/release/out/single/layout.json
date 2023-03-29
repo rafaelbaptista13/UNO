@@ -1,0 +1,82 @@
+[
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_exercise.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_exercise.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_media.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_media.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_activities.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_activities.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/activitygroup_list_item.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/activitygroup_list_item.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/activity_register.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/activity_register.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/activity_list_item.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/activity_list_item.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/activity_full_screen_media.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/activity_full_screen_media.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_game_identify_mode.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_game_identify_mode.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_game_play_mode.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_game_play_mode.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/activity_record_video.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/activity_record_video.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_notification.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_notification.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/answer_list_item.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/answer_list_item.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_home.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/activity_login.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_profile.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_question.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_question.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_activitygroups.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_activitygroups.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/activity_main.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/activity_page.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/activity_page.xml"
+    },
+    {
+        "merged": "com.example.unomobile.app-mergeReleaseResources-55:/layout/fragment_game_build_mode.xml",
+        "source": "com.example.unomobile.app-main-57:/layout/fragment_game_build_mode.xml"
+    }
+]

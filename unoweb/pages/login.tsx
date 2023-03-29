@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "../redux/store";
 import { clearMessage, MessageState } from "../redux/features/message";
 import LoginForm from "../components/auth/login_form";
 import RegisterForm from "../components/auth/register_form";
+import React from "react";
 
 const ImageResponsiveDiv = styled.div`
   height: 200px;

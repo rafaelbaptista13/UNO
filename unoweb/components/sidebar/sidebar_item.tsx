@@ -19,6 +19,7 @@ import {
 import styled from "styled-components";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import Link from "next/link";
+import React from "react";
 
 const ListItemDiv = styled.div`
   border: none;
