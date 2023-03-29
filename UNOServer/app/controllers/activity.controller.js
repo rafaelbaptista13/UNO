@@ -11,6 +11,16 @@ const QuestionActivity = db.questionactivities;
 const QuestionActivityStatus = db.questionactivitystatus;
 const UserAnswered = db.useranswered;
 const Answer = db.answers;
+const GameActivity = db.gameactivities;
+const PlayMode = db.playmode;
+const MusicalNote = db.musicalnotes;
+const GameMode = db.gamemodes;
+const PlayModeStatus = db.playmodestatus;
+const IdentifyMode = db.identifymode;
+const IdentifyModeStatus = db.identifymodestatus;
+const BuildMode = db.buildmode;
+const BuildModeStatus = db.buildmodestatus;
+const UserChosenNotes = db.userchosennotes;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -127,6 +137,13 @@ exports.findOne = (req, res) => {
     ],
   })
     .then(async (activity) => {
+      if (activity === null) {
+        res.status(400).send({
+          message: "Activity not found.",
+        });
+        return;
+      }
+
       activity = activity.toJSON();
       switch (activity.activitytype.id) {
         case 1:
@@ -205,9 +222,98 @@ exports.findOne = (req, res) => {
             question: question_info.question,
             answers: answers,
             media_type: question_info.media_type,
+            one_answer_only: question_info.one_answer_only,
           };
           break;
         case 4:
+          let game_info = await GameActivity.findOne({
+            where: {
+              activity_id: activity.id,
+            },
+            include: [
+              {
+                model: MusicalNote,
+                attributes: [
+                  "id",
+                  "order",
+                  "name",
+                  "violin_string",
+                  "violin_finger",
+                  "viola_string",
+                  "viola_finger",
+                  "note_code",
+                  "type",
+                ]
+              },
+            ],
+            order: [
+              [MusicalNote, "order", "ASC"]
+            ]
+          });
+
+          switch (game_info.gamemode_id) {
+            case 1:
+              activity.game_activity = {
+                mode: "Identify",
+                notes: game_info.MusicalNotes,
+              };
+              let identify_mode_status = await IdentifyModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (identify_mode_status !== null) {
+                activity.completed = true;
+              }
+              break;
+            case 2:
+              activity.game_activity = {
+                mode: "Play",
+                notes: game_info.MusicalNotes,
+              };
+              let play_mode_status = await PlayModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (play_mode_status !== null) {
+                activity.completed = true;
+              }
+              break;
+            case 3:
+              let build_mode = await BuildMode.findOne({
+                where: {
+                  activity_id: activity.id,
+                },
+              });
+              activity.game_activity = {
+                mode: "Build",
+                notes: game_info.MusicalNotes,
+                sequence_length: build_mode.sequence_length,
+              };
+              let build_mode_status = await BuildModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (build_mode_status !== null) {
+                activity.completed = true;
+                let user_chosen_notes = await UserChosenNotes.findAll({
+                  where: {
+                    status_id: build_mode_status.id,
+                  },
+                  attributes: ["order", "note_id"],
+                  order: [["order", "ASC"]],
+                });
+                activity.game_activity.chosen_notes = user_chosen_notes;
+              }
+              break;
+          }
+
+          break;
       }
 
       res.send(activity);
@@ -291,7 +397,56 @@ exports.findAll = (req, res) => {
             }
             break;
           case 4:
-            activity.completed = false;
+            let game_activity_type = await GameActivity.findOne({
+              where: {
+                activity_id: activity.id,
+              },
+              include: [
+                {
+                  model: GameMode,
+                  as: "gamemode",
+                },
+              ],
+            });
+
+            activity.game_activity = { mode: game_activity_type.gamemode.name };
+            if (game_activity_type.gamemode.id === 1) {
+              let identify_mode_status = await IdentifyModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (identify_mode_status === null) {
+                activity.completed = false;
+              } else {
+                activity.completed = true;
+              }
+            } else if (game_activity_type.gamemode.id === 2) {
+              let play_mode_status = await PlayModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (play_mode_status === null) {
+                activity.completed = false;
+              } else {
+                activity.completed = true;
+              }
+            } else if (game_activity_type.gamemode.id === 3) {
+              let build_mode_status = await BuildModeStatus.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: req.userId,
+                },
+              });
+              if (build_mode_status === null) {
+                activity.completed = false;
+              } else {
+                activity.completed = true;
+              }
+            }
             break;
         }
         data.push(activity);

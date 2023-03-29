@@ -5,7 +5,8 @@ module.exports = (app) => {
   const activities = require("../controllers/activity.controller.js");
   const mediaactivities = require("../controllers/mediaactivity.controller.js");
   const exerciseactivities = require("../controllers/exerciseactivity.controller.js");
-  const questionactivities = require("../controllers/questionactivity.controller.js")
+  const questionactivities = require("../controllers/questionactivity.controller.js");
+  const gameactivities = require("../controllers/gameactivity.controller.js");
 
   let router = require("express").Router();
 
@@ -102,6 +103,40 @@ module.exports = (app) => {
     "/:class_id/:activity_id/question/answers/:order/media",
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     questionactivities.getMediaFromAnswer
+  );
+
+
+  /**
+   * Game Activities
+   */
+  router.post(
+    "/:class_id/game",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    gameactivities.createGame
+  );
+  // Get the media submitted by an user to a Game activity
+  router.get(
+    "/:class_id/:activity_id/game/submitted/media",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    gameactivities.getSubmittedMedia
+  );
+  // Submit activity of type Play
+  router.post(
+    "/:class_id/:activity_id/game/play/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
+    gameactivities.submitGamePlay
+  );
+  // Submit activity of type Identify
+  router.post(
+    "/:class_id/:activity_id/game/identify/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass],
+    gameactivities.submitGameIdentify
+  );
+  // Submit activity of type Build
+  router.post(
+    "/:class_id/:activity_id/game/build/submit",
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
+    gameactivities.submitGameBuild
   );
 
   // Create a new activity

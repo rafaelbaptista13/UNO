@@ -9,8 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.example.unomobile.R
-import com.example.unomobile.fragments.ExerciseFragment
-import com.example.unomobile.fragments.MediaFragment
+import com.example.unomobile.fragments.*
 import com.example.unomobile.fragments.questions.QuestionFragment
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
@@ -28,6 +27,7 @@ class ActivityPageActivity : AppCompatActivity() {
     var activities_type : Array<String>? = null
     var activities_description : Array<String>? = null
     var activities_status : Array<Boolean>? = null
+    var activities_game_mode : Array<String>? = null
     var active_activity : Int = 0
     private var user: UserInfo? = null
 
@@ -70,6 +70,17 @@ class ActivityPageActivity : AppCompatActivity() {
             }
             if (activities_type!![active_activity] == "Question") {
                 launchQuestionFragment()
+            }
+            if (activities_type!![active_activity] == "Game") {
+                if (activities_game_mode!![active_activity] == "Play") {
+                    launchGamePlayModeFragment()
+                }
+                if (activities_game_mode!![active_activity] == "Identify") {
+                    launchGameIdentifyModeFragment()
+                }
+                if (activities_game_mode!![active_activity] == "Build") {
+                    launchGameBuildModeFragment()
+                }
             }
         }
 
@@ -115,6 +126,17 @@ class ActivityPageActivity : AppCompatActivity() {
                             if (activities_type!![active_activity] == "Question") {
                                 launchQuestionFragment()
                             }
+                            if (activities_type!![active_activity] == "Game") {
+                                if (activities_game_mode!![active_activity] == "Play") {
+                                    launchGamePlayModeFragment()
+                                }
+                                if (activities_game_mode!![active_activity] == "Identify") {
+                                    launchGameIdentifyModeFragment()
+                                }
+                                if (activities_game_mode!![active_activity] == "Build") {
+                                    launchGameBuildModeFragment()
+                                }
+                            }
 
 
                         }
@@ -153,6 +175,17 @@ class ActivityPageActivity : AppCompatActivity() {
                 if (activities_type!![active_activity] == "Question") {
                     launchQuestionFragment()
                 }
+                if (activities_type!![active_activity] == "Game") {
+                    if (activities_game_mode!![active_activity] == "Play") {
+                        launchGamePlayModeFragment()
+                    }
+                    if (activities_game_mode!![active_activity] == "Identify") {
+                        launchGameIdentifyModeFragment()
+                    }
+                    if (activities_game_mode!![active_activity] == "Build") {
+                        launchGameBuildModeFragment()
+                    }
+                }
             }
         }
 
@@ -163,6 +196,7 @@ class ActivityPageActivity : AppCompatActivity() {
         activities_type = bundle?.getStringArray("activities_type")
         activities_description = bundle?.getStringArray("activities_description")
         activities_status = bundle?.getBooleanArray("activities_status")?.toTypedArray()
+        activities_game_mode = bundle?.getStringArray("activities_game_mode")
         active_activity = bundle?.getInt("active_activity")!!
 
         // Fix Buttons
@@ -182,6 +216,17 @@ class ActivityPageActivity : AppCompatActivity() {
         if (activities_type!![active_activity] == "Question") {
             launchQuestionFragment()
         }
+        if (activities_type!![active_activity] == "Game") {
+            if (activities_game_mode!![active_activity] == "Play") {
+                launchGamePlayModeFragment()
+            }
+            if (activities_game_mode!![active_activity] == "Identify") {
+                launchGameIdentifyModeFragment()
+            }
+            if (activities_game_mode!![active_activity] == "Build") {
+                launchGameBuildModeFragment()
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -192,8 +237,6 @@ class ActivityPageActivity : AppCompatActivity() {
         val resultIntent = Intent()
         val bundle = Bundle()
 
-        Log.i("ActivityPageActivity", activities_status!![activities_status!!.size-2].toString())
-        Log.i("ActivityPageActivity", activities_status!![activities_status!!.size-1].toString())
         if (activities_status!!.isNotEmpty()) {
 
             bundle.putBooleanArray("activities_status", activities_status!!.toBooleanArray())
@@ -221,6 +264,30 @@ class ActivityPageActivity : AppCompatActivity() {
 
     private fun launchQuestionFragment() {
         val fragment = QuestionFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity])
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    private fun launchGamePlayModeFragment() {
+        val fragment = GamePlayModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    private fun launchGameIdentifyModeFragment() {
+        val fragment = GameIdentifyModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    private fun launchGameBuildModeFragment() {
+        val fragment = GameBuildModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)

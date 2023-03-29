@@ -139,7 +139,6 @@ class MediaFragment : Fragment() {
                     override fun onFailure(call: Call<Activity>, t: Throwable) {
                         Log.i("ActivityFragment", "Failed request");
                         Log.i("ActivityFragment", t.message!!)
-
                     }
                 })
 

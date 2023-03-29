@@ -39,6 +39,7 @@ const db = require("./app/models");
 
 const Role = db.roles;
 const ActivityType = db.activitytypes;
+const GameMode = db.gamemodes;
 
 async function synchronize() {
   try {
@@ -95,6 +96,33 @@ async function synchronize() {
       },
       defaults: {
         name: "Game"
+      }
+    });
+
+    await GameMode.findOrCreate({
+      where: {
+        id: 1,
+      },
+      defaults: {
+        name: "Identify"
+      }
+    });
+
+    await GameMode.findOrCreate({
+      where: {
+        id: 2,
+      },
+      defaults: {
+        name: "Play"
+      }
+    });
+
+    await GameMode.findOrCreate({
+      where: {
+        id: 3,
+      },
+      defaults: {
+        name: "Build"
       }
     });
     

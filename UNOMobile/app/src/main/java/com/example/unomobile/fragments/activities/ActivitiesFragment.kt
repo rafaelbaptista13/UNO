@@ -39,12 +39,15 @@ class ActivitiesFragment : Fragment() {
     private lateinit var content_text: TextView
     private lateinit var exercise_text: TextView
     private lateinit var question_text: TextView
+    private lateinit var game_text: TextView
     private lateinit var content_progress_bar: ProgressBar
     private lateinit var exercise_progress_bar: ProgressBar
     private lateinit var question_progress_bar: ProgressBar
+    private lateinit var game_progress_bar: ProgressBar
     private lateinit var content_number_text: TextView
     private lateinit var exercise_number_text: TextView
     private lateinit var question_number_text: TextView
+    private lateinit var game_number_text: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,12 +71,15 @@ class ActivitiesFragment : Fragment() {
         content_text = view.findViewById(R.id.content_text)
         exercise_text = view.findViewById(R.id.exercise_text)
         question_text = view.findViewById(R.id.question_text)
+        game_text = view.findViewById(R.id.game_text)
         content_progress_bar = view.findViewById(R.id.content_progress_bar)
         exercise_progress_bar = view.findViewById(R.id.exercise_progress_bar)
         question_progress_bar = view.findViewById(R.id.question_progress_bar)
+        game_progress_bar = view.findViewById(R.id.game_progress_bar)
         content_number_text = view.findViewById(R.id.content_number_text)
         exercise_number_text = view.findViewById(R.id.exercise_number_text)
         question_number_text = view.findViewById(R.id.question_number_text)
+        game_number_text = view.findViewById(R.id.game_number_text)
 
         recyclerView = view.findViewById(R.id.recycler_view)
         manager = LinearLayoutManager(activity)
@@ -100,7 +106,8 @@ class ActivitiesFragment : Fragment() {
                     val total_content_activities = data.count { it.activitytype.name == "Media" }
                     val total_exercise_activities = data.count { it.activitytype.name == "Exercise" }
                     val total_question_activities = data.count { it.activitytype.name == "Question" }
-                    Log.i("ActivitiesFragment", total_content_activities.toString() + " - " + total_exercise_activities.toString() + " - " + total_question_activities.toString())
+                    val total_game_activities = data.count { it.activitytype.name == "Game" }
+                    Log.i("ActivitiesFragment", total_content_activities.toString() + " - " + total_exercise_activities.toString() + " - " + total_question_activities.toString() + " - " + total_game_activities.toString())
 
                     if (total_content_activities != 0) {
                         val completed_content_activities = data.count { it.activitytype.name == "Media" && it.completed == true }
@@ -117,6 +124,11 @@ class ActivitiesFragment : Fragment() {
                         updateActivityStatusCard(question_number_text, question_progress_bar, completed_question_activities, total_question_activities)
                         setActivityTypeStatusCardVisible(question_text, question_progress_bar, question_number_text)
                     }
+                    if (total_game_activities != 0) {
+                        val completed_game_activities = data.count { it.activitytype.name == "Game" && it.completed == true }
+                        updateActivityStatusCard(game_number_text, game_progress_bar, completed_game_activities, total_game_activities)
+                        setActivityTypeStatusCardVisible(game_text, game_progress_bar, game_number_text)
+                    }
 
                     adapter = ActivitiesAdapter(data, requireContext())
                     recyclerView.adapter = adapter
@@ -131,6 +143,7 @@ class ActivitiesFragment : Fragment() {
                             bundle.putStringArray("activities_type", response.body()!!.map { it.activitytype.name }.toTypedArray())
                             bundle.putStringArray("activities_description", response.body()!!.map { it.description }.toTypedArray())
                             bundle.putBooleanArray("activities_status", response.body()!!.map { it.completed ?: false }.toBooleanArray())
+                            bundle.putStringArray("activities_game_mode", response.body()!!.map { it.game_activity?.mode ?: "" }.toTypedArray())
                             bundle.putInt("active_activity", position)
 
                             var intent = Intent(requireContext(), ActivityPageActivity::class.java)
@@ -170,6 +183,11 @@ class ActivitiesFragment : Fragment() {
                             val total = question_number_text.text.split("/")[1].toInt()
                             val new_completed = question_number_text.text.split("/")[0].toInt() + 1
                             updateActivityStatusCard(question_number_text, question_progress_bar, new_completed, total)
+                        }
+                        if (data[index].activitytype.name == "Game") {
+                            val total = game_number_text.text.split("/")[1].toInt()
+                            val new_completed = game_number_text.text.split("/")[0].toInt() + 1
+                            updateActivityStatusCard(game_number_text, game_progress_bar, new_completed, total)
                         }
                         data[index].completed = modifiedData[index]
                         recyclerView.adapter!!.notifyItemChanged(index)
