@@ -222,7 +222,7 @@ exports.findOne = (req, res) => {
             question: question_info.question,
             answers: answers,
             media_type: question_info.media_type,
-            one_answer_only: question_info.one_answer_only
+            one_answer_only: question_info.one_answer_only,
           };
           break;
         case 4:
@@ -242,10 +242,13 @@ exports.findOne = (req, res) => {
                   "viola_string",
                   "viola_finger",
                   "note_code",
-                  "type"
-                ],
+                  "type",
+                ]
               },
             ],
+            order: [
+              [MusicalNote, "order", "ASC"]
+            ]
           });
 
           switch (game_info.gamemode_id) {
@@ -282,13 +285,13 @@ exports.findOne = (req, res) => {
             case 3:
               let build_mode = await BuildMode.findOne({
                 where: {
-                  activity_id: activity.id
-                }
-              })
+                  activity_id: activity.id,
+                },
+              });
               activity.game_activity = {
                 mode: "Build",
                 notes: game_info.MusicalNotes,
-                sequence_length: build_mode.sequence_length
+                sequence_length: build_mode.sequence_length,
               };
               let build_mode_status = await BuildModeStatus.findOne({
                 where: {
@@ -300,13 +303,11 @@ exports.findOne = (req, res) => {
                 activity.completed = true;
                 let user_chosen_notes = await UserChosenNotes.findAll({
                   where: {
-                    status_id: build_mode_status.id
+                    status_id: build_mode_status.id,
                   },
-                  attributes: [
-                    "order",
-                    "note_id"
-                  ]
-                })
+                  attributes: ["order", "note_id"],
+                  order: [["order", "ASC"]],
+                });
                 activity.game_activity.chosen_notes = user_chosen_notes;
               }
               break;
@@ -437,8 +438,8 @@ exports.findAll = (req, res) => {
               let build_mode_status = await BuildModeStatus.findOne({
                 where: {
                   activity_id: activity.id,
-                  user_id: req.userId
-                }
+                  user_id: req.userId,
+                },
               });
               if (build_mode_status === null) {
                 activity.completed = false;

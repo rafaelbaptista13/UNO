@@ -121,7 +121,6 @@ class GameBuildModeFragment : Fragment() {
             activity_id = arguments?.getInt("activity_id")
         }
         midiDriver = MidiDriver.getInstance()
-        midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
         notes_views = arrayOf()
     }
 
@@ -195,6 +194,7 @@ class GameBuildModeFragment : Fragment() {
         play_button!!.setOnClickListener {
             it.visibility = View.GONE
             pause_button!!.visibility = View.VISIBLE
+            midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
 
             horizontal_scroll_view.scrollTo(0, 0)
 

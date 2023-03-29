@@ -93,7 +93,6 @@ class GameIdentifyModeFragment : Fragment() {
             activity_id = arguments?.getInt("activity_id")
         }
         midiDriver = MidiDriver.getInstance()
-        midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
         notes_views = arrayOf()
     }
 

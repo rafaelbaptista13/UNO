@@ -86,7 +86,7 @@ fun addInvisibleView(string: LinearLayout, context: Context) {
 }
 
 fun updateMusicalNoteViewToCircle(note_view: MusicalNoteView, note: MusicalNote, color: Int, context: Context) {
-    note_view.setText(note.violin_finger.toString())
+    note_view.setTextCircle(note.violin_finger.toString())
     val circle_drawable = ContextCompat.getDrawable(context, R.drawable.circle_note) as GradientDrawable
     circle_drawable.let {
         it.setColor(ContextCompat.getColor(context, color))
@@ -159,7 +159,7 @@ fun createMusicalNoteViewForAvailableNotes(note: MusicalNote, context: Context):
             circle_drawable.let {
                 it.setColor(ContextCompat.getColor(context, string_color))
                 note_view.background = it
-                note_view.setText(note.name)
+                note_view.setTextCircle(note.name)
             }
         }
         "RightTriangle" -> {

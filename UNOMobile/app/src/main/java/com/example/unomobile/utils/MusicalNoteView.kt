@@ -60,6 +60,11 @@ class MusicalNoteView(context: Context?, attrs: AttributeSet?) : View(context, a
         invalidate() // triggers a redraw of the view
     }
 
+    fun setTextCircle(newText: String) {
+        note_type = "Circle"
+        setText(newText)
+    }
+
     fun setTextLeftTriangle(newText: String) {
         note_type = "LeftTriangle"
         setText(newText)
