@@ -240,6 +240,15 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <TextView
+                android:id="@+id/incorrect_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Incorreto. Tenta outra sequência."
+                android:visibility="gone"/>
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/submit"
                 android:layout_width="match_parent"
@@ -252,14 +261,7 @@
                 android:layout_weight="1"
                 />
 
-            <TextView
-                android:id="@+id/incorrect_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Incorreto. Tenta outra sequência."
-                android:visibility="gone"/>
+
 
         </LinearLayout>
 
