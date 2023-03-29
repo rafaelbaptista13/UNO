@@ -1,0 +1,35 @@
+{
+  "name": "unoserver",
+  "version": "1.0.0",
+  "description": "UNO Rest API",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "sequelize",
+    "mysql",
+    "rest",
+    "api",
+    "uno"
+  ],
+  "author": "rafael",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1323.0",
+    "bcryptjs": "^2.4.3",
+    "cookie": "^0.5.0",
+    "cookie-session": "^2.0.0",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.28.0",
+    "uuid": "^9.0.0"
+  }
+}

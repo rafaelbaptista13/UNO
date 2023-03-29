@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">UNOMobile</string>
+    <string name="content_title">Conteúdos</string>
+    <string name="home_title">Olá Ana!</string>
+    <string name="notifications_title">Notificações</string>
+    <string name="profile_title">Perfil</string>
+    <string name="app_logo">App logo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Media">Conteúdo</string>
+    <string name="Exercise">Exercício</string>
+    <string name="Game">Jogo</string>
+    <string name="Question">Pergunta</string>
+</resources>
