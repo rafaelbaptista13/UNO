@@ -33,17 +33,13 @@ jobs:
           push: true
           tags: rafaelbaptista13/uno_webapp:latest
 
-      - name: Install Docker Compose
-        uses: docker/compose-cli@v1.0.31
-
       - name: Deploy Docker Compose stack
-        uses: docker/compose@v2.0.0
-        with:
-          compose-file: docker-compose.yml
-          project-name: uno
-          command: up -d
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-          MYSQL_USER: ${{ secrets.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+            MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+            MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+            MYSQL_USER: ${{ secrets.MYSQL_USER }}
+            MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        run: |
+          echo --- Starting docker ---
+          docker-compose up -d
+          echo --- Containers up ---
