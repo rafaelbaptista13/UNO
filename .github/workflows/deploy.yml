@@ -25,8 +25,8 @@ jobs:
           tags: rafaelbaptista13/uno:latest
 
       - name: Deploy Docker Compose stack
-        uses: docker/compose-action@v1
+        uses: docker/compose@v2.0.0
         with:
           compose-file: docker-compose.yml
-          project-name: your-project-name
+          project-name: uno
           command: up -d
