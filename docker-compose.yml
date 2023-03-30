@@ -4,7 +4,7 @@ services:
   webapp:
     build: ./unoweb
     ports:
-      - "3000:3000"
+      - "0.0.0.0:3000:3000"
     depends_on:
       - api
     networks:
@@ -16,7 +16,7 @@ services:
     build: ./UNOServer
     restart: always
     ports:
-      - "8080:8080"
+      - "0.0.0.0:8080:8080"
     depends_on:
       db:
         condition: service_healthy
