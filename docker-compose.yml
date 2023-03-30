@@ -4,7 +4,7 @@ services:
   webapp:
     build: ./unoweb
     ports:
-      - "0.0.0.0:3000:3000"
+      - "0.0.0.0:80:3000"
     depends_on:
       - api
     networks:
