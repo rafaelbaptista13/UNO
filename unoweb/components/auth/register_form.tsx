@@ -72,6 +72,7 @@ export default function RegisterForm({
     last_name: string;
     email: string;
     password: string;
+    confirm_password: string;
   }) => {
     const { first_name, last_name, email, password } = formValue;
 

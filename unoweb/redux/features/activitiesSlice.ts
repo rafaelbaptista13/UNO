@@ -18,6 +18,6 @@ export const activitiesSlice: Slice = createSlice({
   },
 });
 
-export const { setType, setTitle } = activitiesSlice.actions;
+export const { setType } = activitiesSlice.actions;
 
 export default activitiesSlice.reducer;

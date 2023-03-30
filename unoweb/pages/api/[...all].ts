@@ -15,7 +15,7 @@ const proxy = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) =>
     const proxy: httpProxy = httpProxy.createProxy();
     proxy.once("proxyRes", resolve).once("error", reject).web(req, res, {
       changeOrigin: true,
-      target: "http://localhost:8080",
+      target: process.env.API_URL,
     });
   });
 
