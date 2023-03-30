@@ -17,12 +17,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker images
+      - name: Build and push Docker image for API
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./UNOServer
+          dockerfile: ./UNOServer/Dockerfile
           push: true
-          tags: rafaelbaptista13/uno:latest
+          tags: rafaelbaptista13/uno_api:latest
+
+      - name: Build and push Docker image for WebApp
+        uses: docker/build-push-action@v2
+        with:
+          context: ./unoweb
+          dockerfile: ./unoweb/Dockerfile
+          push: true
+          tags: rafaelbaptista13/uno_webapp:latest
 
       - name: Deploy Docker Compose stack
         uses: docker/compose@v2.0.0
