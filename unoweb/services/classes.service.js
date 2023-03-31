@@ -1,6 +1,6 @@
 import api from "./api";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = "/api";
 
 const getClasses = () => {
   return api.get(API_URL + "/classes").then((response) => {
