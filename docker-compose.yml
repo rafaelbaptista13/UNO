@@ -10,13 +10,13 @@ services:
     networks:
       - my-network
     environment:
-      API_URL: http://api:8080
+      API_URL: http://api:4000
 
   api:
     build: ./UNOServer
     restart: always
     ports:
-      - "0.0.0.0:8080:8080"
+      - "0.0.0.0:4000:8080"
     depends_on:
       db:
         condition: service_healthy
