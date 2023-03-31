@@ -16,7 +16,7 @@ services:
     build: ./UNOServer
     restart: always
     ports:
-      - "0.0.0.0:4000:8080"
+      - "0.0.0.0:8080:8080"
     depends_on:
       db:
         condition: service_healthy
