@@ -10,7 +10,7 @@ services:
     networks:
       - my-network
     environment:
-      API_URL: http://api:4000
+      API_URL: http://api:8080
 
   api:
     build: ./UNOServer
