@@ -16,7 +16,7 @@ const proxy = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) =>
     console.log("Aqui");
     console.log(process.env.NODE_ENV);
     const target = process.env.NODE_ENV === "production"
-      ? "http://deti-viola.ua.pt/internal-api/"
+      ? "http://deti-viola.ua.pt/internal-api"
       : "http://api:8080"
 
     console.log(target)
