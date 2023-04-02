@@ -2,10 +2,7 @@ version: '3'
 
 services:
   webapp:
-    build: 
-      context: ./unoweb
-      args:
-        APP_ENV: ${APP_ENV}
+    image: rafaelbaptista13/uno_webapp:latest
     ports:
       - "3000:3000"
     depends_on:
@@ -16,7 +13,7 @@ services:
       API_URL: http://api:8080
 
   api:
-    build: ./UNOServer
+    image: rafaelbaptista13/uno_api:latest
     restart: always
     ports:
       - "8080:8080"
