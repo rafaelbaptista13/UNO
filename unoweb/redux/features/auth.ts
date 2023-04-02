@@ -68,6 +68,7 @@ export const login = createAsyncThunk(
     thunkAPI
   ) => {
     try {
+      console.log("AQUIIII")
       const data = await AuthService.login(email, password);
       return { user: data };
     } catch (error: any) {

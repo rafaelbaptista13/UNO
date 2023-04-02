@@ -2,7 +2,10 @@ version: '3'
 
 services:
   webapp:
-    build: ./unoweb
+    build: 
+      context: ./unoweb
+      args:
+        APP_ENV: ${APP_ENV}
     ports:
       - "3000:3000"
     depends_on:
@@ -11,7 +14,6 @@ services:
       - my-network
     environment:
       API_URL: http://api:8080
-      NODE_ENV: ${NODE_ENV:-production}
 
   api:
     build: ./UNOServer
@@ -29,7 +31,6 @@ services:
       DB_NAME: ${MYSQL_DATABASE}
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
-      NODE_ENV: ${NODE_ENV:-production}
 
   db:
     image: mysql/mysql-server:8.0.23

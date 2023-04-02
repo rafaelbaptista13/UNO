@@ -2,13 +2,12 @@ import Head from "next/head";
 import styled from "styled-components";
 import Image from "next/image";
 import { ButtonPrimaryInverseDarker } from "../utils/buttons";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { clearMessage, MessageState } from "../redux/features/message";
 import LoginForm from "../components/auth/login_form";
 import RegisterForm from "../components/auth/register_form";
-import React from "react";
 
 const ImageResponsiveDiv = styled.div`
   height: 200px;
