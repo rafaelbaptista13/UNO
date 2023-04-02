@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST={"_app.tsx -> ../components/sidebar/sidebar":{"id":"_app.tsx -> ../components/sidebar/sidebar","files":["static/chunks/components_sidebar_sidebar_tsx.js"]},"_app.tsx -> ../components/sidebar/sidebarbutton":{"id":"_app.tsx -> ../components/sidebar/sidebarbutton","files":["static/chunks/components_sidebar_sidebarbutton_tsx.js"]}}
