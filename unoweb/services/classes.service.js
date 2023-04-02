@@ -1,6 +1,6 @@
 import api from "./api";
 
-const API_URL = "/api";
+const API_URL = "http://deti-viola.ua.pt/api";
 
 const getClasses = () => {
   return api.get(API_URL + "/classes").then((response) => {
