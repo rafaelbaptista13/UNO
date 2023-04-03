@@ -13,11 +13,9 @@ export const config = {
 const proxy = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) =>
   new Promise((resolve, reject) => {
     const proxy: httpProxy = httpProxy.createProxy();
-    console.log("Aqui");
-    console.log(process.env.NODE_ENV);
     const target = process.env.NODE_ENV === "production"
       ? "http://deti-viola.ua.pt/internal-api"
-      : "http://api:8080"
+      : "http://localhost:8080"
 
     console.log(target)
     proxy

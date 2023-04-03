@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://deti-viola.ua.pt/api/auth/";
+const API_URL = process.env.NODE_ENV === "production" ? "http://deti-viola.ua.pt/api/auth/" : "http://localhost:3000/api/auth/";
 
 const register = (first_name, last_name, email, password) => {
   return axios.post(API_URL + "teacher/signup", {
