@@ -15,6 +15,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -105,6 +107,7 @@ class QuestionFragment : Fragment() {
         val type_text = view.findViewById<TextView>(R.id.type)
         type_text.text = order.toString() + ". Pergunta"
         val question_text = view.findViewById<TextView>(R.id.question)
+
         edit_submission_btn = view.findViewById(R.id.edit_submission)
         edit_submission_btn.setOnClickListener {
             editMode = true
@@ -144,11 +147,10 @@ class QuestionFragment : Fragment() {
                             val activity_data = response.body()
                             media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data!!.id + "/question/media"
                             one_answer_only = activity_data.question_activity!!.one_answer_only
-                            Log.i("QuestionFragment", "Estou aqui")
-                            Log.i("QuestionFragment", activity_data.question_activity!!.media_type.toString())
-                            if (activity_data.question_activity!!.media_type != null) {
+                            question_text.text = activity_data.question_activity.question
+                            if (activity_data.question_activity.media_type != null) {
                                 // Get media type
-                                media_type = activity_data.question_activity.media_type!!.split("/")[0]
+                                media_type = activity_data.question_activity.media_type.split("/")[0]
 
                                 Log.i("QuestionFragment", media_type!!);
 

@@ -97,14 +97,14 @@ fun updateMusicalNoteViewToCircle(note_view: MusicalNoteView, note: MusicalNote,
 
 fun updateMusicalNoteViewToLeftTriangle(note_view: MusicalNoteView, note: MusicalNote, drawable: Int, context: Context) {
     note_view.setTextLeftTriangle(note.violin_finger.toString())
-    val drawable = ContextCompat.getDrawable(context, drawable)
-    note_view.background = drawable
+    val drawable_image = ContextCompat.getDrawable(context, drawable)
+    note_view.background = drawable_image
 }
 
 fun updateMusicalNoteViewToRightTriangle(note_view: MusicalNoteView, note: MusicalNote, drawable: Int, context: Context) {
     note_view.setTextRightTriangle(note.violin_finger.toString())
-    val drawable = ContextCompat.getDrawable(context, drawable)
-    note_view.background = drawable
+    val drawable_image = ContextCompat.getDrawable(context, drawable)
+    note_view.background = drawable_image
 }
 
 fun addInitialItems(string: LinearLayout, context: Context) {

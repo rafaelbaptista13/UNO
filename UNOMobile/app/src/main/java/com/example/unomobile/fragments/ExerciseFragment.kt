@@ -214,7 +214,7 @@ class ExerciseFragment : Fragment() {
                                 // There is media to present
                                 media_path = com.example.unomobile.network.BASE_URL + "activities/" + user!!.class_id + "/" + activity_data.id + "/exercise/media"
                                 // Get media type
-                                media_type = activity_data.exercise_activity!!.media_type!!.split("/")[0]
+                                media_type = activity_data.exercise_activity.media_type!!.split("/")[0]
 
                                 Log.i("ActivityFragment", media_type!!);
 
@@ -388,8 +388,7 @@ class ExerciseFragment : Fragment() {
     }
 
     private fun getMimeType(uri: Uri): String? {
-        var mimeType: String? = null
-        mimeType = if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
+        var mimeType: String? = if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
             val cr: ContentResolver = requireContext().contentResolver
             cr.getType(uri)
         } else {
