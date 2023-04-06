@@ -1,7 +1,5 @@
 package com.example.unomobile.utils
 
-import com.example.unomobile.R
-
 val noteToMidiMap = mapOf<String, Int>(
     "A0" to 21,
     "A#0/Bb0" to 22,

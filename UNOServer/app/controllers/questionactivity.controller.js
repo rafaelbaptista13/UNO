@@ -119,6 +119,7 @@ exports.createQuestion = async (req, res) => {
   let answer_media_counter = 0;
   let answers = [];
   for (let idx in req.body.answers) {
+    console.log(req.body.answers[idx])
     let answer = JSON.parse(req.body.answers[idx]);
     if (answer.hasMedia) {
       // Save media type
