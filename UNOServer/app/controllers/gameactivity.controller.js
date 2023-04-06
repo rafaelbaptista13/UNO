@@ -78,10 +78,10 @@ exports.createGame = async (req, res) => {
     if (
       note.violin_string < 1 ||
       note.violin_string > 4 ||
-      note.violin_finger < 1 ||
-      note.violin_finger > 5 ||
-      note.viola_finger < 1 ||
-      note.viola_finger > 5 ||
+      note.violin_finger < 0 ||
+      note.violin_finger > 4 ||
+      note.viola_finger < 0 ||
+      note.viola_finger > 4 ||
       note.viola_string < 1 ||
       note.viola_string > 4 ||
       (note.type !== "Circle" &&

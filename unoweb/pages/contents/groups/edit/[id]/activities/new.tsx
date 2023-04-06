@@ -4,7 +4,8 @@ import Link from "next/link";
 import PageHeader from "../../../../../../components/utils/page_header";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  ActivitiesState, setType
+  ActivitiesState,
+  setType,
 } from "../../../../../../redux/features/activitiesSlice";
 import { useState } from "react";
 import ErrorModal from "../../../../../../components/utils/error_modal";
@@ -75,9 +76,30 @@ export default function NewActivity({ activitygroup_id }: NewActivityProps) {
                 activitygroup_id={activitygroup_id}
               />
             )}
-            {activities_state.type === "Exercise" && <ExerciseForm />}
-            {activities_state.type === "Game" && <GameForm />}
-            {activities_state.type === "Question" && <QuestionForm />}
+            {activities_state.type === "Exercise" && (
+              <ExerciseForm
+                setIsLoading={setIsLoading}
+                setErrorMessage={setErrorMessage}
+                setSuccessMessage={setSuccessMessage}
+                activitygroup_id={activitygroup_id}
+              />
+            )}
+            {activities_state.type === "Game" && (
+              <GameForm
+                setIsLoading={setIsLoading}
+                setErrorMessage={setErrorMessage}
+                setSuccessMessage={setSuccessMessage}
+                activitygroup_id={activitygroup_id}
+              />
+            )}
+            {activities_state.type === "Question" && (
+              <QuestionForm
+                setIsLoading={setIsLoading}
+                setErrorMessage={setErrorMessage}
+                setSuccessMessage={setSuccessMessage}
+                activitygroup_id={activitygroup_id}
+              />
+            )}
           </>
         )}
       </div>
@@ -89,7 +111,10 @@ export default function NewActivity({ activitygroup_id }: NewActivityProps) {
       />
       <SuccessModal
         show={successMessage !== ""}
-        onHide={() => {setSuccessMessage(""); dispatch(setType(""))}}
+        onHide={() => {
+          setSuccessMessage("");
+          dispatch(setType(""));
+        }}
         message={successMessage}
         button_link_path={`/contents/groups/edit/${activitygroup_id}`}
       />
