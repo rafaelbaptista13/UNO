@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ExerciseActivity from "../../../../../../../components/contents/activities/exercise_activity";
 import MediaActivity from "../../../../../../../components/contents/activities/media_activity";
+import QuestionActivity from "../../../../../../../components/contents/activities/question_activity";
 import ErrorCard from "../../../../../../../components/utils/error_card";
 import Loading from "../../../../../../../components/utils/loading";
 import PageHeader from "../../../../../../../components/utils/page_header";
@@ -167,11 +168,7 @@ export default function StudentActivityPage({
             activity_id={activity_id}
             title={activity.title}
             description={activity.description}
-            media_type={
-              activity.media_activity
-                ? activity.media_activity.media_type
-                : null
-            }
+            media_type={activity.media_activity!!.media_type}
             completed={activity.completed}
           />
         )}
@@ -182,12 +179,19 @@ export default function StudentActivityPage({
             activity_id={activity_id}
             title={activity.title}
             description={activity.description}
-            media_type={
-              activity.exercise_activity
-                ? activity.exercise_activity.media_type
-                : null
-            }
+            media_type={activity.exercise_activity!!.media_type}
             completed={activity.completed}
+          />
+        )}
+        {activity?.activitytype.name === "Question" && (
+          <QuestionActivity
+            student_id={student_id}
+            activitygroup_id={activitygroup_id}
+            activity_id={activity_id}
+            title={activity.title}
+            media_type={activity.question_activity!!.media_type}
+            completed={activity.completed}
+            question_info={activity.question_activity!!}
           />
         )}
       </div>

@@ -237,6 +237,39 @@ const createQuestionActivity = (
       return { error: true };
     });
 };
+const getQuestionActivityMedia = (class_id, activity_id) => {
+  return api
+    .get(
+      "/activities/" +
+        class_id +
+        "/" +
+        activity_id +
+        "/question/media",
+      {
+        responseType: "blob",
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
+const getQuestionActivityAnswerMedia = (class_id, activity_id, order) => {
+  return api
+    .get(
+      "/activities/" +
+        class_id +
+        "/" +
+        activity_id +
+        "/question/answers/" + 
+        order + "/media",
+      {
+        responseType: "blob",
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
 
 /**
  * Game Activities
@@ -379,6 +412,8 @@ const ActivitiesService = {
   getExerciseActivityMedia,
   getExerciseActivitySubmittedMedia,
   createQuestionActivity,
+  getQuestionActivityMedia,
+  getQuestionActivityAnswerMedia,
   createGameActivity,
   updateActivity,
   changeOrder,

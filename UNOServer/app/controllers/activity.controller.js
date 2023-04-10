@@ -562,7 +562,7 @@ exports.getActivityOfStudent = async (req, res) => {
           final_data.activity = await getGameActivityInfo(final_data.activity, student_id);
           break;
       }
-
+      
       res.send(final_data);
     })
     .catch((err) => {
@@ -655,6 +655,7 @@ const getQuestionActivityInfo = async (activity, user_id) => {
     media_type: question_info.media_type,
     one_answer_only: question_info.one_answer_only,
   };
+  return activity;
 };
 
 const getGameActivityInfo = async (activity, user_id) => {
