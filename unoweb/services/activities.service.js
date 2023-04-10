@@ -102,19 +102,17 @@ const updateMediaActivity = (
     });
 };
 
-const getActivityMedia = (class_id, activitygroup_id, activity_id) => {
+const getActivityMedia = (class_id, activity_id) => {
   return api
     .get(
       "/activities/" +
         class_id +
         "/" +
-        activitygroup_id +
-        "/" +
         activity_id +
-        "/media"
-        , {
-          responseType: "blob"
-        }
+        "/media",
+      {
+        responseType: "blob",
+      }
     )
     .then((response) => {
       return response.data;
@@ -155,6 +153,39 @@ const createExerciseActivity = (
       return { error: true };
     });
 };
+const getExerciseActivityMedia = (class_id, activity_id) => {
+  return api
+    .get(
+      "/activities/" +
+        class_id +
+        "/" +
+        activity_id +
+        "/exercise/media",
+      {
+        responseType: "blob",
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
+const getExerciseActivitySubmittedMedia = (class_id, activity_id, student_id) => {
+  return api
+    .get(
+      "/activities/teacher/" +
+        class_id +
+        "/" +
+        activity_id +
+        "/exercise/submitted/media/" + 
+        student_id,
+      {
+        responseType: "blob",
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
 
 /**
  * Question Activities
@@ -175,11 +206,14 @@ const createQuestionActivity = (
   formData.append("question", question);
   for (const element of answers) {
     if (element.media != null) {
-      const answer = JSON.stringify({hasMedia: true, answer: element.answer})
+      const answer = JSON.stringify({ hasMedia: true, answer: element.answer });
       formData.append("answers", answer);
       formData.append("answers_media", element.media);
     } else {
-      const answer = JSON.stringify({hasMedia: false, answer: element.answer})
+      const answer = JSON.stringify({
+        hasMedia: false,
+        answer: element.answer,
+      });
       formData.append("answers", answer);
     }
   }
@@ -219,16 +253,48 @@ const createGameActivity = (
     activitygroup_id: activitygroup_id,
     mode: mode,
     notes: notes,
-    description: description
-  }
+    description: description,
+  };
   console.log(mode);
   if (mode === "Build") {
     console.log(sequence_length);
-    body.sequence_length = sequence_length
+    body.sequence_length = sequence_length;
   }
   console.log(body);
   return api
     .post("/activities/" + class_id + "/game", body)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
+    });
+};
+
+const getActivitiesOfStudent = (class_id, activitygroup_id, student_id) => {
+  return api
+    .get("/activities/teacher/" + class_id + "/" + activitygroup_id + "/" + student_id)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
+    });
+};
+
+const getActivityOfStudent = (class_id, activitygroup_id, activity_id, student_id) => {
+  return api
+    .get("/activities/teacher/" + class_id + "/" + activitygroup_id + "/" + activity_id + "/" + student_id)
     .then((response) => {
       if (response.status === 200) {
         return response.data;
@@ -303,11 +369,15 @@ const deleteActivity = (class_id, activity_id, activitygroup_id) => {
 const ActivitiesService = {
   getActivities,
   getActivity,
+  getActivitiesOfStudent,
+  getActivityOfStudent,
   createActivity,
   createMediaActivity,
   updateMediaActivity,
   getActivityMedia,
   createExerciseActivity,
+  getExerciseActivityMedia,
+  getExerciseActivitySubmittedMedia,
   createQuestionActivity,
   createGameActivity,
   updateActivity,

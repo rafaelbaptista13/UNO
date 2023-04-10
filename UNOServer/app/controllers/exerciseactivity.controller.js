@@ -517,3 +517,74 @@ exports.getSubmittedMedia = async (req, res) => {
     .status(200)
     .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
 };
+
+// Get Media from Exercise Activity
+exports.getSubmittedMediaOfStudent = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activity_id = req.params.activity_id;
+  const student_id = req.params.student_id;
+
+  // Check Activity
+  let activity = await Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: {
+      model: ActivityGroup,
+      as: "activitygroup",
+      where: {
+        class_id: class_id,
+      },
+    },
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "Activity not found!",
+    });
+    return;
+  }
+
+  // Get ExerciseActivityStatus
+  let activity_exercise = await ExerciseActivity.findOne({
+    where: {
+      activity_id: activity_id,
+    },
+    include: [
+      {
+        model: ExerciseActivityStatus,
+        where: {
+          activity_id: activity_id,
+          user_id: student_id,
+        },
+      },
+    ],
+  });
+  if (activity_exercise === null) {
+    res.status(400).send({
+      message: "Activity not submitted!",
+    });
+    return;
+  }
+
+  // Save media type
+  const media_type = activity_exercise.ExerciseActivityStatus.media_type;
+
+  // Get Media from aws s3
+  const s3Object = await req.s3
+    .getObject({
+      Bucket: "violuno",
+      Key: activity_exercise.ExerciseActivityStatus.media_id,
+    })
+    .promise();
+
+  // Decrypt
+  const decryptedFile = CryptoJS.AES.decrypt(
+    s3Object.Body.toString(),
+    activity_exercise.ExerciseActivityStatus.media_secret
+  );
+
+  res.set("Content-Type", media_type);
+  res
+    .status(200)
+    .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
+};
