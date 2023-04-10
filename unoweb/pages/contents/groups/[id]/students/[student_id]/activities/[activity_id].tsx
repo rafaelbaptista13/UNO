@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ExerciseActivity from "../../../../../../../components/contents/activities/exercise_activity";
+import GameActivity from "../../../../../../../components/contents/activities/game_activity";
 import MediaActivity from "../../../../../../../components/contents/activities/media_activity";
 import QuestionActivity from "../../../../../../../components/contents/activities/question_activity";
 import ErrorCard from "../../../../../../../components/utils/error_card";
@@ -192,6 +193,17 @@ export default function StudentActivityPage({
             media_type={activity.question_activity!!.media_type}
             completed={activity.completed}
             question_info={activity.question_activity!!}
+          />
+        )}
+        {activity?.activitytype.name === "Game" && (
+          <GameActivity
+            student_id={student_id}
+            activitygroup_id={activitygroup_id}
+            activity_id={activity_id}
+            title={activity.title}
+            description={activity.description}
+            game_info={activity.game_activity!!}
+            completed={activity.completed}
           />
         )}
       </div>

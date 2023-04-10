@@ -308,6 +308,23 @@ const createGameActivity = (
       return { error: true };
     });
 };
+const getGameActivitySubmittedMedia = (class_id, activity_id, student_id) => {
+  return api
+    .get(
+      "/activities/teacher/" +
+        class_id +
+        "/" +
+        activity_id +
+        "/game/submitted/media/" + 
+        student_id,
+      {
+        responseType: "blob",
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
 
 const getActivitiesOfStudent = (class_id, activitygroup_id, student_id) => {
   return api
@@ -415,6 +432,7 @@ const ActivitiesService = {
   getQuestionActivityMedia,
   getQuestionActivityAnswerMedia,
   createGameActivity,
+  getGameActivitySubmittedMedia,
   updateActivity,
   changeOrder,
   deleteActivity,

@@ -126,6 +126,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     gameactivities.getSubmittedMedia
   );
+  // Get the media submitted by an user to a Game activity (Teacher)
+  router.get(
+    "/teacher/:class_id/:activity_id/game/submitted/media/:student_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    gameactivities.getSubmittedMediaOfStudent
+  );
   // Submit activity of type Play
   router.post(
     "/:class_id/:activity_id/game/play/submit",

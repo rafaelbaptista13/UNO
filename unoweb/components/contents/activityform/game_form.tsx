@@ -178,7 +178,7 @@ export default function GameForm({
             )}
 
             <div className="mb-2 col-xl-11">
-              <label className="mb-2 primary-text" htmlFor="description_input">
+              <label className="mb-2 primary-text">
                 {(selectedMode === "Identify" ||
                   selectedMode === "Play") &&
                   "Sequência de notas"}
@@ -343,7 +343,7 @@ export default function GameForm({
                   </div>
                 </div>
               </form>
-              <div className="table-responsive card" id="description_input">
+              <div className="table-responsive card">
                 <table className="table table-bordered text-center">
                   <thead>
                     <tr>
