@@ -148,6 +148,16 @@ export default function QuestionActivity({
               </div>
             )}
 
+            <div className="form-group mb-2">
+              <label className="mb-2 primary-text">Tipo de resposta</label>
+              {question_info.one_answer_only && (
+                <p>Resposta única</p>
+              )}
+              {!question_info.one_answer_only && (
+                <p>Múltiplas respostas</p>
+              )}
+            </div>
+
             <div className="form-group mb-2 col-xl-6">
             <label className="mb-2 primary-text">Respostas</label>
               {answers.map(function (answer, index) {
