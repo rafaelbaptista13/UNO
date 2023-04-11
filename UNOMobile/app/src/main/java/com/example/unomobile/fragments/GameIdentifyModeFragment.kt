@@ -32,6 +32,7 @@ import org.billthefarmer.mididriver.MidiDriver
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.stream.Collectors.toSet
 
 class GameIdentifyModeFragment : Fragment() {
 
@@ -160,10 +161,10 @@ class GameIdentifyModeFragment : Fragment() {
                     }   // Note on
 
                     withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order].x.toInt() - 5.dpToPx(requireContext()), 0)
+                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(requireContext()), 0)
                     }
 
-                    delay(1000)
+                    delay(2000)
 
                     if (midi_code != null) {
                         midiDriver.write(byteArrayOf(0x80.toByte(), midi_code.toByte(),0))
@@ -210,7 +211,19 @@ class GameIdentifyModeFragment : Fragment() {
                             Log.i("GameIdentifyFragment", response.body().toString())
                             val activity_data = response.body()!!
                             notes = activity_data.game_activity!!.notes
-                            available_notes = notes!!.toSet()
+                            available_notes = notes!!.map{ note ->
+                                MusicalNote(
+                                    null,
+                                    null,
+                                    note.name,
+                                    note.violin_string,
+                                    note.violin_finger,
+                                    note.viola_string,
+                                    note.viola_finger,
+                                    note.note_code,
+                                    note.type
+                                )
+                            }.toTypedArray().toSet()
                             chosen_notes = arrayOfNulls(notes!!.size)
                             chosen_notes_views = arrayOfNulls(notes!!.size)
 
@@ -355,7 +368,21 @@ class GameIdentifyModeFragment : Fragment() {
     }
 
     private fun submitAnswer() {
-        if (notes.contentEquals(chosen_notes)) {
+        val solution = notes!!.map { note ->
+            MusicalNote(
+                null,
+                null,
+                note.name,
+                note.violin_string,
+                note.violin_finger,
+                note.viola_string,
+                note.viola_finger,
+                note.note_code,
+                note.type
+            )
+        }.toTypedArray()
+
+        if (solution.contentEquals(chosen_notes)) {
 
             val call = Api.retrofitService.submitGameIdentifyModeActivity(user!!.class_id!!, activity_id!!)
 
@@ -448,7 +475,7 @@ class GameIdentifyModeFragment : Fragment() {
             }
 
             middle_row.addView(note_view)
-            addHiddenItem(string1, note.order, context)
+            addHiddenItem(string1, note.order!!, context)
             addHiddenItem(string2, note.order, context)
             addHiddenItem(string3, note.order, context)
             addHiddenItem(string4, note.order, context)
