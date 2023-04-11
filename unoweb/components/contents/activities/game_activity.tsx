@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setType } from "../../../redux/features/activitiesSlice";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import styled from "styled-components";
 import { ActiveClassState } from "../../../redux/features/active_class";
 import ActivitiesService from "../../../services/activities.service";
-import Image from "next/image";
 import Loading from "../../utils/loading";
 import ErrorCard from "../../utils/error_card";
 import Link from "next/link";
 import { ButtonPrimary } from "../../../utils/buttons";
 import { GameActivityType } from "../../../pages/contents/groups/[id]/students/[student_id]/activities/[activity_id]";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const CardDiv = styled.div`
   position: relative;
