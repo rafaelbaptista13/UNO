@@ -1,6 +1,12 @@
 const { sequelize } = require("../models");
 const db = require("../models");
 const ActivityGroup = db.activitygroups;
+const Activity = db.activities;
+const CompletedActivity = db.completedactivities;
+const Class = db.classes;
+const Role = db.roles;
+const User = db.users;
+const ActivityType = db.activitytypes;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new ActivityGroup
@@ -254,4 +260,90 @@ exports.delete = async (req, res) => {
       message: err.message || "Could not delete ActivityGroup with id=" + id,
     });
   }
+};
+
+
+// Retrieve all students that belong to this activitygroup and their progress
+exports.getStudentsFromActivityGroup = async (req, res) => {
+  const activitygroup_id = req.params.activitygroup_id;
+  const class_id = req.params.class_id;
+
+  // Get students
+  let students;
+  try {
+    students = await User.findAll({
+      attributes: ["id", "first_name", "last_name"],
+      include: [
+        {
+          model: Class,
+          where: {
+            id: class_id,
+          },
+          attributes: []
+        },
+        {
+          model: Role,
+          where: {
+            name: "student"
+          },
+          attributes: []
+        }
+      ]
+    })
+  } catch (error) {
+    console.log(error);
+  }
+  
+  let _students = students.map(student => student.toJSON());
+  for (let idx in _students) {
+    _students[idx].completed = 0;
+  }
+  const final_data = {students: _students};
+
+  Activity.findAll({
+    include: [
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          id: activitygroup_id,
+          class_id: class_id,
+        },
+      },
+      {
+        model: ActivityType,
+        as: "activitytype",
+      },
+    ],
+    order: [["order", "ASC"]],
+  })
+    .then(async (_data) => {
+      final_data.total_activities = _data.length;
+      if (final_data.total_activities !== 0) {
+        final_data.name = _data[0].activitygroup.name;
+        for (let idx in _data) {
+          let activity = _data[idx].toJSON();
+
+          for (let student_idx in students) {
+            let student_id = students[student_idx].id;
+            let completed_activity = await CompletedActivity.findOne({
+              where: {
+                activity_id: activity.id,
+                user_id: student_id,
+              }
+            })
+            if (completed_activity !== null) {
+              final_data.students[student_idx].completed++;
+            }
+          }
+        }
+      }
+      res.send(final_data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Activities.",
+      });
+    });
 };

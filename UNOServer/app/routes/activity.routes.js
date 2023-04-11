@@ -72,6 +72,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     exerciseactivities.getSubmittedMedia
   );
+  // Get the media submitted by an user to an Exercise activity (Teacher)
+  router.get(
+    "/teacher/:class_id/:activity_id/exercise/submitted/media/:student_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    exerciseactivities.getSubmittedMediaOfStudent
+  );
 
 
   /**
@@ -119,6 +125,12 @@ module.exports = (app) => {
     "/:class_id/:activity_id/game/submitted/media",
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     gameactivities.getSubmittedMedia
+  );
+  // Get the media submitted by an user to a Game activity (Teacher)
+  router.get(
+    "/teacher/:class_id/:activity_id/game/submitted/media/:student_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    gameactivities.getSubmittedMediaOfStudent
   );
   // Submit activity of type Play
   router.post(
@@ -179,6 +191,22 @@ module.exports = (app) => {
     "/:class_id/:id",
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     activities.delete
+  );
+
+  /**
+   * Teacher endpoints
+   */
+  // Retrieve activities of a specific activitygroup of a student
+  router.get(
+    "/teacher/:class_id/:activitygroup_id/:student_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    activities.getActivitiesOfActivityGroupOfStudent
+  );
+  // Retrieve activity of a student
+  router.get(
+    "/teacher/:class_id/:activitygroup_id/:activity_id/:student_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    activities.getActivityOfStudent
   );
 
   app.use("/api/activities", router);

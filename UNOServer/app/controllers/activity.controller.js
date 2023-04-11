@@ -21,6 +21,10 @@ const IdentifyModeStatus = db.identifymodestatus;
 const BuildMode = db.buildmode;
 const BuildModeStatus = db.buildmodestatus;
 const UserChosenNotes = db.userchosennotes;
+const User = db.users;
+const Class = db.classes;
+const CompletedActivity = db.completedactivities;
+const Role = db.roles;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -147,172 +151,16 @@ exports.findOne = (req, res) => {
       activity = activity.toJSON();
       switch (activity.activitytype.id) {
         case 1:
-          let media_info = await MediaActivity.findOne({
-            where: {
-              activity_id: activity.id,
-            },
-            attributes: ["media_type"],
-          });
-          let media_activity_status = await MediaActivityStatus.findOne({
-            where: {
-              activity_id: activity.id,
-              user_id: req.userId,
-            },
-          });
-          if (media_activity_status !== null) {
-            activity.completed = true;
-          }
-          activity.media_activity = media_info;
+          activity = await getMediaActivityInfo(activity, req.userId);
           break;
         case 2:
-          let exercise_info = await ExerciseActivity.findOne({
-            where: {
-              activity_id: activity.id,
-            },
-            attributes: ["media_type"],
-          });
-          let exercise_activity_status = await ExerciseActivityStatus.findOne({
-            where: {
-              activity_id: activity.id,
-              user_id: req.userId,
-            },
-          });
-          if (exercise_activity_status !== null) {
-            activity.completed = true;
-          }
-          activity.exercise_activity = exercise_info;
+          activity = await getExerciseActivityInfo(activity, req.userId);
           break;
         case 3:
-          let question_info = await QuestionActivity.findOne({
-            where: {
-              activity_id: activity.id,
-            },
-            include: [
-              {
-                model: Answer,
-                attributes: ["order", "answer", "media_type"],
-              },
-            ],
-          });
-          let question_activity_status = await QuestionActivityStatus.findOne({
-            where: {
-              activity_id: activity.id,
-              user_id: req.userId,
-            },
-          });
-          let answers = question_info.Answers.map((item) => item.toJSON());
-          if (question_activity_status !== null) {
-            let chosen_answers = await UserAnswered.findAll({
-              where: {
-                status_id: question_activity_status.id,
-              },
-            });
-            activity.completed = true;
-            for (let idx in chosen_answers) {
-              let chosen_answer = chosen_answers[idx];
-              const itemToUpdate = answers.find(
-                (item) => item.order == chosen_answer.order
-              );
-              if (itemToUpdate) {
-                itemToUpdate.chosen = true;
-              }
-            }
-          }
-          activity.question_activity = {
-            question: question_info.question,
-            answers: answers,
-            media_type: question_info.media_type,
-            one_answer_only: question_info.one_answer_only,
-          };
+          activity = await getQuestionActivityInfo(activity, req.userId);
           break;
         case 4:
-          let game_info = await GameActivity.findOne({
-            where: {
-              activity_id: activity.id,
-            },
-            include: [
-              {
-                model: MusicalNote,
-                attributes: [
-                  "id",
-                  "order",
-                  "name",
-                  "violin_string",
-                  "violin_finger",
-                  "viola_string",
-                  "viola_finger",
-                  "note_code",
-                  "type",
-                ]
-              },
-            ],
-            order: [
-              [MusicalNote, "order", "ASC"]
-            ]
-          });
-
-          switch (game_info.gamemode_id) {
-            case 1:
-              activity.game_activity = {
-                mode: "Identify",
-                notes: game_info.MusicalNotes,
-              };
-              let identify_mode_status = await IdentifyModeStatus.findOne({
-                where: {
-                  activity_id: activity.id,
-                  user_id: req.userId,
-                },
-              });
-              if (identify_mode_status !== null) {
-                activity.completed = true;
-              }
-              break;
-            case 2:
-              activity.game_activity = {
-                mode: "Play",
-                notes: game_info.MusicalNotes,
-              };
-              let play_mode_status = await PlayModeStatus.findOne({
-                where: {
-                  activity_id: activity.id,
-                  user_id: req.userId,
-                },
-              });
-              if (play_mode_status !== null) {
-                activity.completed = true;
-              }
-              break;
-            case 3:
-              let build_mode = await BuildMode.findOne({
-                where: {
-                  activity_id: activity.id,
-                },
-              });
-              activity.game_activity = {
-                mode: "Build",
-                notes: game_info.MusicalNotes,
-                sequence_length: build_mode.sequence_length,
-              };
-              let build_mode_status = await BuildModeStatus.findOne({
-                where: {
-                  activity_id: activity.id,
-                  user_id: req.userId,
-                },
-              });
-              if (build_mode_status !== null) {
-                activity.completed = true;
-                let user_chosen_notes = await UserChosenNotes.findAll({
-                  where: {
-                    status_id: build_mode_status.id,
-                  },
-                  attributes: ["order", "note_id"],
-                  order: [["order", "ASC"]],
-                });
-                activity.game_activity.chosen_notes = user_chosen_notes;
-              }
-              break;
-          }
-
+          activity = await getGameActivityInfo(activity, req.userId);
           break;
       }
 
@@ -352,102 +200,32 @@ exports.findAll = (req, res) => {
       for (let idx in _data) {
         let activity = _data[idx].toJSON();
 
-        switch (activity.activitytype.id) {
-          case 1:
-            let media_activity_status = await MediaActivityStatus.findOne({
-              where: {
-                activity_id: activity.id,
-                user_id: req.userId,
-              },
-            });
-            if (media_activity_status === null) {
-              activity.completed = false;
-            } else {
-              activity.completed = true;
-            }
-            break;
-          case 2:
-            let exercise_activity_status = await ExerciseActivityStatus.findOne(
-              {
-                where: {
-                  activity_id: activity.id,
-                  user_id: req.userId,
-                },
-              }
-            );
-            if (exercise_activity_status === null) {
-              activity.completed = false;
-            } else {
-              activity.completed = true;
-            }
-            break;
-          case 3:
-            let question_activity_status = await QuestionActivityStatus.findOne(
-              {
-                where: {
-                  activity_id: activity.id,
-                  user_id: req.userId,
-                },
-              }
-            );
-            if (question_activity_status === null) {
-              activity.completed = false;
-            } else {
-              activity.completed = true;
-            }
-            break;
-          case 4:
-            let game_activity_type = await GameActivity.findOne({
-              where: {
-                activity_id: activity.id,
-              },
-              include: [
-                {
-                  model: GameMode,
-                  as: "gamemode",
-                },
-              ],
-            });
+        let completed_activity = await CompletedActivity.findOne({
+          where: {
+            user_id: req.userId,
+            activity_id: activity.id,
+          },
+        });
 
-            activity.game_activity = { mode: game_activity_type.gamemode.name };
-            if (game_activity_type.gamemode.id === 1) {
-              let identify_mode_status = await IdentifyModeStatus.findOne({
-                where: {
-                  activity_id: activity.id,
-                  user_id: req.userId,
-                },
-              });
-              if (identify_mode_status === null) {
-                activity.completed = false;
-              } else {
-                activity.completed = true;
-              }
-            } else if (game_activity_type.gamemode.id === 2) {
-              let play_mode_status = await PlayModeStatus.findOne({
-                where: {
-                  activity_id: activity.id,
-                  user_id: req.userId,
-                },
-              });
-              if (play_mode_status === null) {
-                activity.completed = false;
-              } else {
-                activity.completed = true;
-              }
-            } else if (game_activity_type.gamemode.id === 3) {
-              let build_mode_status = await BuildModeStatus.findOne({
-                where: {
-                  activity_id: activity.id,
-                  user_id: req.userId,
-                },
-              });
-              if (build_mode_status === null) {
-                activity.completed = false;
-              } else {
-                activity.completed = true;
-              }
-            }
-            break;
+        if (completed_activity === null) {
+          activity.completed = false;
+        } else {
+          activity.completed = true;
+        }
+
+        if (activity.activitytype.id === 4) {
+          let game_activity_type = await GameActivity.findOne({
+            where: {
+              activity_id: activity.id,
+            },
+            include: [
+              {
+                model: GameMode,
+                as: "gamemode",
+              },
+            ],
+          });
+          activity.game_activity = { mode: game_activity_type.gamemode.name };
         }
         data.push(activity);
       }
@@ -612,4 +390,358 @@ exports.delete = async (req, res) => {
       message: err.message || "Could not delete Activity with id=" + id,
     });
   }
+};
+
+// Retrieve activities of a specific activitygroup of a student
+exports.getActivitiesOfActivityGroupOfStudent = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activitygroup_id = req.params.activitygroup_id;
+  const student_id = req.params.student_id;
+
+  // Get Student
+  let student;
+  try {
+    student = await User.findByPk(student_id);
+  } catch (err) {
+    res.status(400).send({
+      message: err.message || "Some error occured while searching the student.",
+    });
+  }
+  if (student === null) {
+    res.status(400).send({
+      message: err.message || "Student not found.",
+    });
+  }
+
+  Activity.findAll({
+    include: [
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          id: activitygroup_id,
+          class_id: class_id,
+        },
+      },
+      {
+        model: ActivityType,
+        as: "activitytype",
+      },
+    ],
+    order: [["order", "ASC"]],
+  })
+    .then(async (_data) => {
+      let data = {
+        activities: [],
+        first_name: student.first_name,
+        last_name: student.last_name,
+      };
+      if (_data.length !== 0) {
+        data.name = _data[0].activitygroup.name;
+        for (let idx in _data) {
+          let activity = {
+            id: _data[idx].id,
+            order: _data[idx].order,
+            activitygroup_id: _data[idx].activitygroup_id,
+            title: _data[idx].title,
+            createdAt: _data[idx].createdAt,
+            updatedAt: _data[idx].updatedAt,
+            activitytype: {
+              id: _data[idx].activitytype.id,
+              name: _data[idx].activitytype.name,
+            },
+          };
+
+          let completed_activity = await CompletedActivity.findOne({
+            where: {
+              user_id: student_id,
+              activity_id: activity.id,
+            },
+          });
+
+          if (completed_activity === null) {
+            activity.completed = false;
+          } else {
+            activity.completed = true;
+          }
+
+          if (activity.activitytype.id === 4) {
+            let game_activity_type = await GameActivity.findOne({
+              where: {
+                activity_id: activity.id,
+              },
+              include: [
+                {
+                  model: GameMode,
+                  as: "gamemode",
+                },
+              ],
+            });
+            activity.game_activity = { mode: game_activity_type.gamemode.name };
+          }
+          data.activities.push(activity);
+        }
+      }
+
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Activities.",
+      });
+    });
+};
+
+// Retrieve activity of a student
+exports.getActivityOfStudent = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activitygroup_id = req.params.activitygroup_id;
+  const activity_id = req.params.activity_id;
+  const student_id = req.params.student_id;
+
+  // Get Student
+  let student;
+  try {
+    student = await User.findByPk(student_id);
+  } catch (err) {
+    res.status(400).send({
+      message: err.message || "Some error occured while searching the student.",
+    });
+  }
+  if (student === null) {
+    res.status(400).send({
+      message: err.message || "Student not found.",
+    });
+  }
+
+  Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: [
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          id: activitygroup_id,
+          class_id: class_id,
+        },
+      },
+      {
+        model: ActivityType,
+        as: "activitytype",
+      },
+    ],
+  })
+    .then(async (activity) => {
+      if (activity === null) {
+        res.status(400).send({
+          message: "Activity not found.",
+        });
+        return;
+      }
+      let final_data = {
+        first_name: student.first_name,
+        last_name: student.last_name,
+        name: activity.activitygroup.name,
+        activity: activity.toJSON()
+      };
+
+      switch (final_data.activity.activitytype.id) {
+        case 1:
+          final_data.activity = await getMediaActivityInfo(final_data.activity, student_id);
+          break;
+        case 2:
+          final_data.activity = await getExerciseActivityInfo(final_data.activity, student_id);
+          break;
+        case 3:
+          final_data.activity = await getQuestionActivityInfo(final_data.activity, student_id);
+          break;
+        case 4:
+          final_data.activity = await getGameActivityInfo(final_data.activity, student_id);
+          break;
+      }
+      
+      res.send(final_data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving the Activity.",
+      });
+    });
+};
+
+const getMediaActivityInfo = async (activity, user_id) => {
+  let media_info = await MediaActivity.findOne({
+    where: {
+      activity_id: activity.id,
+    },
+    attributes: ["media_type"],
+  });
+  let media_activity_status = await MediaActivityStatus.findOne({
+    where: {
+      activity_id: activity.id,
+      user_id: user_id,
+    },
+  });
+  if (media_activity_status !== null) {
+    activity.completed = true;
+  }
+  activity.media_activity = media_info;
+  return activity;
+};
+
+const getExerciseActivityInfo = async (activity, user_id) => {
+  let exercise_info = await ExerciseActivity.findOne({
+    where: {
+      activity_id: activity.id,
+    },
+    attributes: ["media_type"],
+  });
+  let exercise_activity_status = await ExerciseActivityStatus.findOne({
+    where: {
+      activity_id: activity.id,
+      user_id: user_id,
+    },
+  });
+  if (exercise_activity_status !== null) {
+    activity.completed = true;
+  }
+  activity.exercise_activity = exercise_info;
+  return activity;
+};
+
+const getQuestionActivityInfo = async (activity, user_id) => {
+  let question_info = await QuestionActivity.findOne({
+    where: {
+      activity_id: activity.id,
+    },
+    include: [
+      {
+        model: Answer,
+        attributes: ["order", "answer", "media_type"],
+      },
+    ],
+  });
+  let question_activity_status = await QuestionActivityStatus.findOne({
+    where: {
+      activity_id: activity.id,
+      user_id: user_id,
+    },
+  });
+  let answers = question_info.Answers.map((item) => item.toJSON());
+  if (question_activity_status !== null) {
+    let chosen_answers = await UserAnswered.findAll({
+      where: {
+        status_id: question_activity_status.id,
+      },
+    });
+    activity.completed = true;
+    for (let idx in chosen_answers) {
+      let chosen_answer = chosen_answers[idx];
+      const itemToUpdate = answers.find(
+        (item) => item.order == chosen_answer.order
+      );
+      if (itemToUpdate) {
+        itemToUpdate.chosen = true;
+      }
+    }
+  }
+  activity.question_activity = {
+    question: question_info.question,
+    answers: answers,
+    media_type: question_info.media_type,
+    one_answer_only: question_info.one_answer_only,
+  };
+  return activity;
+};
+
+const getGameActivityInfo = async (activity, user_id) => {
+  let game_info = await GameActivity.findOne({
+    where: {
+      activity_id: activity.id,
+    },
+    include: [
+      {
+        model: MusicalNote,
+        attributes: [
+          "id",
+          "order",
+          "name",
+          "violin_string",
+          "violin_finger",
+          "viola_string",
+          "viola_finger",
+          "note_code",
+          "type",
+        ],
+      },
+    ],
+    order: [[MusicalNote, "order", "ASC"]],
+  });
+
+  switch (game_info.gamemode_id) {
+    case 1:
+      activity.game_activity = {
+        mode: "Identify",
+        notes: game_info.MusicalNotes,
+      };
+      let identify_mode_status = await IdentifyModeStatus.findOne({
+        where: {
+          activity_id: activity.id,
+          user_id: user_id,
+        },
+      });
+      if (identify_mode_status !== null) {
+        activity.completed = true;
+      }
+      break;
+    case 2:
+      activity.game_activity = {
+        mode: "Play",
+        notes: game_info.MusicalNotes,
+      };
+      let play_mode_status = await PlayModeStatus.findOne({
+        where: {
+          activity_id: activity.id,
+          user_id: user_id,
+        },
+      });
+      if (play_mode_status !== null) {
+        activity.completed = true;
+      }
+      break;
+    case 3:
+      let build_mode = await BuildMode.findOne({
+        where: {
+          activity_id: activity.id,
+        },
+      });
+      activity.game_activity = {
+        mode: "Build",
+        notes: game_info.MusicalNotes,
+        sequence_length: build_mode.sequence_length,
+      };
+      let build_mode_status = await BuildModeStatus.findOne({
+        where: {
+          activity_id: activity.id,
+          user_id: user_id,
+        },
+      });
+      if (build_mode_status !== null) {
+        activity.completed = true;
+        let user_chosen_notes = await UserChosenNotes.findAll({
+          where: {
+            status_id: build_mode_status.id,
+          },
+          attributes: ["order", "note_id"],
+          order: [["order", "ASC"]],
+        });
+        activity.game_activity.chosen_notes = user_chosen_notes;
+      }
+      break;
+  }
+  return activity;
 };

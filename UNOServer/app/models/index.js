@@ -62,6 +62,7 @@ db.identifymode = require("./identifymode.model")(sequelize, Sequelize);
 db.buildmode = require("./buildmode.model")(sequelize, Sequelize);
 db.buildmodestatus = require("./buildmodestatus.model")(sequelize, Sequelize);
 db.userchosennotes = require("./userchosennotes.model")(sequelize, Sequelize);
+db.completedactivities = require("./completedactivities.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -272,6 +273,61 @@ db.buildmodestatus.belongsToMany(db.musicalnotes, {
   foreignKey: "status_id",
   otherKey: "note_id",
 });
+
+
+// Completed Activities trigger
+db.mediaactivitystatus.afterCreate((status, options) => {
+  return db.completedactivities.create({
+    activity_id: status.activity_id,
+    user_id: status.user_id
+  })
+});
+db.exerciseactivitystatus.afterCreate((status, options) => {
+  return db.completedactivities.create({
+    activity_id: status.activity_id,
+    user_id: status.user_id
+  })
+});
+db.questionactivitystatus.afterCreate((status, options) => {
+  return db.completedactivities.create({
+    activity_id: status.activity_id,
+    user_id: status.user_id
+  })
+});
+db.identifymodestatus.afterCreate((status, options) => {
+  return db.completedactivities.create({
+    activity_id: status.activity_id,
+    user_id: status.user_id
+  })
+});
+db.playmodestatus.afterCreate((status, options) => {
+  return db.completedactivities.create({
+    activity_id: status.activity_id,
+    user_id: status.user_id
+  })
+});
+db.buildmodestatus.afterCreate((status, options) => {
+  return db.completedactivities.create({
+    activity_id: status.activity_id,
+    user_id: status.user_id
+  })
+});
+
+// Delete Activities trigger
+db.activities.beforeDestroy((activity, options) => {
+  return db.completedactivities.destroy({
+    where: {
+      activity_id: activity.id
+    }
+  })
+})
+db.users.beforeDestroy((user, options) => {
+  return db.completedactivities.destroy({
+    where: {
+      user_id: user.id
+    }
+  })
+})
 
 db.ROLES = ["student", "teacher"];
 
