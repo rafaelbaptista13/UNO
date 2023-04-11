@@ -72,7 +72,7 @@ export default function EditMediaForm({
 
   useEffect(() => {
     setIsPageLoading(true);
-    ActivitiesService.getActivityMedia(class_id, activitygroup_id, activity.id)
+    ActivitiesService.getActivityMedia(class_id, activity.id)
       .then((blob) => {
         const _file = new File([blob], "", { type: activity.media.media_type });
         setFile(_file);
@@ -85,7 +85,7 @@ export default function EditMediaForm({
       .finally(() => {
         setIsPageLoading(false);
       });
-  }, [activity.id, activity.media.media_type, activitygroup_id, class_id]);
+  }, [activity.id, activity.media.media_type, class_id]);
 
   if (isPageLoading) {
     return <Loading />;
