@@ -216,10 +216,10 @@ class GamePlayModeFragment : Fragment() {
                     }   // Note on
 
                     withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order].x.toInt() - 5.dpToPx(requireContext()), 0)
+                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(requireContext()), 0)
                     }
 
-                    delay(1000)
+                    delay(2000)
 
                     if (midi_code != null) {
                         midiDriver.write(byteArrayOf(0x80.toByte(), midi_code.toByte(),0))

@@ -8,50 +8,49 @@ module.exports = (app) => {
   // Create a new ActivityGroup
   router.post(
     "/:class_id",
-    [
-      authJwt.verifyToken,
-      authJwt.isTeacher,
-      authJwt.isTeacherOfRequestedClass,
-    ],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     activitygroup.create
   );
 
   // Change order of ActivityGroups
   router.put(
     "/:class_id/change_order",
-    [
-      authJwt.verifyToken,
-      authJwt.isTeacher,
-      authJwt.isTeacherOfRequestedClass,
-    ],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     activitygroup.change_order
   );
 
   // Update an ActivityGroup
   router.put(
     "/:class_id/:id",
-    [
-      authJwt.verifyToken,
-      authJwt.isTeacher,
-      authJwt.isTeacherOfRequestedClass,
-    ],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     activitygroup.update
   );
 
   // Retrieve a specific ActivityGroup by id
-  router.get("/:class_id/:activitygroup_id", [authJwt.verifyToken, authJwt.isPartOfRequestedClass], activitygroup.findOne);
+  router.get(
+    "/:class_id/:activitygroup_id",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    activitygroup.findOne
+  );
 
   // Retrieve all ActivityGroups of a class
-  router.get("/:class_id", [authJwt.verifyToken, authJwt.isPartOfRequestedClass], activitygroup.findAll);
+  router.get(
+    "/:class_id",
+    [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
+    activitygroup.findAll
+  );
+
+  // Retrieve students' progress in an activitygroup
+  router.get(
+    "/:class_id/:activitygroup_id/students",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    activitygroup.getStudentsFromActivityGroup
+  );
 
   // Delete a ActivityGroup
   router.delete(
     "/:class_id/:activitygroup_id",
-    [
-      authJwt.verifyToken,
-      authJwt.isTeacher,
-      authJwt.isTeacherOfRequestedClass,
-    ],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     activitygroup.delete
   );
 

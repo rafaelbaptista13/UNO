@@ -40,7 +40,7 @@ export default function ContentCard({
         <h3 className="primary-text ms-3 text-center mb-0">{name}</h3>
       </div>
       <div className="d-flex justify-content-center d-grid gap-3 mt-2 mt-sm-0">
-        <CardLink href={"#"}>
+        <CardLink href={"/contents/groups/" + id + "/students"}>
           <button className="btn btn-warning">{"Ver alunos"}</button>
         </CardLink>
         <CardLink href={"/contents/groups/edit/" + id}>

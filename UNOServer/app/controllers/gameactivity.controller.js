@@ -448,6 +448,130 @@ exports.getSubmittedMedia = async (req, res) => {
     .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
 };
 
+// Get Media from Game Activity
+exports.getSubmittedMediaOfStudent = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activity_id = req.params.activity_id;
+  const student_id = req.params.student_id;
+
+  // Check if Activity exists
+  let activity = await Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: [
+      {
+        model: GameActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id,
+        },
+      },
+    ],
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "Activity not found!",
+    });
+    return;
+  }
+  // Check activity type
+  if (activity.activitytype_id !== 4) {
+    res.status(400).send({
+      message: "Activity is not of type Game!",
+    });
+    return;
+  }
+  if (
+    activity.GameActivity.gamemode_id !== 2 &&
+    activity.GameActivity.gamemode_id !== 3
+  ) {
+    res.status(400).send({
+      message:
+        "GameActivity is not of type Play or Build. So, there's no media submitted!",
+    });
+    return;
+  }
+
+  let media_type;
+  let media_id;
+  let media_secret;
+
+  if (activity.GameActivity.gamemode_id === 2) {
+    let play_mode_activity = await PlayMode.findOne({
+      where: {
+        activity_id: activity_id,
+      },
+      include: [
+        {
+          model: PlayModeStatus,
+          where: {
+            activity_id: activity_id,
+            user_id: student_id,
+          },
+        },
+      ],
+    });
+    if (play_mode_activity === null) {
+      res.status(400).send({
+        message: "Activity not submitted!",
+      });
+      return;
+    }
+
+    media_type = play_mode_activity.PlayModeStatus.media_type;
+    media_id = play_mode_activity.PlayModeStatus.media_id;
+    media_secret = play_mode_activity.PlayModeStatus.media_secret;
+  } else if (activity.GameActivity.gamemode_id === 3) {
+    let build_mode_activity = await BuildMode.findOne({
+      where: {
+        activity_id: activity_id,
+      },
+      include: [
+        {
+          model: BuildModeStatus,
+          where: {
+            activity_id: activity_id,
+            user_id: student_id,
+          },
+        },
+      ],
+    });
+    if (build_mode_activity === null) {
+      res.status(400).send({
+        message: "Activity not submitted!",
+      });
+      return;
+    }
+
+    media_type = build_mode_activity.BuildModeStatus.media_type;
+    media_id = build_mode_activity.BuildModeStatus.media_id;
+    media_secret = build_mode_activity.BuildModeStatus.media_secret;
+  }
+
+  // Get Media from aws s3
+  const s3Object = await req.s3
+    .getObject({
+      Bucket: "violuno",
+      Key: media_id,
+    })
+    .promise();
+
+  // Decrypt
+  const decryptedFile = CryptoJS.AES.decrypt(
+    s3Object.Body.toString(),
+    media_secret
+  );
+
+  res.set("Content-Type", media_type);
+  res
+    .status(200)
+    .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
+};
+
 // Submit Game of type Identify
 exports.submitGameIdentify = async (req, res) => {
   const class_id = req.params.class_id;

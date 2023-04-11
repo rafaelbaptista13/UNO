@@ -225,7 +225,7 @@ class GameBuildModeFragment : Fragment() {
                         horizontal_scroll_view.smoothScrollTo(chosen_notes_views[index]!!.x.toInt() - 5.dpToPx(requireContext()), 0)
                     }
 
-                    delay(1000)
+                    delay(2000)
 
                     if (midi_code != null) {
                         midiDriver.write(byteArrayOf(0x80.toByte(), midi_code.toByte(), 0))
@@ -573,7 +573,7 @@ class GameBuildModeFragment : Fragment() {
         val video_file = getFileFromUri(chosen_file!!, context)
         val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!, context)!!.toMediaTypeOrNull())
         val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
-        val chosen_notes_ids = chosen_notes.map { it!!.id }.toTypedArray()
+        val chosen_notes_ids = chosen_notes.map { it!!.id!! }.toTypedArray()
 
         val call = Api.retrofitService.submitGameBuildModeActivity(user!!.class_id!!, activity_id!!, mediaPart, chosen_notes_ids)
 
