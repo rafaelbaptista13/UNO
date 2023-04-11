@@ -114,11 +114,11 @@ class GameIdentifyModeFragment : Fragment() {
         }
 
         val type_text = view.findViewById<TextView>(R.id.type)
-        type_text.text = order.toString() + ". Jogo"
+        type_text.text = order.toString() + ". Jogo - Identificar"
         val title_text = view.findViewById<TextView>(R.id.title)
         title_text.text = title
         val description_text = view.findViewById<TextView>(R.id.description)
-        if (description != null) {
+        if (description != null && description != "") {
             description_text.text = description
         } else {
             description_text.visibility = View.GONE

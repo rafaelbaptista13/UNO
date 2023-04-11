@@ -48,8 +48,21 @@ class ActivitiesAdapter(private val data: List<Activity>, val context: Context) 
         val currentItem = data[position]
         holder.activity_number.text = currentItem.order.toString() + "."
         holder.activity_title.text = currentItem.title
-        holder.activity_type.text = context.resources.getString(
-            context.resources.getIdentifier(currentItem.activitytype.name, "string", context.packageName))
+
+        if (currentItem.activitytype.name == "Game") {
+            if (currentItem.game_activity!!.mode == "Identify") {
+                holder.activity_type.text = "Jogo - Identificar"
+            }
+            if (currentItem.game_activity!!.mode == "Play") {
+                holder.activity_type.text = "Jogo - Reproduzir"
+            }
+            if (currentItem.game_activity!!.mode == "Build") {
+                holder.activity_type.text = "Jogo - Construir"
+            }
+        } else {
+            holder.activity_type.text = context.resources.getString(
+                context.resources.getIdentifier(currentItem.activitytype.name, "string", context.packageName))
+        }
         holder.activity_image.setImageResource(context.resources.getIdentifier(currentItem.activitytype.name.lowercase() + "_icon", "drawable", context.packageName))
 
         if (currentItem.completed == false) {
