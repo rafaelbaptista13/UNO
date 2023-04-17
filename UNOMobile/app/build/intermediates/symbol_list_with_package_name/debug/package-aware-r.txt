@@ -1986,10 +1986,6 @@ color mtrl_textinput_disabled_color
 color mtrl_textinput_filled_box_default_background_color
 color mtrl_textinput_focused_box_stroke_color
 color mtrl_textinput_hovered_box_stroke_color
-color musical_note_blue
-color musical_note_green
-color musical_note_red
-color musical_note_yellow
 color notification_action_color_filter
 color notification_icon_bg_color
 color notification_material_background_media_default_color
@@ -2021,6 +2017,14 @@ color teal_200
 color teal_700
 color tooltip_background_dark
 color tooltip_background_light
+color viola_string_1
+color viola_string_2
+color viola_string_3
+color viola_string_4
+color violin_string_1
+color violin_string_2
+color violin_string_3
+color violin_string_4
 color white
 color yellow
 dimen abc_action_bar_content_inset_material
@@ -2974,6 +2978,7 @@ drawable inverse_primary_button
 drawable left_triangle_blue
 drawable left_triangle_green
 drawable left_triangle_note
+drawable left_triangle_pink
 drawable left_triangle_red
 drawable left_triangle_yellow
 drawable loading_icon
@@ -3061,6 +3066,7 @@ drawable record_icon
 drawable right_triangle_blue
 drawable right_triangle_green
 drawable right_triangle_note
+drawable right_triangle_pink
 drawable right_triangle_red
 drawable right_triangle_yellow
 drawable start_recording

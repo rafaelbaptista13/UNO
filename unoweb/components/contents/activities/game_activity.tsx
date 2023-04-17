@@ -306,6 +306,7 @@ export default function GameActivity({
                           controls
                         />
                       )}
+                      {submittedMediaSrc === "" && <Loading />}
                     </div>
                   )}
               </>
