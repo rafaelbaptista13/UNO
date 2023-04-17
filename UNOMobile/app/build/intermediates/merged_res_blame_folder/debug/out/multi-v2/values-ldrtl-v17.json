@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.unomobile.app-mergeDebugResources-54:/values-ldrtl-v17/values-ldrtl-v17.xml",
+            "outputFile": "com.example.unomobile.app-mergeDebugResources-49:/values-ldrtl-v17/values-ldrtl-v17.xml",
             "map": [
                 {
                     "source": "/home/rafael/.gradle/caches/transforms-3/3055546eade27779c6aa30f537741feb/transformed/material-1.8.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",

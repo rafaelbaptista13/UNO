@@ -637,7 +637,6 @@ attr imagePanX
 attr imagePanY
 attr imageRotate
 attr imageZoom
-attr implementationMode
 attr indeterminateAnimationType
 attr indeterminateProgressStyle
 attr indicatorColor
@@ -1016,7 +1015,6 @@ attr roundPercent
 attr route
 attr saturation
 attr scaleFromTextSize
-attr scaleType
 attr scrimAnimationDuration
 attr scrimBackground
 attr scrimVisibleHeightTrigger
@@ -3142,7 +3140,6 @@ id action_bar_root
 id action_bar_spinner
 id action_bar_subtitle
 id action_bar_title
-id action_button
 id action_container
 id action_context_bar
 id action_divider
@@ -3223,7 +3220,6 @@ id clip_vertical
 id clockwise
 id closest
 id collapseActionView
-id compatible
 id completed_icon
 id compress
 id confirm_button
@@ -3346,9 +3342,6 @@ id expand_activities_button
 id expanded_menu
 id fade
 id fill
-id fillCenter
-id fillEnd
-id fillStart
 id fill_horizontal
 id fill_vertical
 id filled
@@ -3543,13 +3536,11 @@ id pathRelative
 id pause_button
 id peekHeight
 id percent
-id performance
 id pin
 id play_button
 id position
 id postLayout
 id pressed
-id preview_view
 id previous_activity
 id profileFragment
 id progressBar
@@ -3868,7 +3859,6 @@ layout activity_list_item
 layout activity_login
 layout activity_main
 layout activity_page
-layout activity_record_video
 layout activity_register
 layout activitygroup_list_item
 layout answer_list_item
@@ -5469,7 +5459,6 @@ styleable PlayerControlView ad_marker_color ad_marker_width bar_gravity bar_heig
 styleable PlayerView ad_marker_color ad_marker_width auto_show bar_height buffered_color controller_layout_id default_artwork hide_during_ads hide_on_touch keep_content_on_player_reset played_ad_marker_color played_color player_layout_id repeat_toggle_modes resize_mode scrubber_color scrubber_disabled_size scrubber_dragged_size scrubber_drawable scrubber_enabled_size show_buffering show_shuffle_button show_timeout shutter_background_color surface_type time_bar_min_update_interval touch_target_height unplayed_color use_artwork use_controller
 styleable PopupWindow android_popupBackground android_popupAnimationStyle overlapAnchor
 styleable PopupWindowBackgroundState state_above_anchor
-styleable PreviewView implementationMode scaleType
 styleable PropertySet android_visibility android_alpha layout_constraintTag motionProgress visibilityMode
 styleable RadialViewGroup materialCircleRadius
 styleable RangeSlider minSeparation values

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.unomobile.app-mergeDebugResources-54:/values-v26/values-v26.xml",
+            "outputFile": "com.example.unomobile.app-mergeDebugResources-49:/values-v26/values-v26.xml",
             "map": [
                 {
                     "source": "/home/rafael/.gradle/caches/transforms-3/3e6ecb1c61db6b5e34610f7bfc12cf5a/transformed/appcompat-1.5.1/res/values-v26/values-v26.xml",

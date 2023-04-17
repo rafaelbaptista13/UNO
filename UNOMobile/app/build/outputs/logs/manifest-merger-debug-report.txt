@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
-INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
-INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
-INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
+INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
+INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
+INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
 MERGED from [MidiDriver-1.26.aar] /home/rafael/.gradle/caches/transforms-3/aee311e8fe84f732b647f55c22b8e6c3/transformed/jetified-MidiDriver-1.26/AndroidManifest.xml:2:1-9:12
 MERGED from [androidx.databinding:viewbinding:7.3.0] /home/rafael/.gradle/caches/transforms-3/57972210c0a1bdbd108cc24ea1d57707/transformed/jetified-viewbinding-7.3.0/AndroidManifest.xml:2:1-9:12
 MERGED from [androidx.navigation:navigation-fragment-ktx:2.5.3] /home/rafael/.gradle/caches/transforms-3/bf2a9ed3e9606361470ba586e8b15b6a/transformed/navigation-fragment-ktx-2.5.3/AndroidManifest.xml:17:1-24:12
@@ -23,11 +23,6 @@ MERGED from [androidx.datastore:datastore-preferences:1.0.0] /home/rafael/.gradl
 MERGED from [androidx.datastore:datastore:1.0.0] /home/rafael/.gradle/caches/transforms-3/7c33627052833f99be3cf5cc291b9498/transformed/jetified-datastore-1.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.material:material:1.8.0] /home/rafael/.gradle/caches/transforms-3/3055546eade27779c6aa30f537741feb/transformed/material-1.8.0/AndroidManifest.xml:17:1-26:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/rafael/.gradle/caches/transforms-3/a687ec468d3f4fd40500b349db512997/transformed/constraintlayout-2.1.4/AndroidManifest.xml:2:1-11:12
-MERGED from [androidx.camera:camera-video:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/6dac01986f2bf248dc3f70a838df8923/transformed/jetified-camera-video-1.3.0-alpha04/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.camera:camera-lifecycle:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/88257a7e47a45f269bcd45e8c503c360/transformed/jetified-camera-lifecycle-1.3.0-alpha04/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:17:1-36:12
-MERGED from [androidx.camera:camera-core:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/f8f0aedf7dd8f5b16cdcdc4923bb00e3/transformed/jetified-camera-core-1.3.0-alpha04/AndroidManifest.xml:17:1-36:12
-MERGED from [androidx.camera:camera-view:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/d17b0de2ec7cbf0bfe071de2e2a52bde/transformed/jetified-camera-view-1.3.0-alpha04/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.appcompat:appcompat-resources:1.5.1] /home/rafael/.gradle/caches/transforms-3/610313b3a7fdc48308cf37443e9f4d4b/transformed/jetified-appcompat-resources-1.5.1/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.appcompat:appcompat:1.5.1] /home/rafael/.gradle/caches/transforms-3/3e6ecb1c61db6b5e34610f7bfc12cf5a/transformed/appcompat-1.5.1/AndroidManifest.xml:17:1-22:12
 MERGED from [com.github.bumptech.glide:glide:4.12.0] /home/rafael/.gradle/caches/transforms-3/0e1046d7e494585b9b15d2455719d465/transformed/jetified-glide-4.12.0/AndroidManifest.xml:2:1-12:12
@@ -70,18 +65,18 @@ MERGED from [androidx.lifecycle:lifecycle-process:2.4.1] /home/rafael/.gradle/ca
 MERGED from [androidx.lifecycle:lifecycle-runtime:2.5.1] /home/rafael/.gradle/caches/transforms-3/ba2ea540b58d1dfabbb173ca45f34e69/transformed/lifecycle-runtime-2.5.1/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.savedstate:savedstate-ktx:1.2.0] /home/rafael/.gradle/caches/transforms-3/9ef118d9e7e0db4f51124b3c80410d0f/transformed/jetified-savedstate-ktx-1.2.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.savedstate:savedstate:1.2.0] /home/rafael/.gradle/caches/transforms-3/7564fbdf217ce65621eeb717e2305867/transformed/jetified-savedstate-1.2.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.exifinterface:exifinterface:1.2.0] /home/rafael/.gradle/caches/transforms-3/6d460210271fe45ea58e28b2167cf9db/transformed/exifinterface-1.2.0/AndroidManifest.xml:17:1-24:12
 MERGED from [com.github.bumptech.glide:gifdecoder:4.12.0] /home/rafael/.gradle/caches/transforms-3/7f368afce17c32db2b7a9a40f0021d0c/transformed/jetified-gifdecoder-4.12.0/AndroidManifest.xml:2:1-11:12
 MERGED from [com.google.android.exoplayer:exoplayer-datasource:2.18.3] /home/rafael/.gradle/caches/transforms-3/e6e96e83295a17d0399910bd6436e316/transformed/jetified-exoplayer-datasource-2.18.3/AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.exoplayer:exoplayer-database:2.18.3] /home/rafael/.gradle/caches/transforms-3/8894dab76ca81488b0d31f1112adb2b8/transformed/jetified-exoplayer-database-2.18.3/AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.exoplayer:exoplayer-extractor:2.18.3] /home/rafael/.gradle/caches/transforms-3/4d315eda6207e08ea2174b9707ee5c16/transformed/jetified-exoplayer-extractor-2.18.3/AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.exoplayer:exoplayer-decoder:2.18.3] /home/rafael/.gradle/caches/transforms-3/da24f9afcc37618ab9c6f166c523ed43/transformed/jetified-exoplayer-decoder-2.18.3/AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.exoplayer:exoplayer-common:2.18.3] /home/rafael/.gradle/caches/transforms-3/5d6b7f0a32240bfa4a6fc8046a4f7217/transformed/jetified-exoplayer-common-2.18.3/AndroidManifest.xml:17:1-26:12
-MERGED from [androidx.exifinterface:exifinterface:1.3.2] /home/rafael/.gradle/caches/transforms-3/000e741b965b9679cb098c867b0b3eba/transformed/exifinterface-1.3.2/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/rafael/.gradle/caches/transforms-3/59defd0b33b4701242dbebc66be2ced3/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/rafael/.gradle/caches/transforms-3/c322f4bba356ccd9948c3eaafe016a2d/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
 MERGED from [androidx.tracing:tracing:1.0.0] /home/rafael/.gradle/caches/transforms-3/0b99ee54a152b62b5029ff76b36b0112/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:17:1-24:12
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.1.0] /home/rafael/.gradle/caches/transforms-3/efd0cad43f61576ba4791410ab60106f/transformed/lifecycle-livedata-2.1.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.5.1] /home/rafael/.gradle/caches/transforms-3/b8c931d97fc9aee26585a4bd75c9743f/transformed/jetified-lifecycle-livedata-core-ktx-2.5.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /home/rafael/.gradle/caches/transforms-3/e515f23e5b8dffc50148bde440d0d7d1/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.5.1] /home/rafael/.gradle/caches/transforms-3/8e558c167bb9dde3f9c41458f94224cf/transformed/lifecycle-livedata-core-2.5.1/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.arch.core:core-runtime:2.1.0] /home/rafael/.gradle/caches/transforms-3/8ae7c95b0fab65c543a8a2d05be72856/transformed/core-runtime-2.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.interpolator:interpolator:1.0.0] /home/rafael/.gradle/caches/transforms-3/abf06944fc6aff52b1acd93587076ca0/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
@@ -89,22 +84,22 @@ MERGED from [androidx.documentfile:documentfile:1.0.0] /home/rafael/.gradle/cach
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /home/rafael/.gradle/caches/transforms-3/66fe769d524b6ae4946849e2a9307491/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.print:print:1.0.0] /home/rafael/.gradle/caches/transforms-3/74af9eb72f677e48e96d0851dd26e268/transformed/print-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.annotation:annotation-experimental:1.1.0] /home/rafael/.gradle/caches/transforms-3/6c8efb5de44fc914f9cc648a0fc3b13b/transformed/jetified-annotation-experimental-1.1.0/AndroidManifest.xml:17:1-24:12
-INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
-INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
-INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
+INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
+INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
+INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
 	package
 		INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
 		INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
 		INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
 	xmlns:tools
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:3:5-51
 	android:versionCode
 		INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-85:12
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:1-78:12
 		INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:2:11-69
@@ -120,10 +115,6 @@ MERGED from [com.google.android.exoplayer:exoplayer-common:2.18.3] /home/rafael/
 MERGED from [com.google.android.exoplayer:exoplayer-common:2.18.3] /home/rafael/.gradle/caches/transforms-3/5d6b7f0a32240bfa4a6fc8046a4f7217/transformed/jetified-exoplayer-common-2.18.3/AndroidManifest.xml:24:5-79
 	android:name
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:6:22-76
-uses-permission#android.permission.RECORD_AUDIO
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:7:5-71
-	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:7:22-68
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
 ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:8:5-9:68
 	android:name
@@ -132,24 +123,12 @@ uses-permission#android.permission.READ_EXTERNAL_STORAGE
 ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:10:5-80
 	android:name
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:10:22-77
-queries
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:12:5-16:15
-intent#action:name:android.media.action.VIDEO_CAPTURE
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:13:9-15:18
-action#android.media.action.VIDEO_CAPTURE
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:14:13-73
-	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:14:21-70
 application
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:18:5-83:19
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:18:5-76:19
 MERGED from [com.google.android.material:material:1.8.0] /home/rafael/.gradle/caches/transforms-3/3055546eade27779c6aa30f537741feb/transformed/material-1.8.0/AndroidManifest.xml:24:5-20
 MERGED from [com.google.android.material:material:1.8.0] /home/rafael/.gradle/caches/transforms-3/3055546eade27779c6aa30f537741feb/transformed/material-1.8.0/AndroidManifest.xml:24:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/rafael/.gradle/caches/transforms-3/a687ec468d3f4fd40500b349db512997/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/rafael/.gradle/caches/transforms-3/a687ec468d3f4fd40500b349db512997/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
-MERGED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:23:5-34:19
-MERGED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:23:5-34:19
-MERGED from [androidx.camera:camera-core:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/f8f0aedf7dd8f5b16cdcdc4923bb00e3/transformed/jetified-camera-core-1.3.0-alpha04/AndroidManifest.xml:23:5-34:19
-MERGED from [androidx.camera:camera-core:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/f8f0aedf7dd8f5b16cdcdc4923bb00e3/transformed/jetified-camera-core-1.3.0-alpha04/AndroidManifest.xml:23:5-34:19
 MERGED from [com.github.bumptech.glide:glide:4.12.0] /home/rafael/.gradle/caches/transforms-3/0e1046d7e494585b9b15d2455719d465/transformed/jetified-glide-4.12.0/AndroidManifest.xml:10:5-20
 MERGED from [com.github.bumptech.glide:glide:4.12.0] /home/rafael/.gradle/caches/transforms-3/0e1046d7e494585b9b15d2455719d465/transformed/jetified-glide-4.12.0/AndroidManifest.xml:10:5-20
 MERGED from [androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:24:5-31:19
@@ -192,68 +171,62 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /home/rafael/.gradle/caches
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:20:9-65
 	android:usesCleartextTraffic
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:27:9-44
-activity#com.example.unomobile.activities.RecordVideoActivity
+activity#com.example.unomobile.activities.FullScreenActivity
 ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:30:9-36:20
 	android:exported
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:32:13-37
 	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:31:13-59
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:31:13-58
 meta-data#android.app.lib_name
 ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:33:13-35:36
 	android:value
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:35:17-33
 	android:name
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:34:17-52
-activity#com.example.unomobile.activities.FullScreenActivity
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:37:9-43:20
+activity#com.example.unomobile.activities.ActivityPageActivity
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:37:9-44:20
+	android:screenOrientation
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:40:13-49
 	android:exported
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:39:13-37
 	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:38:13-58
-activity#com.example.unomobile.activities.ActivityPageActivity
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:44:9-51:20
-	android:screenOrientation
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:47:13-49
-	android:exported
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:46:13-37
-	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:45:13-60
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:38:13-60
 activity#com.example.unomobile.activities.RegisterActivity
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:52:9-59:20
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:45:9-52:20
 	android:screenOrientation
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:55:13-49
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:48:13-49
 	android:exported
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:54:13-37
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:47:13-37
 	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:53:13-56
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:46:13-56
 activity#com.example.unomobile.activities.LoginActivity
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:60:9-67:20
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:53:9-60:20
 	android:screenOrientation
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:63:13-49
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:56:13-49
 	android:exported
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:62:13-37
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:55:13-37
 	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:61:13-53
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:54:13-53
 activity#com.example.unomobile.MainActivity
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:68:9-82:20
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:61:9-75:20
 	android:screenOrientation
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:72:13-49
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:65:13-49
 	android:exported
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:71:13-36
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:64:13-36
 	android:configChanges
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:70:13-74
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:63:13-74
 	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:69:13-41
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:62:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:73:13-77:29
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:66:13-70:29
 action#android.intent.action.MAIN
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:74:17-69
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:67:17-69
 	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:74:25-66
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:67:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:76:17-77
+ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:69:17-77
 	android:name
-		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:76:27-74
+		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:69:27-74
 uses-sdk
 INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
@@ -296,16 +269,6 @@ MERGED from [com.google.android.material:material:1.8.0] /home/rafael/.gradle/ca
 MERGED from [com.google.android.material:material:1.8.0] /home/rafael/.gradle/caches/transforms-3/3055546eade27779c6aa30f537741feb/transformed/material-1.8.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/rafael/.gradle/caches/transforms-3/a687ec468d3f4fd40500b349db512997/transformed/constraintlayout-2.1.4/AndroidManifest.xml:5:5-7:41
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/rafael/.gradle/caches/transforms-3/a687ec468d3f4fd40500b349db512997/transformed/constraintlayout-2.1.4/AndroidManifest.xml:5:5-7:41
-MERGED from [androidx.camera:camera-video:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/6dac01986f2bf248dc3f70a838df8923/transformed/jetified-camera-video-1.3.0-alpha04/AndroidManifest.xml:20:5-44
-MERGED from [androidx.camera:camera-video:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/6dac01986f2bf248dc3f70a838df8923/transformed/jetified-camera-video-1.3.0-alpha04/AndroidManifest.xml:20:5-44
-MERGED from [androidx.camera:camera-lifecycle:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/88257a7e47a45f269bcd45e8c503c360/transformed/jetified-camera-lifecycle-1.3.0-alpha04/AndroidManifest.xml:20:5-44
-MERGED from [androidx.camera:camera-lifecycle:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/88257a7e47a45f269bcd45e8c503c360/transformed/jetified-camera-lifecycle-1.3.0-alpha04/AndroidManifest.xml:20:5-44
-MERGED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:21:5-44
-MERGED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:21:5-44
-MERGED from [androidx.camera:camera-core:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/f8f0aedf7dd8f5b16cdcdc4923bb00e3/transformed/jetified-camera-core-1.3.0-alpha04/AndroidManifest.xml:21:5-44
-MERGED from [androidx.camera:camera-core:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/f8f0aedf7dd8f5b16cdcdc4923bb00e3/transformed/jetified-camera-core-1.3.0-alpha04/AndroidManifest.xml:21:5-44
-MERGED from [androidx.camera:camera-view:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/d17b0de2ec7cbf0bfe071de2e2a52bde/transformed/jetified-camera-view-1.3.0-alpha04/AndroidManifest.xml:20:5-44
-MERGED from [androidx.camera:camera-view:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/d17b0de2ec7cbf0bfe071de2e2a52bde/transformed/jetified-camera-view-1.3.0-alpha04/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.5.1] /home/rafael/.gradle/caches/transforms-3/610313b3a7fdc48308cf37443e9f4d4b/transformed/jetified-appcompat-resources-1.5.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.5.1] /home/rafael/.gradle/caches/transforms-3/610313b3a7fdc48308cf37443e9f4d4b/transformed/jetified-appcompat-resources-1.5.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.5.1] /home/rafael/.gradle/caches/transforms-3/3e6ecb1c61db6b5e34610f7bfc12cf5a/transformed/appcompat-1.5.1/AndroidManifest.xml:20:5-44
@@ -390,6 +353,8 @@ MERGED from [androidx.savedstate:savedstate-ktx:1.2.0] /home/rafael/.gradle/cach
 MERGED from [androidx.savedstate:savedstate-ktx:1.2.0] /home/rafael/.gradle/caches/transforms-3/9ef118d9e7e0db4f51124b3c80410d0f/transformed/jetified-savedstate-ktx-1.2.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.savedstate:savedstate:1.2.0] /home/rafael/.gradle/caches/transforms-3/7564fbdf217ce65621eeb717e2305867/transformed/jetified-savedstate-1.2.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.savedstate:savedstate:1.2.0] /home/rafael/.gradle/caches/transforms-3/7564fbdf217ce65621eeb717e2305867/transformed/jetified-savedstate-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.2.0] /home/rafael/.gradle/caches/transforms-3/6d460210271fe45ea58e28b2167cf9db/transformed/exifinterface-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.2.0] /home/rafael/.gradle/caches/transforms-3/6d460210271fe45ea58e28b2167cf9db/transformed/exifinterface-1.2.0/AndroidManifest.xml:20:5-22:41
 MERGED from [com.github.bumptech.glide:gifdecoder:4.12.0] /home/rafael/.gradle/caches/transforms-3/7f368afce17c32db2b7a9a40f0021d0c/transformed/jetified-gifdecoder-4.12.0/AndroidManifest.xml:5:5-7:41
 MERGED from [com.github.bumptech.glide:gifdecoder:4.12.0] /home/rafael/.gradle/caches/transforms-3/7f368afce17c32db2b7a9a40f0021d0c/transformed/jetified-gifdecoder-4.12.0/AndroidManifest.xml:5:5-7:41
 MERGED from [com.google.android.exoplayer:exoplayer-datasource:2.18.3] /home/rafael/.gradle/caches/transforms-3/e6e96e83295a17d0399910bd6436e316/transformed/jetified-exoplayer-datasource-2.18.3/AndroidManifest.xml:20:5-22:41
@@ -402,18 +367,16 @@ MERGED from [com.google.android.exoplayer:exoplayer-decoder:2.18.3] /home/rafael
 MERGED from [com.google.android.exoplayer:exoplayer-decoder:2.18.3] /home/rafael/.gradle/caches/transforms-3/da24f9afcc37618ab9c6f166c523ed43/transformed/jetified-exoplayer-decoder-2.18.3/AndroidManifest.xml:20:5-22:41
 MERGED from [com.google.android.exoplayer:exoplayer-common:2.18.3] /home/rafael/.gradle/caches/transforms-3/5d6b7f0a32240bfa4a6fc8046a4f7217/transformed/jetified-exoplayer-common-2.18.3/AndroidManifest.xml:20:5-22:41
 MERGED from [com.google.android.exoplayer:exoplayer-common:2.18.3] /home/rafael/.gradle/caches/transforms-3/5d6b7f0a32240bfa4a6fc8046a4f7217/transformed/jetified-exoplayer-common-2.18.3/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.exifinterface:exifinterface:1.3.2] /home/rafael/.gradle/caches/transforms-3/000e741b965b9679cb098c867b0b3eba/transformed/exifinterface-1.3.2/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.exifinterface:exifinterface:1.3.2] /home/rafael/.gradle/caches/transforms-3/000e741b965b9679cb098c867b0b3eba/transformed/exifinterface-1.3.2/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/rafael/.gradle/caches/transforms-3/59defd0b33b4701242dbebc66be2ced3/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/rafael/.gradle/caches/transforms-3/59defd0b33b4701242dbebc66be2ced3/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/rafael/.gradle/caches/transforms-3/c322f4bba356ccd9948c3eaafe016a2d/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/rafael/.gradle/caches/transforms-3/c322f4bba356ccd9948c3eaafe016a2d/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
 MERGED from [androidx.tracing:tracing:1.0.0] /home/rafael/.gradle/caches/transforms-3/0b99ee54a152b62b5029ff76b36b0112/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.tracing:tracing:1.0.0] /home/rafael/.gradle/caches/transforms-3/0b99ee54a152b62b5029ff76b36b0112/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.1.0] /home/rafael/.gradle/caches/transforms-3/efd0cad43f61576ba4791410ab60106f/transformed/lifecycle-livedata-2.1.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata:2.1.0] /home/rafael/.gradle/caches/transforms-3/efd0cad43f61576ba4791410ab60106f/transformed/lifecycle-livedata-2.1.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.5.1] /home/rafael/.gradle/caches/transforms-3/b8c931d97fc9aee26585a4bd75c9743f/transformed/jetified-lifecycle-livedata-core-ktx-2.5.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.5.1] /home/rafael/.gradle/caches/transforms-3/b8c931d97fc9aee26585a4bd75c9743f/transformed/jetified-lifecycle-livedata-core-ktx-2.5.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /home/rafael/.gradle/caches/transforms-3/e515f23e5b8dffc50148bde440d0d7d1/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /home/rafael/.gradle/caches/transforms-3/e515f23e5b8dffc50148bde440d0d7d1/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.5.1] /home/rafael/.gradle/caches/transforms-3/8e558c167bb9dde3f9c41458f94224cf/transformed/lifecycle-livedata-core-2.5.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.5.1] /home/rafael/.gradle/caches/transforms-3/8e558c167bb9dde3f9c41458f94224cf/transformed/lifecycle-livedata-core-2.5.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.arch.core:core-runtime:2.1.0] /home/rafael/.gradle/caches/transforms-3/8ae7c95b0fab65c543a8a2d05be72856/transformed/core-runtime-2.1.0/AndroidManifest.xml:20:5-22:41
@@ -438,26 +401,6 @@ INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/Androi
 		INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
 		ADDED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
 		INJECTED from /home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml
-service#androidx.camera.core.impl.MetadataHolderService
-ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:24:9-33:19
-MERGED from [androidx.camera:camera-core:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/f8f0aedf7dd8f5b16cdcdc4923bb00e3/transformed/jetified-camera-core-1.3.0-alpha04/AndroidManifest.xml:29:9-33:78
-MERGED from [androidx.camera:camera-core:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/f8f0aedf7dd8f5b16cdcdc4923bb00e3/transformed/jetified-camera-core-1.3.0-alpha04/AndroidManifest.xml:29:9-33:78
-	tools:node
-		ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:29:13-31
-	android:enabled
-		ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:26:13-36
-	android:exported
-		ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:27:13-37
-	tools:ignore
-		ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:28:13-75
-	android:name
-		ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:25:13-75
-meta-data#androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER
-ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:30:13-32:89
-	android:value
-		ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:32:17-86
-	android:name
-		ADDED from [androidx.camera:camera-camera2:1.3.0-alpha04] /home/rafael/.gradle/caches/transforms-3/92e258f6cc6f248d8ad88b8ecada6c23/transformed/jetified-camera-camera2-1.3.0-alpha04/AndroidManifest.xml:31:17-103
 uses-library#androidx.window.extensions
 ADDED from [androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:25:9-27:40
 	android:required

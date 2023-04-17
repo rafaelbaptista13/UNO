@@ -78,7 +78,6 @@ drawable video_icon
 drawable yellowprogress
 id action_activitiesFragment_to_activitygroupsFragment
 id action_activitygroupFragment_to_activitiesFragment
-id action_button
 id action_homeFragment_to_activitygroupsFragment
 id activitiesFragment
 id activities_graph
@@ -141,7 +140,6 @@ id num_of_activities
 id order
 id pause_button
 id play_button
-id preview_view
 id previous_activity
 id profileFragment
 id progressBar
@@ -187,7 +185,6 @@ layout activity_list_item
 layout activity_login
 layout activity_main
 layout activity_page
-layout activity_record_video
 layout activity_register
 layout activitygroup_list_item
 layout answer_list_item
