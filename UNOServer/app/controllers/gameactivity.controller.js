@@ -816,3 +816,99 @@ exports.submitGameBuild = async (req, res) => {
     }
   }
 };
+
+// Put Feedback to student
+exports.putFeedbackToStudent = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activity_id = req.params.activity_id;
+  const student_id = req.params.student_id;
+  const feedback = req.body.feedback;
+
+  if (!feedback) {
+    res.status(400).send({
+      message: "Content can not be empty! Define a feedback in body.",
+    });
+    return;
+  }
+
+  // Check Activity
+  let activity = await Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: [
+      {
+        model: GameActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id,
+        },
+      },
+    ],
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "Activity not found!",
+    });
+    return;
+  }
+  if (activity.activitytype_id !== 4) {
+    res.status(400).send({
+      message: "Activity is not of type Game!",
+    });
+    return;
+  }
+
+  let GameTypeStatus;
+  switch (activity.GameActivity.gamemode_id) {
+    case 1:
+      GameTypeStatus = IdentifyModeStatus;
+      break;
+    case 2:
+      GameTypeStatus = PlayModeStatus;
+      break;
+    case 3:
+      GameTypeStatus = BuildModeStatus;
+      break;
+  }
+
+  // Get ActivityStatus
+  let activity_game_status = await GameTypeStatus.findOne({
+    where: {
+      activity_id: activity_id,
+      user_id: student_id,
+    },
+  });
+  if (activity_game_status === null) {
+    res.status(400).send({
+      message: "Activity not submitted!",
+    });
+    return;
+  }
+
+  GameTypeStatus.update(
+    {
+      teacher_feedback: feedback,
+    },
+    {
+      where: {
+        activity_id: activity_id,
+        user_id: student_id,
+      },
+    }
+  )
+    .then((data) => {
+      res.status(200).send({
+        message: "Activity updated successfully!",
+      });
+    })
+    .catch((err) => {
+      console.log(error);
+      res.status(500).send({
+        message: "Failed to update activity.",
+      });
+    });
+};
