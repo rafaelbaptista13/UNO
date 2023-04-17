@@ -114,11 +114,11 @@ class GameIdentifyModeFragment : Fragment() {
         }
 
         val type_text = view.findViewById<TextView>(R.id.type)
-        type_text.text = order.toString() + ". Jogo"
+        type_text.text = order.toString() + ". Jogo - Identificar"
         val title_text = view.findViewById<TextView>(R.id.title)
         title_text.text = title
         val description_text = view.findViewById<TextView>(R.id.description)
-        if (description != null) {
+        if (description != null && description != "") {
             description_text.text = description
         } else {
             description_text.visibility = View.GONE
@@ -310,18 +310,31 @@ class GameIdentifyModeFragment : Fragment() {
                 1 -> {
                     note_view = string1.getChildAt(note_order + 1) as MusicalNoteView
                     if (selected_note!!.type == "LeftTriangle") {
-                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_blue, context)
+                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_green, context)
                     }
                     if (selected_note!!.type == "RightTriangle") {
-                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_blue, context)
+                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_green, context)
                     }
                     if (selected_note!!.type == "Circle") {
-                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.musical_note_blue, context)
+                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.violin_string_1, context)
                     }
                     note_view.visibility = View.VISIBLE
                 }
                 2 -> {
                     note_view = string2.getChildAt(note_order + 1) as MusicalNoteView
+                    if (selected_note!!.type == "LeftTriangle") {
+                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_pink, context)
+                    }
+                    if (selected_note!!.type == "RightTriangle") {
+                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_pink, context)
+                    }
+                    if (selected_note!!.type == "Circle") {
+                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.violin_string_2, context)
+                    }
+                    note_view.visibility = View.VISIBLE
+                }
+                3 -> {
+                    note_view = string3.getChildAt(note_order + 1) as MusicalNoteView
                     if (selected_note!!.type == "LeftTriangle") {
                         updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_yellow, context)
                     }
@@ -329,33 +342,20 @@ class GameIdentifyModeFragment : Fragment() {
                         updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_yellow, context)
                     }
                     if (selected_note!!.type == "Circle") {
-                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.musical_note_yellow, context)
-                    }
-                    note_view.visibility = View.VISIBLE
-                }
-                3 -> {
-                    note_view = string3.getChildAt(note_order + 1) as MusicalNoteView
-                    if (selected_note!!.type == "LeftTriangle") {
-                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_red, context)
-                    }
-                    if (selected_note!!.type == "RightTriangle") {
-                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_red, context)
-                    }
-                    if (selected_note!!.type == "Circle") {
-                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.musical_note_red, context)
+                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.violin_string_3, context)
                     }
                     note_view.visibility = View.VISIBLE
                 }
                 4 -> {
                     note_view = string4.getChildAt(note_order + 1) as MusicalNoteView
                     if (selected_note!!.type == "LeftTriangle") {
-                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_green, context)
+                        updateMusicalNoteViewToLeftTriangle(note_view, selected_note!!, R.drawable.left_triangle_blue, context)
                     }
                     if (selected_note!!.type == "RightTriangle") {
-                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_green, context)
+                        updateMusicalNoteViewToRightTriangle(note_view, selected_note!!, R.drawable.right_triangle_blue, context)
                     }
                     if (selected_note!!.type == "Circle") {
-                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.musical_note_green, context)
+                        updateMusicalNoteViewToCircle(note_view, selected_note!!, R.color.violin_string_4, context)
                     }
 
                 }

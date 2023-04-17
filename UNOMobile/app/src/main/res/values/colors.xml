@@ -14,8 +14,15 @@
     <color name="yellow">#F4DB62</color>
     <color name="light_grey">#D0D0D0</color>
     <color name="light_light_grey">#ECECEC</color>
-    <color name="musical_note_red">#ff0000</color>
-    <color name="musical_note_green">#339966</color>
-    <color name="musical_note_blue">#0000ff</color>
-    <color name="musical_note_yellow">#F4DB62</color>
+
+    <color name="violin_string_1">#339966</color>   // Green
+    <color name="violin_string_2">#FF6F9C</color>   // Pink
+    <color name="violin_string_3">#F4DB62</color>   // Yellow
+    <color name="violin_string_4">#0000ff</color>   // Blue
+
+    <color name="viola_string_1">#FF6F9C</color>   // Pink
+    <color name="viola_string_2">#F4DB62</color>   // Yellow
+    <color name="viola_string_3">#0000ff</color>   // Blue
+    <color name="viola_string_4">#ff0000</color>   // Red
+
 </resources>

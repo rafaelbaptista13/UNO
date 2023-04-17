@@ -21,13 +21,13 @@ fun showSolution(notes: Array<MusicalNote>, string1: LinearLayout, string2: Line
             addInvisibleView(string3, context)
             addInvisibleView(string4, context)
             if (note.type == "LeftTriangle") {
-                updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_blue, context)
+                updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_green, context)
             }
             if (note.type == "RightTriangle") {
-                updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_blue, context)
+                updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_green, context)
             }
             if (note.type == "Circle") {
-                updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_blue, context)
+                updateMusicalNoteViewToCircle(note_view, note, R.color.violin_string_1, context)
             }
         }
         if (note.violin_string == 2) {
@@ -36,13 +36,13 @@ fun showSolution(notes: Array<MusicalNote>, string1: LinearLayout, string2: Line
             addInvisibleView(string3, context)
             addInvisibleView(string4, context)
             if (note.type == "LeftTriangle") {
-                updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_yellow, context)
+                updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_pink, context)
             }
             if (note.type == "RightTriangle") {
-                updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_yellow, context)
+                updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_pink, context)
             }
             if (note.type == "Circle") {
-                updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_yellow, context)
+                updateMusicalNoteViewToCircle(note_view, note, R.color.violin_string_2, context)
             }
         }
         if (note.violin_string == 3) {
@@ -51,13 +51,13 @@ fun showSolution(notes: Array<MusicalNote>, string1: LinearLayout, string2: Line
             addInvisibleView(string1, context)
             addInvisibleView(string4, context)
             if (note.type == "LeftTriangle") {
-                updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_red, context)
+                updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_yellow, context)
             }
             if (note.type == "RightTriangle") {
-                updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_red, context)
+                updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_yellow, context)
             }
             if (note.type == "Circle") {
-                updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_red, context)
+                updateMusicalNoteViewToCircle(note_view, note, R.color.violin_string_3, context)
             }
         }
         if (note.violin_string == 4) {
@@ -66,13 +66,13 @@ fun showSolution(notes: Array<MusicalNote>, string1: LinearLayout, string2: Line
             addInvisibleView(string3, context)
             addInvisibleView(string1, context)
             if (note.type == "LeftTriangle") {
-                updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_green, context)
+                updateMusicalNoteViewToLeftTriangle(note_view, note, R.drawable.left_triangle_blue, context)
             }
             if (note.type == "RightTriangle") {
-                updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_green, context)
+                updateMusicalNoteViewToRightTriangle(note_view, note, R.drawable.right_triangle_blue, context)
             }
             if (note.type == "Circle") {
-                updateMusicalNoteViewToCircle(note_view, note, R.color.musical_note_green, context)
+                updateMusicalNoteViewToCircle(note_view, note, R.color.violin_string_4, context)
             }
         }
     }
@@ -132,24 +132,24 @@ fun createMusicalNoteViewForAvailableNotes(note: MusicalNote, context: Context):
     var right_triangle_drawable = 0
     when (note.violin_string) {
         1 -> {
-            string_color = R.color.musical_note_blue
-            left_triangle_drawable = R.drawable.left_triangle_blue
-            right_triangle_drawable = R.drawable.right_triangle_blue
+            string_color = R.color.violin_string_1
+            left_triangle_drawable = R.drawable.left_triangle_green
+            right_triangle_drawable = R.drawable.right_triangle_green
         }
         2 -> {
-            string_color = R.color.musical_note_yellow
+            string_color = R.color.violin_string_2
+            left_triangle_drawable = R.drawable.left_triangle_pink
+            right_triangle_drawable = R.drawable.right_triangle_pink
+        }
+        3 -> {
+            string_color = R.color.violin_string_3
             left_triangle_drawable = R.drawable.left_triangle_yellow
             right_triangle_drawable = R.drawable.right_triangle_yellow
         }
-        3 -> {
-            string_color = R.color.musical_note_red
-            left_triangle_drawable = R.drawable.left_triangle_red
-            right_triangle_drawable = R.drawable.right_triangle_red
-        }
         4 -> {
-            string_color = R.color.musical_note_green
-            left_triangle_drawable = R.drawable.left_triangle_green
-            right_triangle_drawable = R.drawable.right_triangle_green
+            string_color = R.color.violin_string_4
+            left_triangle_drawable = R.drawable.left_triangle_blue
+            right_triangle_drawable = R.drawable.right_triangle_blue
         }
     }
 

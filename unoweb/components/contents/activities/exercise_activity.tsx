@@ -46,17 +46,6 @@ export default function ExerciseActivity({
         .then((blob) => {
           const src = URL.createObjectURL(blob);
           setMediaSrc(src);
-
-          if (completed) {
-            ActivitiesService.getExerciseActivitySubmittedMedia(
-              class_id,
-              activity_id,
-              student_id
-            ).then((_blob) => {
-              const submitted_src = URL.createObjectURL(_blob);
-              setSubmittedMediaSrc(submitted_src);
-            });
-          }
         })
         .catch((err) => {
           setError(true);
@@ -64,6 +53,16 @@ export default function ExerciseActivity({
         .finally(() => {
           setIsPageLoading(false);
         });
+    }
+    if (completed) {
+      ActivitiesService.getExerciseActivitySubmittedMedia(
+        class_id,
+        activity_id,
+        student_id
+      ).then((_blob) => {
+        const submitted_src = URL.createObjectURL(_blob);
+        setSubmittedMediaSrc(submitted_src);
+      });
     }
   }, [
     activity_id,

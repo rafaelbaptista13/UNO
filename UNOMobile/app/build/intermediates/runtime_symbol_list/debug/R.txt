@@ -1985,10 +1985,6 @@ int color mtrl_textinput_disabled_color 0x7f060271
 int color mtrl_textinput_filled_box_default_background_color 0x7f060272
 int color mtrl_textinput_focused_box_stroke_color 0x7f060273
 int color mtrl_textinput_hovered_box_stroke_color 0x7f060274
-int color musical_note_blue 0x7f060275
-int color musical_note_green 0x7f060276
-int color musical_note_red 0x7f060277
-int color musical_note_yellow 0x7f060278
 int color notification_action_color_filter 0x7f060279
 int color notification_icon_bg_color 0x7f06027a
 int color notification_material_background_media_default_color 0x7f06027b
@@ -2020,6 +2016,14 @@ int color teal_200 0x7f060294
 int color teal_700 0x7f060295
 int color tooltip_background_dark 0x7f060296
 int color tooltip_background_light 0x7f060297
+int color viola_string_1 0x7f06029a
+int color viola_string_2 0x7f06029b
+int color viola_string_3 0x7f06029c
+int color viola_string_4 0x7f06029d
+int color violin_string_1 0x7f06029e
+int color violin_string_2 0x7f06029f
+int color violin_string_3 0x7f0602a0
+int color violin_string_4 0x7f0602a1
 int color white 0x7f060298
 int color yellow 0x7f060299
 int dimen abc_action_bar_content_inset_material 0x7f070000
@@ -2973,6 +2977,7 @@ int drawable inverse_primary_button 0x7f0800f6
 int drawable left_triangle_blue 0x7f0800f7
 int drawable left_triangle_green 0x7f0800f8
 int drawable left_triangle_note 0x7f0800f9
+int drawable left_triangle_pink 0x7f08015e
 int drawable left_triangle_red 0x7f0800fa
 int drawable left_triangle_yellow 0x7f0800fb
 int drawable loading_icon 0x7f0800fc
@@ -3060,6 +3065,7 @@ int drawable record_icon 0x7f08014d
 int drawable right_triangle_blue 0x7f08014e
 int drawable right_triangle_green 0x7f08014f
 int drawable right_triangle_note 0x7f080150
+int drawable right_triangle_pink 0x7f08015f
 int drawable right_triangle_red 0x7f080151
 int drawable right_triangle_yellow 0x7f080152
 int drawable start_recording 0x7f080153
