@@ -121,7 +121,7 @@ export default function Classes({ teacher_classes, error }: ClassesProps) {
         </div>
         {error && (
           <div className="row g-3 my-2">
-            <ErrorCard message="Ocorreu um erro ao obter os conteúdos semanais. Por favor tente novamente." />
+            <ErrorCard message="Ocorreu um erro ao obter as turmas. Por favor tente novamente." />
           </div>
         )}
         {newClassMode && (
