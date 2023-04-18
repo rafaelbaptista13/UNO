@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 
 import styled from "styled-components";
+import getBasePath from "../utils/basePath";
 
 import PageCard from "../utils/page_card";
 
@@ -11,6 +12,8 @@ const ImageResponsiveDiv = styled.div`
 `;
 
 export default function HomePage() {
+  const basePath = getBasePath();
+
   return (
     <div className="container px-4 mt-5">
       <div className="row mt-5 mb-5">
@@ -21,7 +24,7 @@ export default function HomePage() {
               fill
               sizes="100"
               id="header-logo"
-              src="/img/logo-no-background.png"
+              src={ basePath + "/img/logo-no-background.png"}
               alt="SportsStats logo"
               style={{ objectFit: "contain" }}
             />

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Image from "next/image";
 import Link from "next/link";
+import getBasePath from "../utils/basePath";
 
 const CardDiv = styled.div`
   position: relative;
@@ -46,6 +47,7 @@ export default function StudentActivityCard({
   type: string;
   description: string;
 }) {
+  const basePath = getBasePath();
   return (
     <CardDiv className="container p-3 bg-white shadow-sm rounded">
       <div className="row">
@@ -54,7 +56,7 @@ export default function StudentActivityCard({
             width={30}
             height={30}
             className="activity_logo"
-            src={`/img/icons/completed.png`}
+            src={`${basePath}/img/icons/completed.png`}
             alt={"activity logo"}
             style={{opacity: completed ? "100%" : "20%"}}
           />
@@ -67,7 +69,7 @@ export default function StudentActivityCard({
                   fill
                   sizes="100"
                   className="activity_logo"
-                  src={`/img/icons/${type}.png`}
+                  src={`${basePath}/img/icons/${type}.png`}
                   alt={"activity logo"}
                   style={{ objectFit: "contain" }}
                 />
