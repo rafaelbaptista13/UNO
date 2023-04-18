@@ -24,6 +24,7 @@ const proxy = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) =>
       .web(req, res, {
         changeOrigin: true,
         target: target,
+        secure: false
       });
   });
 

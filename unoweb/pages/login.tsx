@@ -19,7 +19,6 @@ export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
   const [type, setType] = useState("login");
   const basePath = getBasePath();
-  console.log(basePath);
 
   const [successful, setSuccessful] = useState(false);
   const { message } = useSelector<RootState, MessageState>(
