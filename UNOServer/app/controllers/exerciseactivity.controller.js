@@ -361,7 +361,7 @@ exports.updateExercise = async (req, res) => {
     const new_activity = {
       title: req.body.title,
       description: req.body.description,
-    }
+    };
 
     Activity.update(new_activity, {
       where: {
@@ -369,17 +369,17 @@ exports.updateExercise = async (req, res) => {
       },
       transaction: t,
     })
-    .then(() => {
-      res.send({
-        message: "Activity was updated successfully.",
+      .then(() => {
+        res.send({
+          message: "Activity was updated successfully.",
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while updating the Activity.",
+        });
       });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while updating the Activity.",
-      });
-    });
   }
 };
 
@@ -587,4 +587,79 @@ exports.getSubmittedMediaOfStudent = async (req, res) => {
   res
     .status(200)
     .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
+};
+
+// Put Feedback to student
+exports.putFeedbackToStudent = async (req, res) => {
+  const class_id = req.params.class_id;
+  const activity_id = req.params.activity_id;
+  const student_id = req.params.student_id;
+  const feedback = req.body.feedback;
+
+  if (!feedback) {
+    res.status(400).send({
+      message: "Content can not be empty! Define a feedback in body.",
+    });
+    return;
+  }
+
+  // Check Activity
+  let activity = await Activity.findOne({
+    where: {
+      id: activity_id,
+    },
+    include: {
+      model: ActivityGroup,
+      as: "activitygroup",
+      where: {
+        class_id: class_id,
+      },
+    },
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "Activity not found!",
+    });
+    return;
+  }
+
+  // Get ExerciseActivityStatus
+  let activity_exercise = await ExerciseActivity.findOne({
+    where: {
+      activity_id: activity_id,
+    },
+    include: [
+      {
+        model: ExerciseActivityStatus,
+        where: {
+          activity_id: activity_id,
+          user_id: student_id,
+        },
+      },
+    ],
+  });
+  if (activity_exercise === null) {
+    res.status(400).send({
+      message: "Activity not submitted!",
+    });
+    return;
+  }
+  
+  ExerciseActivityStatus.update({
+    teacher_feedback: feedback
+  }, {
+    where: {
+      activity_id: activity_id,
+      user_id: student_id
+    }
+  }).then((data) => {
+    res.status(200).send({
+      message: "Activity updated successfully!",
+    });
+  }).catch((err) => {
+    console.log(error);
+    res.status(500).send({
+      message: "Failed to update activity.",
+    });
+  })
 };
