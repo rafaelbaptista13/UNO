@@ -3,7 +3,6 @@ import React from "react";
 
 import styled from "styled-components";
 import getBasePath from "../utils/basePath";
-import getConfig from 'next/config';
 
 import PageCard from "../utils/page_card";
 
@@ -13,13 +12,7 @@ const ImageResponsiveDiv = styled.div`
 `;
 
 export default function HomePage() {
-  //const basePath = getBasePath();
-  
-
-  const { publicRuntimeConfig } = getConfig();
-  const basePath = publicRuntimeConfig?.basePath ?? '';
-  console.log("Aqui");
-  console.log(basePath);
+  const basePath = getBasePath();
 
   return (
     <div className="container px-4 mt-5">

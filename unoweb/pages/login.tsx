@@ -9,7 +9,6 @@ import { clearMessage, MessageState } from "../redux/features/message";
 import LoginForm from "../components/auth/login_form";
 import RegisterForm from "../components/auth/register_form";
 import getBasePath from "../components/utils/basePath";
-import getConfig from "next/config";
 
 const ImageResponsiveDiv = styled.div`
   height: 200px;
@@ -19,11 +18,8 @@ const ImageResponsiveDiv = styled.div`
 export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
   const [type, setType] = useState("login");
-  //const basePath = getBasePath();
-  const { publicRuntimeConfig } = getConfig();
-  const basePath = publicRuntimeConfig?.basePath || '';
-  console.log(publicRuntimeConfig);
-  console.log(basePath)
+  const basePath = getBasePath();
+  console.log(basePath);
 
   const [successful, setSuccessful] = useState(false);
   const { message } = useSelector<RootState, MessageState>(
