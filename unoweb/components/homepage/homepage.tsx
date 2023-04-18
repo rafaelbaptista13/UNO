@@ -18,6 +18,8 @@ export default function HomePage() {
 
   const { publicRuntimeConfig } = getConfig();
   const basePath = publicRuntimeConfig?.basePath ?? '';
+  console.log("Aqui");
+  console.log(basePath);
 
   return (
     <div className="container px-4 mt-5">
