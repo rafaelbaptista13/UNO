@@ -1,5 +1,6 @@
 package com.example.unomobile.network
 
+import com.example.unomobile.BuildConfig
 import com.example.unomobile.models.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -15,7 +16,11 @@ import retrofit2.http.*
 import java.net.CookieManager
 import java.util.concurrent.TimeUnit
 
-const val BASE_URL = "http://10.0.2.2:8080/api/"
+var BASE_URL = if (BuildConfig.IS_DEVELOPMENT_MODE) {
+    "http://10.0.2.2:8080/api/"
+} else {
+    "https://deti-viola.ua.pt/rb-md-violuno-app-v1/internal-api/api/"
+}
 
 private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 private val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)

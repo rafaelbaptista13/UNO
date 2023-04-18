@@ -14,7 +14,7 @@ const proxy = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) =>
   new Promise((resolve, reject) => {
     const proxy: httpProxy = httpProxy.createProxy();
     const target = process.env.NODE_ENV === "production"
-      ? "http://deti-viola.ua.pt/internal-api"
+      ? "https://deti-viola.ua.pt/rb-md-violuno-app-v1/internal-api"
       : "http://localhost:8080"
 
     console.log(target)

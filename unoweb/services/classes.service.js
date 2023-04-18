@@ -1,6 +1,6 @@
 import api from "./api";
 
-const API_URL = process.env.NODE_ENV === "production" ? "http://deti-viola.ua.pt/api" : "http://localhost:3000/api";
+const API_URL = process.env.NODE_ENV === "production" ? "https://deti-viola.ua.pt/rb-md-violuno-app-v1/api" : "http://localhost:3000/api";
 
 const getClasses = () => {
   return api.get(API_URL + "/classes").then((response) => {

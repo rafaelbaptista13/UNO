@@ -134,7 +134,6 @@ class ActivitiesFragment : Fragment() {
                     recyclerView.adapter = adapter
                     (adapter as ActivitiesAdapter).setOnItemClickListener(object : ActivitiesAdapter.onItemClickListener{
                         override fun onItemClick(position: Int) {
-                            val activity = response.body()!![position]
                             Log.i("ActivitiesFragment", "Clicked")
                             val bundle = Bundle()
                             bundle.putIntArray("activities_id", response.body()!!.map { it.id }.toIntArray())

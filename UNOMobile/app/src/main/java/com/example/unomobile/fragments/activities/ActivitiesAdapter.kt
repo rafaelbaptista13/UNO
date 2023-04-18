@@ -53,10 +53,10 @@ class ActivitiesAdapter(private val data: List<Activity>, val context: Context) 
             if (currentItem.game_activity!!.mode == "Identify") {
                 holder.activity_type.text = "Jogo - Identificar"
             }
-            if (currentItem.game_activity!!.mode == "Play") {
+            if (currentItem.game_activity.mode == "Play") {
                 holder.activity_type.text = "Jogo - Reproduzir"
             }
-            if (currentItem.game_activity!!.mode == "Build") {
+            if (currentItem.game_activity.mode == "Build") {
                 holder.activity_type.text = "Jogo - Construir"
             }
         } else {

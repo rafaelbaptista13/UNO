@@ -93,7 +93,8 @@
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/primary_text"
                 android:layout_marginHorizontal="10dp"
-                android:layout_marginVertical="10dp">
+                android:layout_marginVertical="10dp"
+                app:cardBackgroundColor="@color/white">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -247,7 +248,8 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="Incorreto. Tenta outra sequência."
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textColor="@color/primary_text"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/submit"

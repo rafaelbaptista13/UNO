@@ -434,6 +434,7 @@ class GameIdentifyModeFragment : Fragment() {
             card_view.layoutParams = params
             card_view.cardElevation = 10.dpToPx(context).toFloat()
             card_view.radius = 20.dpToPx(context).toFloat()
+            card_view.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
             card_view.setOnClickListener {
                 Log.i("GameIdentifyFragment", it.toString())
                 if (selected_note_cardview == null) {

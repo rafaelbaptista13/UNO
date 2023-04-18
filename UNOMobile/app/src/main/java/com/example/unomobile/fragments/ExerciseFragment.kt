@@ -1,14 +1,10 @@
 package com.example.unomobile.fragments
 
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
-import android.content.ActivityNotFoundException
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,14 +19,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.unomobile.R
 import com.example.unomobile.activities.ActivityPageActivity
 import com.example.unomobile.activities.FullScreenActivity
-import com.example.unomobile.activities.RecordVideoActivity
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
@@ -42,8 +36,6 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -54,12 +46,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
-
-private val REQUEST_CODE = 123
 
 class ExerciseFragment : Fragment() {
 
@@ -89,11 +76,6 @@ class ExerciseFragment : Fragment() {
     private lateinit var upload_video_buttons : LinearLayout
     // To handle if the user can change their submission or not
     private var editMode: Boolean = true
-
-    private var videoUriForAddingCaptureVideo : Uri? = null
-    private var videoPathForAddingCaptureVideo : String? = null
-
-    private val REQUEST_VIDEO_CAPTURE = 123
 
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String) = ExerciseFragment().apply {
@@ -176,7 +158,7 @@ class ExerciseFragment : Fragment() {
         // Add click listeners on both buttons
         record_video_button.setOnClickListener {
             Log.i("ExerciseFragment", "Record Video Button clicked")
-            val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            /*val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
             Log.i("ExerciseFragment", takeVideoIntent.resolveActivity(requireActivity().packageManager).toString())
             if (takeVideoIntent.resolveActivity(requireActivity().packageManager) != null) {
                 try {
@@ -188,7 +170,7 @@ class ExerciseFragment : Fragment() {
 
             } else {
                 Toast.makeText(requireContext(), "Ocorreu um erro ao abrir a câmera.", Toast.LENGTH_SHORT).show()
-            }
+            }*/
         }
 
         upload_video_button.setOnClickListener {

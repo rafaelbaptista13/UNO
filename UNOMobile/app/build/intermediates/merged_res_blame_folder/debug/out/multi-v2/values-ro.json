@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.unomobile.app-mergeDebugResources-54:/values-ro/values-ro.xml",
+            "outputFile": "com.example.unomobile.app-mergeDebugResources-49:/values-ro/values-ro.xml",
             "map": [
                 {
                     "source": "/home/rafael/.gradle/caches/transforms-3/9f6e66260b72730b2dfc25530e48ab8c/transformed/jetified-exoplayer-core-2.18.3/res/values-ro/values-ro.xml",

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.unomobile.app-mergeDebugResources-54:/values-mk/values-mk.xml",
+            "outputFile": "com.example.unomobile.app-mergeDebugResources-49:/values-mk/values-mk.xml",
             "map": [
                 {
                     "source": "/home/rafael/.gradle/caches/transforms-3/abd504e945e0f0944dd59a629e21ee85/transformed/jetified-exoplayer-ui-2.18.3/res/values-mk/values-mk.xml",
