@@ -56,8 +56,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - /etc/ssl/certs/deti-viola.ua.pt/:/etc/ssl/certs/deti-viola.ua.pt/
-      - /etc/ssl/private/deti-viola.ua.pt/:/etc/ssl/private/deti-viola.ua.pt/
+      - /etc/ssl/certs/deti-viola.ua.pt/cert.pem:/etc/ssl/certs/deti-viola.ua.pt/cert.pem
+      - /etc/ssl/private/deti-viola.ua.pt/key.pem:/etc/ssl/private/deti-viola.ua.pt/key.pem
     depends_on:
       - webapp
     networks:
