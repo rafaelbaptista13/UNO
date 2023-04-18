@@ -104,16 +104,9 @@ const updateMediaActivity = (
 
 const getActivityMedia = (class_id, activity_id) => {
   return api
-    .get(
-      "/activities/" +
-        class_id +
-        "/" +
-        activity_id +
-        "/media",
-      {
-        responseType: "blob",
-      }
-    )
+    .get("/activities/" + class_id + "/" + activity_id + "/media", {
+      responseType: "blob",
+    })
     .then((response) => {
       return response.data;
     });
@@ -155,28 +148,25 @@ const createExerciseActivity = (
 };
 const getExerciseActivityMedia = (class_id, activity_id) => {
   return api
-    .get(
-      "/activities/" +
-        class_id +
-        "/" +
-        activity_id +
-        "/exercise/media",
-      {
-        responseType: "blob",
-      }
-    )
+    .get("/activities/" + class_id + "/" + activity_id + "/exercise/media", {
+      responseType: "blob",
+    })
     .then((response) => {
       return response.data;
     });
 };
-const getExerciseActivitySubmittedMedia = (class_id, activity_id, student_id) => {
+const getExerciseActivitySubmittedMedia = (
+  class_id,
+  activity_id,
+  student_id
+) => {
   return api
     .get(
       "/activities/teacher/" +
         class_id +
         "/" +
         activity_id +
-        "/exercise/submitted/media/" + 
+        "/exercise/submitted/media/" +
         student_id,
       {
         responseType: "blob",
@@ -239,16 +229,9 @@ const createQuestionActivity = (
 };
 const getQuestionActivityMedia = (class_id, activity_id) => {
   return api
-    .get(
-      "/activities/" +
-        class_id +
-        "/" +
-        activity_id +
-        "/question/media",
-      {
-        responseType: "blob",
-      }
-    )
+    .get("/activities/" + class_id + "/" + activity_id + "/question/media", {
+      responseType: "blob",
+    })
     .then((response) => {
       return response.data;
     });
@@ -260,8 +243,9 @@ const getQuestionActivityAnswerMedia = (class_id, activity_id, order) => {
         class_id +
         "/" +
         activity_id +
-        "/question/answers/" + 
-        order + "/media",
+        "/question/answers/" +
+        order +
+        "/media",
       {
         responseType: "blob",
       }
@@ -315,7 +299,7 @@ const getGameActivitySubmittedMedia = (class_id, activity_id, student_id) => {
         class_id +
         "/" +
         activity_id +
-        "/game/submitted/media/" + 
+        "/game/submitted/media/" +
         student_id,
       {
         responseType: "blob",
@@ -328,7 +312,14 @@ const getGameActivitySubmittedMedia = (class_id, activity_id, student_id) => {
 
 const getActivitiesOfStudent = (class_id, activitygroup_id, student_id) => {
   return api
-    .get("/activities/teacher/" + class_id + "/" + activitygroup_id + "/" + student_id)
+    .get(
+      "/activities/teacher/" +
+        class_id +
+        "/" +
+        activitygroup_id +
+        "/" +
+        student_id
+    )
     .then((response) => {
       if (response.status === 200) {
         return response.data;
@@ -342,9 +333,23 @@ const getActivitiesOfStudent = (class_id, activitygroup_id, student_id) => {
     });
 };
 
-const getActivityOfStudent = (class_id, activitygroup_id, activity_id, student_id) => {
+const getActivityOfStudent = (
+  class_id,
+  activitygroup_id,
+  activity_id,
+  student_id
+) => {
   return api
-    .get("/activities/teacher/" + class_id + "/" + activitygroup_id + "/" + activity_id + "/" + student_id)
+    .get(
+      "/activities/teacher/" +
+        class_id +
+        "/" +
+        activitygroup_id +
+        "/" +
+        activity_id +
+        "/" +
+        student_id
+    )
     .then((response) => {
       if (response.status === 200) {
         return response.data;
@@ -416,6 +421,34 @@ const deleteActivity = (class_id, activity_id, activitygroup_id) => {
     });
 };
 
+const sendFeedback = (class_id, activity_id, student_id, type, feedback) => {
+  return api
+    .put(
+      "/activities/teacher/" +
+        class_id +
+        "/" +
+        activity_id +
+        "/" +
+        type +
+        "/feedback/" +
+        student_id,
+      {
+        feedback: feedback,
+      }
+    )
+    .then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
+    });
+};
+
 const ActivitiesService = {
   getActivities,
   getActivity,
@@ -436,6 +469,7 @@ const ActivitiesService = {
   updateActivity,
   changeOrder,
   deleteActivity,
+  sendFeedback
 };
 
 export default ActivitiesService;

@@ -1,4 +1,4 @@
-#Mon Apr 17 15:59:32 WEST 2023
+#Tue Apr 18 12:49:12 WEST 2023
 path.4=12/classes.dex
 path.3=10/classes.dex
 path.2=1/classes.dex
@@ -9,7 +9,6 @@ path.8=7/classes.dex
 path.7=4/classes.dex
 path.6=3/classes.dex
 path.5=15/classes.dex
-renamed.10=classes11.dex
 path.0=classes.dex
 base.4=/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/build/intermediates/dex/debug/mergeProjectDexDebug/12/classes.dex
 base.3=/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/build/intermediates/dex/debug/mergeProjectDexDebug/10/classes.dex
@@ -19,7 +18,6 @@ base.0=/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/build/intermediates/de
 renamed.3=classes4.dex
 renamed.2=classes3.dex
 renamed.1=classes2.dex
-path.10=classes3.dex
 renamed.0=classes.dex
 base.9=/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
 path.9=classes2.dex
@@ -31,4 +29,3 @@ renamed.5=classes6.dex
 base.6=/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/build/intermediates/dex/debug/mergeProjectDexDebug/3/classes.dex
 renamed.4=classes5.dex
 base.5=/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/build/intermediates/dex/debug/mergeProjectDexDebug/15/classes.dex
-base.10=/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/build/intermediates/dex/debug/mergeExtDexDebug/classes3.dex

@@ -1,8 +1,10 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ExerciseActivity from "../../../../../../../components/contents/activities/exercise_activity";
+import FeedbackForm from "../../../../../../../components/contents/activities/feedback_form";
 import GameActivity from "../../../../../../../components/contents/activities/game_activity";
 import MediaActivity from "../../../../../../../components/contents/activities/media_activity";
 import QuestionActivity from "../../../../../../../components/contents/activities/question_activity";
@@ -12,6 +14,7 @@ import PageHeader from "../../../../../../../components/utils/page_header";
 import { ActiveClassState } from "../../../../../../../redux/features/active_class";
 import { RootState } from "../../../../../../../redux/store";
 import ActivityService from "../../../../../../../services/activities.service";
+import { ButtonPrimary } from "../../../../../../../utils/buttons";
 
 export type ActivityTypeType = {
   id: number;
@@ -67,6 +70,7 @@ export type ActivityType = {
   title: string;
   description: string | null;
   completed: boolean;
+  teacher_feedback: string;
   createdAt: string;
   updatedAt: string;
   media_activity: MediaActivityType | null;
@@ -174,38 +178,57 @@ export default function StudentActivityPage({
           />
         )}
         {activity?.activitytype.name === "Exercise" && (
-          <ExerciseActivity
-            student_id={student_id}
-            activitygroup_id={activitygroup_id}
-            activity_id={activity_id}
-            title={activity.title}
-            description={activity.description}
-            media_type={activity.exercise_activity!!.media_type}
-            completed={activity.completed}
-          />
+          <>
+            <ExerciseActivity
+              student_id={student_id}
+              activitygroup_id={activitygroup_id}
+              activity_id={activity_id}
+              title={activity.title}
+              description={activity.description}
+              media_type={activity.exercise_activity!!.media_type}
+              completed={activity.completed}
+            />
+            <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"exercise"} />
+          </>
         )}
         {activity?.activitytype.name === "Question" && (
-          <QuestionActivity
-            student_id={student_id}
-            activitygroup_id={activitygroup_id}
-            activity_id={activity_id}
-            title={activity.title}
-            media_type={activity.question_activity!!.media_type}
-            completed={activity.completed}
-            question_info={activity.question_activity!!}
-          />
+          <>
+            <QuestionActivity
+              student_id={student_id}
+              activitygroup_id={activitygroup_id}
+              activity_id={activity_id}
+              title={activity.title}
+              media_type={activity.question_activity!!.media_type}
+              completed={activity.completed}
+              question_info={activity.question_activity!!}
+            />
+            <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"question"} />
+          </>
         )}
         {activity?.activitytype.name === "Game" && (
-          <GameActivity
-            student_id={student_id}
-            activitygroup_id={activitygroup_id}
-            activity_id={activity_id}
-            title={activity.title}
-            description={activity.description}
-            game_info={activity.game_activity!!}
-            completed={activity.completed}
-          />
+          <>
+            <GameActivity
+              student_id={student_id}
+              activitygroup_id={activitygroup_id}
+              activity_id={activity_id}
+              title={activity.title}
+              description={activity.description}
+              game_info={activity.game_activity!!}
+              completed={activity.completed}
+            />
+            <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"game"} />
+          </>
         )}
+
+        <div className="row g-3 my-2">
+          <div className="col gap-3 d-flex justify-content-end">
+            <Link
+              href={`/contents/groups/${activitygroup_id}/students/${student_id}`}
+            >
+              <ButtonPrimary>Voltar</ButtonPrimary>
+            </Link>
+          </div>
+        </div>
       </div>
     </>
   );

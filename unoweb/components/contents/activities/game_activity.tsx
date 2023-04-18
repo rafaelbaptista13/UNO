@@ -6,8 +6,6 @@ import { ActiveClassState } from "../../../redux/features/active_class";
 import ActivitiesService from "../../../services/activities.service";
 import Loading from "../../utils/loading";
 import ErrorCard from "../../utils/error_card";
-import Link from "next/link";
-import { ButtonPrimary } from "../../../utils/buttons";
 import { GameActivityType } from "../../../pages/contents/groups/[id]/students/[student_id]/activities/[activity_id]";
 
 const CardDiv = styled.div`
@@ -313,15 +311,6 @@ export default function GameActivity({
             )}
           </div>
         </CardDiv>
-      </div>
-      <div className="row g-3 my-2">
-        <div className="col gap-3 d-flex justify-content-end">
-          <Link
-            href={`/contents/groups/${activitygroup_id}/students/${student_id}`}
-          >
-            <ButtonPrimary>Voltar</ButtonPrimary>
-          </Link>
-        </div>
       </div>
     </>
   );
