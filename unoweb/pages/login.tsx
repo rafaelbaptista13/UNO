@@ -22,6 +22,7 @@ export default function Login() {
   //const basePath = getBasePath();
   const { publicRuntimeConfig } = getConfig();
   const basePath = publicRuntimeConfig?.basePath || '';
+  console.log(publicRuntimeConfig);
   console.log(basePath)
 
   const [successful, setSuccessful] = useState(false);
