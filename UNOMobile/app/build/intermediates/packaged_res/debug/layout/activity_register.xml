@@ -39,7 +39,9 @@
             android:layout_marginHorizontal="30dp"
             android:hint="Primeiro nome"
             app:layout_constraintTop_toBottomOf="@+id/textView"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            app:boxBackgroundColor="@color/light_light_grey"
+            android:textColorHint="@color/primary_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_first_name"
@@ -56,7 +58,9 @@
             android:layout_marginHorizontal="30dp"
             android:hint="Último nome"
             app:layout_constraintTop_toBottomOf="@+id/tvFirstName"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            app:boxBackgroundColor="@color/light_light_grey"
+            android:textColorHint="@color/primary_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_last_name"
@@ -74,7 +78,9 @@
             android:layout_marginHorizontal="30dp"
             android:hint="Email"
             app:layout_constraintTop_toBottomOf="@+id/tvLastName"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            app:boxBackgroundColor="@color/light_light_grey"
+            android:textColorHint="@color/primary_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_email"
@@ -92,7 +98,9 @@
             android:layout_marginHorizontal="30dp"
             android:hint="Palavra passe"
             app:layout_constraintTop_toBottomOf="@+id/tvEmail"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            app:boxBackgroundColor="@color/light_light_grey"
+            android:textColorHint="@color/primary_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_password"
@@ -110,7 +118,9 @@
             android:layout_marginHorizontal="30dp"
             android:hint="Confirmar palavra passe"
             app:layout_constraintTop_toBottomOf="@+id/tvPassword"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            app:boxBackgroundColor="@color/light_light_grey"
+            android:textColorHint="@color/primary_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_confirm_password"
@@ -127,7 +137,9 @@
             android:layout_marginHorizontal="30dp"
             android:hint="Código da turma"
             app:layout_constraintTop_toBottomOf="@+id/tvConfirmPassword"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            app:boxBackgroundColor="@color/light_light_grey"
+            android:textColorHint="@color/primary_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_class_code"

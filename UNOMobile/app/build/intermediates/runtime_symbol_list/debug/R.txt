@@ -3074,6 +3074,7 @@ int drawable tooltip_frame_dark 0x7f080159
 int drawable tooltip_frame_light 0x7f08015a
 int drawable trophy_complete 0x7f08015b
 int drawable trophy_incomplete 0x7f08015c
+int drawable uno_icon 0x7f080160
 int drawable upload_icon 0x7f08015d
 int drawable video_icon 0x7f08015e
 int drawable yellowprogress 0x7f08015f

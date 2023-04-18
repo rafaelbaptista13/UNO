@@ -3,6 +3,7 @@ package com.example.unomobile.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -424,6 +425,7 @@ class GameBuildModeFragment : Fragment() {
             card_view.layoutParams = params
             card_view.cardElevation = 10.dpToPx(context).toFloat()
             card_view.radius = 20.dpToPx(context).toFloat()
+            card_view.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
             card_view.setOnClickListener {
                 Log.i("GameBuildFragment", it.toString())
                 if (selected_note_cardview == null) {

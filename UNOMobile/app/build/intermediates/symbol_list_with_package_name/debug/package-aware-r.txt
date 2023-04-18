@@ -3075,6 +3075,7 @@ drawable tooltip_frame_dark
 drawable tooltip_frame_light
 drawable trophy_complete
 drawable trophy_incomplete
+drawable uno_icon
 drawable upload_icon
 drawable video_icon
 drawable yellowprogress

@@ -133,7 +133,8 @@
                 android:text="Vídeo submetido:"
                 android:gravity="center"
                 android:visibility="gone"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp"
+                android:textColor="@color/primary_text"/>
 
             <com.google.android.exoplayer2.ui.StyledPlayerView
                 android:id="@+id/uploaded_video_view"
