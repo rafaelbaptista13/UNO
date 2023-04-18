@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 var BASE_URL = if (BuildConfig.IS_DEVELOPMENT_MODE) {
     "http://10.0.2.2:8080/api/"
 } else {
-    "http://deti-viola.ua.pt/internal-api/api/"
+    "https://deti-viola.ua.pt/rb-md-violuno-app-v1/internal-api/api/"
 }
 
 private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
