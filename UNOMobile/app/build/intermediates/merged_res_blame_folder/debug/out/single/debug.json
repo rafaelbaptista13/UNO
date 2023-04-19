@@ -12,10 +12,6 @@
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/drawable-v24/left_triangle_blue.png"
     },
     {
-        "merged": "com.example.unomobile.app-merged_res-51:/layout_fragment_game_identify_mode.xml.flat",
-        "source": "com.example.unomobile.app-main-53:/layout/fragment_game_identify_mode.xml"
-    },
-    {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-merged_res-51:/drawable-v24_right_triangle_green.png.flat",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/drawable-v24/right_triangle_green.png"
     },
@@ -76,10 +72,6 @@
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/drawable/inverse_primary_button.xml"
     },
     {
-        "merged": "com.example.unomobile.app-merged_res-51:/layout_fragment_game_play_mode.xml.flat",
-        "source": "com.example.unomobile.app-main-53:/layout/fragment_game_play_mode.xml"
-    },
-    {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-merged_res-51:/raw_server.cer.flat",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/raw/server.cer"
     },
@@ -130,10 +122,6 @@
     {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-merged_res-51:/layout_fragment_exercise.xml.flat",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_exercise.xml"
-    },
-    {
-        "merged": "com.example.unomobile.app-merged_res-51:/layout_fragment_game_build_mode.xml.flat",
-        "source": "com.example.unomobile.app-main-53:/layout/fragment_game_build_mode.xml"
     },
     {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-merged_res-51:/drawable_upload_icon.png.flat",
@@ -338,6 +326,10 @@
     {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-merged_res-51:/drawable_activitygroups_ilustration.png.flat",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/drawable/activitygroups_ilustration.png"
+    },
+    {
+        "merged": "com.example.unomobile.app-merged_res-51:/layout_activitygroup_list_item.xml.flat",
+        "source": "com.example.unomobile.app-main-53:/layout/activitygroup_list_item.xml"
     },
     {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-merged_res-51:/drawable_primary_button.xml.flat",

@@ -13,9 +13,7 @@ const Op = db.Sequelize.Op;
 exports.create = async (req, res) => {
   // Validate request
   if (
-    req.body.name === undefined ||
-    req.body.number_of_videos === undefined ||
-    req.body.number_of_exercises === undefined
+    req.body.name === undefined
   ) {
     res.status(400).send({
       message: "Content can not be empty!",
@@ -44,8 +42,6 @@ exports.create = async (req, res) => {
   const activitygroup = {
     order: order,
     name: req.body.name,
-    number_of_videos: req.body.number_of_videos,
-    number_of_exercises: req.body.number_of_exercises,
     class_id: req.params.class_id,
   };
 
@@ -117,15 +113,14 @@ exports.change_order = async (req, res) => {
     where: {
       class_id: req.params.class_id,
     },
-    order: [
-      ["order", "ASC"]
-    ],
+    order: [["order", "ASC"]],
     attributes: ["id"],
-    raw: true
+    raw: true,
   });
   if (_old_order.length < 2) {
     res.status(400).send({
-      message: "Impossible to reorder, there are only zero or one ActivityGroup!",
+      message:
+        "Impossible to reorder, there are only zero or one ActivityGroup!",
     });
     return;
   }
@@ -143,11 +138,12 @@ exports.change_order = async (req, res) => {
       let order = 1;
       for (let activitygroup_id of new_order) {
         await ActivityGroup.update(
-          { order: order}, 
-          { where: { id: activitygroup_id }, transaction: t});
+          { order: order },
+          { where: { id: activitygroup_id }, transaction: t }
+        );
         order++;
       }
-    })
+    });
 
     res.send({
       message: `Order was changed successfully!`,
@@ -186,24 +182,126 @@ exports.findOne = (req, res) => {
 };
 
 // Retrieve all ActivityGroups of a class
-exports.findAll = (req, res) => {
-  ActivityGroup.findAll({
-    where: {
-      class_id: req.params.class_id,
-    },
-    order: [
-      ["order", "ASC"]
-    ]
-  })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving ActivityGroups.",
-      });
+exports.findAll = async (req, res) => {
+  const class_id = req.params.class_id;
+  const user_id = req.userId;
+
+  // Get students
+  let student;
+  try {
+    student = await User.findOne({
+      attributes: ["id", "first_name", "last_name"],
+      where: { id: user_id },
+      include: [
+        {
+          model: Role,
+          where: {
+            name: "student",
+          },
+          attributes: [],
+        },
+      ],
     });
+  } catch (error) {
+    console.log(error);
+  }
+
+  if (!student) {
+    ActivityGroup.findAll({
+      where: {
+        class_id: class_id,
+      },
+      order: [["order", "ASC"]],
+    })
+      .then((data) => {
+        res.send(data);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving ActivityGroups.",
+        });
+      });
+  } else {
+    ActivityGroup.findAll({
+      where: {
+        class_id: class_id,
+      },
+      order: [["order", "ASC"]],
+    })
+      .then(async (data) => {
+
+        const final_data = data.map((activitygroup) => activitygroup.toJSON())
+
+        for (let idx in final_data) {
+          let activitygroup_id = final_data[idx].id;
+
+          let activities = await Activity.findAll({
+            include: [
+              {
+                model: ActivityGroup,
+                as: "activitygroup",
+                where: {
+                  id: activitygroup_id,
+                  class_id: class_id
+                }
+              },
+              {
+                model: ActivityType,
+                as: "activitytype",
+              }
+            ]
+          });
+          
+          final_data[idx].total_activities = activities.length;
+          final_data[idx].completed_activities = 0;
+          final_data[idx].number_of_medias = 0;
+          final_data[idx].number_of_exercises = 0;
+          final_data[idx].number_of_questions = 0;
+          final_data[idx].number_of_games = 0;
+          
+          if (final_data[idx].total_activities !== 0) {
+            for (let _idx in activities) {
+              let activity = activities[_idx];
+              let completed_activity = await CompletedActivity.findOne({
+                where: {
+                  activity_id: activity.id,
+                  user_id: user_id
+                }
+              })
+              if (completed_activity !== null) {
+                final_data[idx].completed_activities++;
+              }
+
+              switch (activity.activitytype.id) {
+                case 1:
+                  final_data[idx].number_of_medias++;
+                  break;
+                case 2:
+                  final_data[idx].number_of_exercises++;
+                  break;
+                case 3:
+                  final_data[idx].number_of_questions++;
+                  break;
+                case 4:
+                  final_data[idx].number_of_games++;
+                  break;
+              }
+            }
+          }
+        }
+
+        res.send(final_data);
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving ActivityGroups.",
+        });
+      });
+  }
 };
 
 // Delete a ActivityGroup from the database.
@@ -262,7 +360,6 @@ exports.delete = async (req, res) => {
   }
 };
 
-
 // Retrieve all students that belong to this activitygroup and their progress
 exports.getStudentsFromActivityGroup = async (req, res) => {
   const activitygroup_id = req.params.activitygroup_id;
@@ -279,26 +376,26 @@ exports.getStudentsFromActivityGroup = async (req, res) => {
           where: {
             id: class_id,
           },
-          attributes: []
+          attributes: [],
         },
         {
           model: Role,
           where: {
-            name: "student"
+            name: "student",
           },
-          attributes: []
-        }
-      ]
-    })
+          attributes: [],
+        },
+      ],
+    });
   } catch (error) {
     console.log(error);
   }
-  
-  let _students = students.map(student => student.toJSON());
+
+  let _students = students.map((student) => student.toJSON());
   for (let idx in _students) {
     _students[idx].completed = 0;
   }
-  const final_data = {students: _students};
+  const final_data = { students: _students };
 
   Activity.findAll({
     include: [
@@ -330,8 +427,8 @@ exports.getStudentsFromActivityGroup = async (req, res) => {
               where: {
                 activity_id: activity.id,
                 user_id: student_id,
-              }
-            })
+              },
+            });
             if (completed_activity !== null) {
               final_data.students[student_idx].completed++;
             }

@@ -14,14 +14,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        number_of_videos: {
-            type: Sequelize.INTEGER,
-            allowNull: false
-        },
-        number_of_exercises: {
-            type: Sequelize.INTEGER,
-            allowNull: false
-        }
     });
 
     return ActivityGroup;

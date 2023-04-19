@@ -40,7 +40,7 @@ class ActivityGroupsFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recycler_view)
         manager = LinearLayoutManager(activity)
         recyclerView.layoutManager = manager
-        recyclerView.adapter = ActivityGroupsAdapter(listOf())
+        recyclerView.adapter = ActivityGroupsAdapter(listOf(), requireContext())
         getActivityGroups()
         return view
     }
@@ -56,7 +56,7 @@ class ActivityGroupsFragment : Fragment() {
                 Log.i("ActivityGroupsFragment", response.toString())
                 if (response.isSuccessful) {
                     Log.i("ActivityGroupsFragment", "Response is successful")
-                    adapter = ActivityGroupsAdapter(response.body()!!)
+                    adapter = ActivityGroupsAdapter(response.body()!!, requireContext())
                     recyclerView.adapter = adapter
                     (adapter as ActivityGroupsAdapter).setOnItemClickListener(object : ActivityGroupsAdapter.onItemClickListener{
                         override fun onItemClick(position: Int) {
