@@ -3,7 +3,7 @@ import { store } from "../redux/store";
 import { logout } from "../redux/features/auth";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NODE_ENV === "production" ? "http://deti-viola.ua.pt/api" : "http://localhost:3000/api",
+  baseURL: process.env.NODE_ENV === "production" ? "https://deti-viola.ua.pt/rb-md-violuno-app-v1/api" : "http://localhost:3000/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

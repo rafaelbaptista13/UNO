@@ -11,6 +11,7 @@ import {
 import { AuthState, logout } from "../../redux/features/auth";
 import { AppDispatch, RootState } from "../../redux/store";
 import SideBarItem from "./sidebar_item";
+import getBasePath from "../utils/basePath";
 
 const SideBarWrapper = styled.div`
   min-height: 100vh;
@@ -42,6 +43,7 @@ export default function SideBar() {
   const router = useRouter();
   const main_path = router.pathname.split("/")[1];
   const dispatch = useDispatch<AppDispatch>();
+  const basePath = getBasePath();
 
   const { user: currentUser } = useSelector<RootState, AuthState>(
     (state) => state.auth
@@ -65,7 +67,7 @@ export default function SideBar() {
       >
         <Image
           id="logo"
-          src="/img/logo-no-background.png"
+          src={ basePath + "/img/logo-no-background.png"}
           alt={"uno logo"}
           height={35}
           width={110}

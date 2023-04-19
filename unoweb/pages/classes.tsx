@@ -13,6 +13,7 @@ import PageHeaderButtonCard from "../components/utils/page_header_button_card";
 import SuccessModal from "../components/utils/success_modal";
 import { web_server } from "../config";
 import ClassesService from "../services/classes.service";
+import https from 'https';
 
 export type ClassesType = {
   id: number;
@@ -121,7 +122,7 @@ export default function Classes({ teacher_classes, error }: ClassesProps) {
         </div>
         {error && (
           <div className="row g-3 my-2">
-            <ErrorCard message="Ocorreu um erro ao obter os conteúdos semanais. Por favor tente novamente." />
+            <ErrorCard message="Ocorreu um erro ao obter as turmas. Por favor tente novamente." />
           </div>
         )}
         {newClassMode && (
@@ -181,6 +182,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       headers: {
         Cookie: cookies,
       },
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      })
     });
   } catch (e) {
     console.log(e);

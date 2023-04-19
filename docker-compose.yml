@@ -53,9 +53,10 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /etc/nginx/ssl/:/etc/nginx/ssl/
     depends_on:
       - webapp
     networks:

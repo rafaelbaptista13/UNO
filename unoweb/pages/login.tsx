@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "../redux/store";
 import { clearMessage, MessageState } from "../redux/features/message";
 import LoginForm from "../components/auth/login_form";
 import RegisterForm from "../components/auth/register_form";
+import getBasePath from "../components/utils/basePath";
 
 const ImageResponsiveDiv = styled.div`
   height: 200px;
@@ -17,6 +18,7 @@ const ImageResponsiveDiv = styled.div`
 export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
   const [type, setType] = useState("login");
+  const basePath = getBasePath();
 
   const [successful, setSuccessful] = useState(false);
   const { message } = useSelector<RootState, MessageState>(
@@ -42,7 +44,7 @@ export default function Login() {
               fill
               sizes="100"
               id="header-logo"
-              src="/img/logo-vertical-no-background.png"
+              src={basePath + "/img/logo-vertical-no-background.png"}
               alt="SportsStats logo"
               style={{ objectFit: "contain" }}
             />
