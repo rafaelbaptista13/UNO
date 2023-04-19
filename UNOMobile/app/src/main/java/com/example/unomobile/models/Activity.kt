@@ -9,6 +9,7 @@ data class Activity(
     val activitytype_id: Int,
     val activitytype: ActivityType,
     var completed: Boolean?,
+    val teacher_feedback: String?,
     val media_activity: MediaActivity?,
     val exercise_activity: ExerciseActivity?,
     val question_activity: QuestionActivity?,

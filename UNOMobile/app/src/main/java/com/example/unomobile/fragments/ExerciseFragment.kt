@@ -35,6 +35,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -231,6 +232,14 @@ class ExerciseFragment : Fragment() {
                                 initSubmittedPlayer()
                             } else {
                                 upload_video_buttons.visibility = View.VISIBLE
+                            }
+
+                            if (activity_data.teacher_feedback !== null) {
+                                val teacher_feedback_card = view.findViewById<MaterialCardView>(R.id.teacher_feedback_card)
+                                val teacher_feedback = view.findViewById<TextView>(R.id.teacher_feedback)
+
+                                teacher_feedback_card.visibility = View.VISIBLE
+                                teacher_feedback.text = activity_data.teacher_feedback
                             }
                         }
                     }

@@ -67,6 +67,15 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
   public final LinearLayout submitButtons;
 
   @NonNull
+  public final TextView teacherFeedback;
+
+  @NonNull
+  public final MaterialCardView teacherFeedbackCard;
+
+  @NonNull
+  public final TextView teacherFeedbackHeader;
+
+  @NonNull
   public final TextView title;
 
   @NonNull
@@ -93,10 +102,11 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
       @NonNull ImageView pauseButton, @NonNull ImageView playButton,
       @NonNull AppCompatButton recordVideo, @NonNull LinearLayout row1, @NonNull LinearLayout row2,
       @NonNull LinearLayout row3, @NonNull LinearLayout row4, @NonNull AppCompatButton submit,
-      @NonNull LinearLayout submitButtons, @NonNull TextView title, @NonNull TextView type,
-      @NonNull AppCompatButton uploadVideo, @NonNull LinearLayout uploadVideoButtons,
-      @NonNull TextView uploadedVideoMessage, @NonNull StyledPlayerView uploadedVideoView,
-      @NonNull View verticalGameLine) {
+      @NonNull LinearLayout submitButtons, @NonNull TextView teacherFeedback,
+      @NonNull MaterialCardView teacherFeedbackCard, @NonNull TextView teacherFeedbackHeader,
+      @NonNull TextView title, @NonNull TextView type, @NonNull AppCompatButton uploadVideo,
+      @NonNull LinearLayout uploadVideoButtons, @NonNull TextView uploadedVideoMessage,
+      @NonNull StyledPlayerView uploadedVideoView, @NonNull View verticalGameLine) {
     this.rootView = rootView;
     this.description = description;
     this.editSubmission = editSubmission;
@@ -112,6 +122,9 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
     this.row4 = row4;
     this.submit = submit;
     this.submitButtons = submitButtons;
+    this.teacherFeedback = teacherFeedback;
+    this.teacherFeedbackCard = teacherFeedbackCard;
+    this.teacherFeedbackHeader = teacherFeedbackHeader;
     this.title = title;
     this.type = type;
     this.uploadVideo = uploadVideo;
@@ -232,6 +245,24 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.teacher_feedback;
+      TextView teacherFeedback = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedback == null) {
+        break missingId;
+      }
+
+      id = R.id.teacher_feedback_card;
+      MaterialCardView teacherFeedbackCard = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedbackCard == null) {
+        break missingId;
+      }
+
+      id = R.id.teacher_feedback_header;
+      TextView teacherFeedbackHeader = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedbackHeader == null) {
+        break missingId;
+      }
+
       id = R.id.title;
       TextView title = ViewBindings.findChildViewById(rootView, id);
       if (title == null) {
@@ -276,8 +307,9 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
 
       return new FragmentGamePlayModeBinding((LinearLayout) rootView, description, editSubmission,
           gameCard, horizontalScrollView, lineBreak, pauseButton, playButton, recordVideo, row1,
-          row2, row3, row4, submit, submitButtons, title, type, uploadVideo, uploadVideoButtons,
-          uploadedVideoMessage, uploadedVideoView, verticalGameLine);
+          row2, row3, row4, submit, submitButtons, teacherFeedback, teacherFeedbackCard,
+          teacherFeedbackHeader, title, type, uploadVideo, uploadVideoButtons, uploadedVideoMessage,
+          uploadedVideoView, verticalGameLine);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -291,6 +291,14 @@ class GamePlayModeFragment : Fragment() {
                                 upload_video_buttons.visibility = View.VISIBLE
                             }
 
+                            if (activity_data.teacher_feedback !== null) {
+                                val teacher_feedback_card = view.findViewById<MaterialCardView>(R.id.teacher_feedback_card)
+                                val teacher_feedback = view.findViewById<TextView>(R.id.teacher_feedback)
+
+                                teacher_feedback_card.visibility = View.VISIBLE
+                                teacher_feedback.text = activity_data.teacher_feedback
+                            }
+
                         }
                     }
 

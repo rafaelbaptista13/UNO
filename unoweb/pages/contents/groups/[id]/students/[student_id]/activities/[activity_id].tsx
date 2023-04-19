@@ -188,7 +188,9 @@ export default function StudentActivityPage({
               media_type={activity.exercise_activity!!.media_type}
               completed={activity.completed}
             />
-            <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"exercise"} />
+            {activity.completed && 
+              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"exercise"} />
+            }
           </>
         )}
         {activity?.activitytype.name === "Question" && (
@@ -202,7 +204,9 @@ export default function StudentActivityPage({
               completed={activity.completed}
               question_info={activity.question_activity!!}
             />
-            <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"question"} />
+            {activity.completed && 
+              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"question"} />
+            }
           </>
         )}
         {activity?.activitytype.name === "Game" && (
@@ -216,7 +220,9 @@ export default function StudentActivityPage({
               game_info={activity.game_activity!!}
               completed={activity.completed}
             />
-            <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"game"} />
+            {activity.completed && 
+              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"game"} />
+            }
           </>
         )}
 

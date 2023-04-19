@@ -15,6 +15,7 @@ import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.example.unomobile.R;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.google.android.material.card.MaterialCardView;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
@@ -48,6 +49,15 @@ public final class FragmentExerciseBinding implements ViewBinding {
   public final LinearLayout submitButtons;
 
   @NonNull
+  public final TextView teacherFeedback;
+
+  @NonNull
+  public final MaterialCardView teacherFeedbackCard;
+
+  @NonNull
+  public final TextView teacherFeedbackHeader;
+
+  @NonNull
   public final TextView title;
 
   @NonNull
@@ -71,10 +81,12 @@ public final class FragmentExerciseBinding implements ViewBinding {
   private FragmentExerciseBinding(@NonNull LinearLayout rootView, @NonNull TextView description,
       @NonNull AppCompatButton editSubmission, @NonNull ImageView imageView,
       @NonNull View lineBreak, @NonNull FrameLayout mediaView, @NonNull AppCompatButton recordVideo,
-      @NonNull AppCompatButton submit, @NonNull LinearLayout submitButtons, @NonNull TextView title,
-      @NonNull TextView type, @NonNull AppCompatButton uploadVideo,
-      @NonNull LinearLayout uploadVideoButtons, @NonNull TextView uploadedVideoMessage,
-      @NonNull StyledPlayerView uploadedVideoView, @NonNull StyledPlayerView videoView) {
+      @NonNull AppCompatButton submit, @NonNull LinearLayout submitButtons,
+      @NonNull TextView teacherFeedback, @NonNull MaterialCardView teacherFeedbackCard,
+      @NonNull TextView teacherFeedbackHeader, @NonNull TextView title, @NonNull TextView type,
+      @NonNull AppCompatButton uploadVideo, @NonNull LinearLayout uploadVideoButtons,
+      @NonNull TextView uploadedVideoMessage, @NonNull StyledPlayerView uploadedVideoView,
+      @NonNull StyledPlayerView videoView) {
     this.rootView = rootView;
     this.description = description;
     this.editSubmission = editSubmission;
@@ -84,6 +96,9 @@ public final class FragmentExerciseBinding implements ViewBinding {
     this.recordVideo = recordVideo;
     this.submit = submit;
     this.submitButtons = submitButtons;
+    this.teacherFeedback = teacherFeedback;
+    this.teacherFeedbackCard = teacherFeedbackCard;
+    this.teacherFeedbackHeader = teacherFeedbackHeader;
     this.title = title;
     this.type = type;
     this.uploadVideo = uploadVideo;
@@ -168,6 +183,24 @@ public final class FragmentExerciseBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.teacher_feedback;
+      TextView teacherFeedback = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedback == null) {
+        break missingId;
+      }
+
+      id = R.id.teacher_feedback_card;
+      MaterialCardView teacherFeedbackCard = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedbackCard == null) {
+        break missingId;
+      }
+
+      id = R.id.teacher_feedback_header;
+      TextView teacherFeedbackHeader = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedbackHeader == null) {
+        break missingId;
+      }
+
       id = R.id.title;
       TextView title = ViewBindings.findChildViewById(rootView, id);
       if (title == null) {
@@ -211,8 +244,9 @@ public final class FragmentExerciseBinding implements ViewBinding {
       }
 
       return new FragmentExerciseBinding((LinearLayout) rootView, description, editSubmission,
-          imageView, lineBreak, mediaView, recordVideo, submit, submitButtons, title, type,
-          uploadVideo, uploadVideoButtons, uploadedVideoMessage, uploadedVideoView, videoView);
+          imageView, lineBreak, mediaView, recordVideo, submit, submitButtons, teacherFeedback,
+          teacherFeedbackCard, teacherFeedbackHeader, title, type, uploadVideo, uploadVideoButtons,
+          uploadedVideoMessage, uploadedVideoView, videoView);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
