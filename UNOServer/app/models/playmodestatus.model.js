@@ -21,6 +21,10 @@ module.exports = (sequelize, Sequelize) => {
         media_secret: {
             type: Sequelize.STRING,
             allowNull: false
+        },
+        teacher_feedback: {
+            type: Sequelize.STRING,
+            allowNull: true
         }
     });
 

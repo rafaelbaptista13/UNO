@@ -56,6 +56,15 @@ public final class FragmentQuestionBinding implements ViewBinding {
   public final TextView submittedMessage;
 
   @NonNull
+  public final TextView teacherFeedback;
+
+  @NonNull
+  public final MaterialCardView teacherFeedbackCard;
+
+  @NonNull
+  public final TextView teacherFeedbackHeader;
+
+  @NonNull
   public final TextView type;
 
   @NonNull
@@ -66,8 +75,9 @@ public final class FragmentQuestionBinding implements ViewBinding {
       @NonNull View lineBreak, @NonNull TextView question, @NonNull MaterialCardView questionCard,
       @NonNull FrameLayout questionFrameLayout, @NonNull RecyclerView recyclerView,
       @NonNull AppCompatButton submit, @NonNull LinearLayout submitButtons,
-      @NonNull TextView submittedMessage, @NonNull TextView type,
-      @NonNull StyledPlayerView videoView) {
+      @NonNull TextView submittedMessage, @NonNull TextView teacherFeedback,
+      @NonNull MaterialCardView teacherFeedbackCard, @NonNull TextView teacherFeedbackHeader,
+      @NonNull TextView type, @NonNull StyledPlayerView videoView) {
     this.rootView = rootView;
     this.editSubmission = editSubmission;
     this.imageView = imageView;
@@ -79,6 +89,9 @@ public final class FragmentQuestionBinding implements ViewBinding {
     this.submit = submit;
     this.submitButtons = submitButtons;
     this.submittedMessage = submittedMessage;
+    this.teacherFeedback = teacherFeedback;
+    this.teacherFeedbackCard = teacherFeedbackCard;
+    this.teacherFeedbackHeader = teacherFeedbackHeader;
     this.type = type;
     this.videoView = videoView;
   }
@@ -170,6 +183,24 @@ public final class FragmentQuestionBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.teacher_feedback;
+      TextView teacherFeedback = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedback == null) {
+        break missingId;
+      }
+
+      id = R.id.teacher_feedback_card;
+      MaterialCardView teacherFeedbackCard = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedbackCard == null) {
+        break missingId;
+      }
+
+      id = R.id.teacher_feedback_header;
+      TextView teacherFeedbackHeader = ViewBindings.findChildViewById(rootView, id);
+      if (teacherFeedbackHeader == null) {
+        break missingId;
+      }
+
       id = R.id.type;
       TextView type = ViewBindings.findChildViewById(rootView, id);
       if (type == null) {
@@ -184,7 +215,8 @@ public final class FragmentQuestionBinding implements ViewBinding {
 
       return new FragmentQuestionBinding((LinearLayout) rootView, editSubmission, imageView,
           lineBreak, question, questionCard, questionFrameLayout, recyclerView, submit,
-          submitButtons, submittedMessage, type, videoView);
+          submitButtons, submittedMessage, teacherFeedback, teacherFeedbackCard,
+          teacherFeedbackHeader, type, videoView);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

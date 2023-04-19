@@ -14,6 +14,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false,
         },
+        teacher_feedback: {
+            type: Sequelize.STRING,
+            allowNull: true
+        }
     });
 
     return QuestionActivityStatus;
