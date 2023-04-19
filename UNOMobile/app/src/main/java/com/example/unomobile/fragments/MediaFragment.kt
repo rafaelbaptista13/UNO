@@ -129,6 +129,7 @@ class MediaFragment : Fragment() {
 
                                         playerView = video
                                         setFullScreenListener()
+                                        initPlayer()
                                     }
                                 }
 
@@ -178,20 +179,11 @@ class MediaFragment : Fragment() {
             intent.putExtras(bundle)
             startActivity(intent)
         }
-        onStart()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (Build.VERSION.SDK_INT > 23 && media_path != null && (media_type == "video" || media_type == "audio")) {
-            initPlayer()
-            playerView?.onResume()
-        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (Build.VERSION.SDK_INT <= 23 && media_path != null && (media_type == "video" || media_type == "audio")) {
+        if (media_path != null && (media_type == "video" || media_type == "audio")) {
             initPlayer()
             playerView?.onResume()
         }
@@ -199,7 +191,7 @@ class MediaFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        if (Build.VERSION.SDK_INT <= 23 && media_path != null && (media_type == "video" || media_type == "audio")) {
+        if (media_path != null && (media_type == "video" || media_type == "audio")) {
             playerView?.player = null
             player?.release()
             player = null
@@ -208,7 +200,7 @@ class MediaFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        if (Build.VERSION.SDK_INT <= 23 && media_path != null && (media_type == "video" || media_type == "audio")) {
+        if (media_path != null && (media_type == "video" || media_type == "audio")) {
             playerView?.player = null
             player?.release()
             player = null

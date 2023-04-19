@@ -1,6 +1,7 @@
 package com.example.unomobile.fragments
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
@@ -11,11 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -31,6 +28,7 @@ import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.client
 import com.example.unomobile.utils.ImageLoader
+import com.example.unomobile.utils.dpToPx
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
@@ -49,6 +47,7 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
+
 
 class ExerciseFragment : Fragment() {
 
@@ -165,19 +164,15 @@ class ExerciseFragment : Fragment() {
         // Add click listeners on both buttons
         record_video_button.setOnClickListener {
             Log.i("ExerciseFragment", "Record Video Button clicked")
-            /*val takeVideoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-            Log.i("ExerciseFragment", takeVideoIntent.resolveActivity(requireActivity().packageManager).toString())
-            if (takeVideoIntent.resolveActivity(requireActivity().packageManager) != null) {
-                try {
-                    startActivity(takeVideoIntent)
-                } catch (err: java.lang.Exception) {
-                    Log.i("ExerciseFragment", err.message.toString())
-                    Toast.makeText(requireContext(), "Ocorreu um erro ao abrir a câmera.", Toast.LENGTH_SHORT).show()
-                }
+            val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            val chooser = Intent.createChooser(intent, "Abrir câmera com")
 
+            if (intent.resolveActivity(requireContext().packageManager) != null) {
+                requireContext().startActivity(chooser)
             } else {
-                Toast.makeText(requireContext(), "Ocorreu um erro ao abrir a câmera.", Toast.LENGTH_SHORT).show()
-            }*/
+                // No camera app available
+                Toast.makeText(context, "Não existe nenhuma aplicação de câmera.", Toast.LENGTH_SHORT).show()
+            }
         }
 
         upload_video_button.setOnClickListener {
@@ -214,9 +209,20 @@ class ExerciseFragment : Fragment() {
 
                                         ImageLoader.picasso.load(media_path).into(image)
                                     }
-                                    "video", "audio" -> {
+                                    "video" -> {
                                         image.visibility = View.GONE
                                         video.visibility = View.VISIBLE
+
+                                        player_view = video
+                                        setFullScreenListener(player_view, media_path!!)
+                                        initPlayer()
+                                    }
+                                    "audio" -> {
+                                        image.visibility = View.GONE
+                                        video.visibility = View.VISIBLE
+                                        val params = video.layoutParams
+                                        params.height = 50.dpToPx(requireContext())
+                                        video.layoutParams = params
 
                                         player_view = video
                                         setFullScreenListener(player_view, media_path!!)

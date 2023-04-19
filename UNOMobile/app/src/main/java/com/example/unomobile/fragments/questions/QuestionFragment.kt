@@ -27,6 +27,7 @@ import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.client
 import com.example.unomobile.utils.ImageLoader
+import com.example.unomobile.utils.dpToPx
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
@@ -162,10 +163,21 @@ class QuestionFragment : Fragment() {
 
                                         ImageLoader.picasso.load(media_path).into(image)
                                     }
-                                    "video", "audio" -> {
+                                    "video" -> {
                                         question_frame_layout.visibility = View.VISIBLE
                                         image.visibility = View.GONE
                                         video.visibility = View.VISIBLE
+
+                                        playerView = video
+                                        setFullScreenListener()
+                                        initPlayer()
+                                    }
+                                    "audio" -> {
+                                        image.visibility = View.GONE
+                                        video.visibility = View.VISIBLE
+                                        val params = video.layoutParams
+                                        params.height = 50.dpToPx(requireContext())
+                                        video.layoutParams = params
 
                                         playerView = video
                                         setFullScreenListener()

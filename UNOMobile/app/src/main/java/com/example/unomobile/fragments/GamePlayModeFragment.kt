@@ -14,6 +14,7 @@ import android.media.SoundPool
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
@@ -168,6 +169,20 @@ class GamePlayModeFragment : Fragment() {
         val upload_icon = ContextCompat.getDrawable(requireContext(), R.drawable.upload_icon)
         upload_icon!!.setBounds(20, 0, 110, 80)
         upload_video_button.setCompoundDrawables(upload_icon, null, null, null)
+
+        // Add click listeners on both buttons
+        record_video_button.setOnClickListener {
+            Log.i("PlayModeFragment", "Record Video Button clicked")
+            val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            val chooser = Intent.createChooser(intent, "Abrir câmera com")
+
+            if (intent.resolveActivity(requireContext().packageManager) != null) {
+                requireContext().startActivity(chooser)
+            } else {
+                // No camera app available
+                Toast.makeText(context, "Não existe nenhuma aplicação de câmera.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         upload_video_button.setOnClickListener {
             if (editMode) {
