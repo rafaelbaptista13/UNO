@@ -57,7 +57,7 @@ export default function ActivityGroup() {
     setIsLoading(true);
 
     const new_activitygroup_response =
-      await ActivityGroupsService.createActivityGroup(class_id, name, 0, 0);
+      await ActivityGroupsService.createActivityGroup(class_id, name);
 
     setIsLoading(false);
 

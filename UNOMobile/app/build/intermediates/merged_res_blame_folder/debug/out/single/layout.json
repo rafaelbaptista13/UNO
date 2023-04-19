@@ -16,6 +16,10 @@
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_exercise.xml"
     },
     {
+        "merged": "com.example.unomobile.app-mergeDebugResources-50:/layout/activitygroup_list_item.xml",
+        "source": "com.example.unomobile.app-main-53:/layout/activitygroup_list_item.xml"
+    },
+    {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_media.xml",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_media.xml"
     },
@@ -40,20 +44,16 @@
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_profile.xml"
     },
     {
-        "merged": "com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_game_build_mode.xml",
-        "source": "com.example.unomobile.app-main-53:/layout/fragment_game_build_mode.xml"
-    },
-    {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_question.xml",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_question.xml"
     },
     {
-        "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_notification.xml",
-        "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_notification.xml"
-    },
-    {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_game_build_mode.xml",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_game_build_mode.xml"
+    },
+    {
+        "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_notification.xml",
+        "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_notification.xml"
     },
     {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_game_identify_mode.xml",
@@ -72,19 +72,11 @@
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_activities.xml"
     },
     {
-        "merged": "com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_game_play_mode.xml",
-        "source": "com.example.unomobile.app-main-53:/layout/fragment_game_play_mode.xml"
-    },
-    {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-mergeDebugResources-50:/layout/activity_main.xml",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/activity_main.xml"
     },
     {
         "merged": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_home.xml",
         "source": "/home/rafael/.gradle/daemon/7.5.1/com.example.unomobile.app-main-53:/layout/fragment_home.xml"
-    },
-    {
-        "merged": "com.example.unomobile.app-mergeDebugResources-50:/layout/fragment_game_identify_mode.xml",
-        "source": "com.example.unomobile.app-main-53:/layout/fragment_game_identify_mode.xml"
     }
 ]

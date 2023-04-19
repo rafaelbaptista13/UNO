@@ -12,12 +12,10 @@ const getActivityGroup = (class_id, activitygroup_id) => {
   });
 };
 
-const createActivityGroup = (class_id, name, number_of_videos, number_of_exercises) => {
+const createActivityGroup = (class_id, name) => {
   return api
     .post("/activitygroup/" + class_id, {
-      name: name,
-      number_of_videos: number_of_videos,
-      number_of_exercises: number_of_exercises,
+      name: name
     })
     .then((response) => {
       if (response.status === 200) {
