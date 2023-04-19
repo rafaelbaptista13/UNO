@@ -1,6 +1,7 @@
 package com.example.unomobile.network
 
 import com.example.unomobile.BuildConfig
+import com.example.unomobile.R
 import com.example.unomobile.models.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -14,7 +15,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.net.CookieManager
+import java.security.KeyStore
+import java.security.SecureRandom
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
+import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.*
 
 var BASE_URL = if (BuildConfig.IS_DEVELOPMENT_MODE) {
     "http://10.0.2.2:8080/api/"
@@ -31,7 +38,25 @@ val client = OkHttpClient.Builder().addNetworkInterceptor(interceptor)
     .connectTimeout(10, TimeUnit.SECONDS)
     .writeTimeout(10, TimeUnit.SECONDS)
     .readTimeout(30, TimeUnit.SECONDS)
-    .build();
+    .sslSocketFactory(TrustAllCerts.sslSocketFactory, TrustAllCerts.trustManager)
+    .hostnameVerifier(TrustAllCerts.hostnameVerifier)
+    .build()
+
+object TrustAllCerts {
+    val trustManager = object : X509TrustManager {
+        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+        override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
+    }
+
+    private val sslContext = SSLContext.getInstance("SSL").apply {
+        init(null, arrayOf(trustManager), SecureRandom())
+    }
+
+    val sslSocketFactory = sslContext.socketFactory
+
+    val hostnameVerifier = HostnameVerifier { _, _ -> true }
+}
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))

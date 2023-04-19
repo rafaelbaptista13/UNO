@@ -198,6 +198,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 override fun onFailure(call: Call<ResponseMessage>, t: Throwable) {
                     t.printStackTrace()
+                    Log.i("RegisterActivity", t.message!!)
                     showToast("Ocorreu um erro ao criar a sua conta! Tente novamente mais tarde.")
                 }
 

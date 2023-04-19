@@ -205,6 +205,7 @@ mipmap ic_launcher
 mipmap ic_launcher_round
 navigation activities_graph
 navigation nav_main
+raw server
 string Exercise
 string Game
 string Media
