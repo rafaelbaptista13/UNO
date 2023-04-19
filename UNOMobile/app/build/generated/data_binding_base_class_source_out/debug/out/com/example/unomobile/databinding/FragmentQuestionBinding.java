@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,9 @@ public final class FragmentQuestionBinding implements ViewBinding {
 
   @NonNull
   public final View lineBreak;
+
+  @NonNull
+  public final ProgressBar loadingProgressBar;
 
   @NonNull
   public final TextView question;
@@ -72,16 +76,18 @@ public final class FragmentQuestionBinding implements ViewBinding {
 
   private FragmentQuestionBinding(@NonNull LinearLayout rootView,
       @NonNull AppCompatButton editSubmission, @NonNull ImageView imageView,
-      @NonNull View lineBreak, @NonNull TextView question, @NonNull MaterialCardView questionCard,
-      @NonNull FrameLayout questionFrameLayout, @NonNull RecyclerView recyclerView,
-      @NonNull AppCompatButton submit, @NonNull LinearLayout submitButtons,
-      @NonNull TextView submittedMessage, @NonNull TextView teacherFeedback,
-      @NonNull MaterialCardView teacherFeedbackCard, @NonNull TextView teacherFeedbackHeader,
-      @NonNull TextView type, @NonNull StyledPlayerView videoView) {
+      @NonNull View lineBreak, @NonNull ProgressBar loadingProgressBar, @NonNull TextView question,
+      @NonNull MaterialCardView questionCard, @NonNull FrameLayout questionFrameLayout,
+      @NonNull RecyclerView recyclerView, @NonNull AppCompatButton submit,
+      @NonNull LinearLayout submitButtons, @NonNull TextView submittedMessage,
+      @NonNull TextView teacherFeedback, @NonNull MaterialCardView teacherFeedbackCard,
+      @NonNull TextView teacherFeedbackHeader, @NonNull TextView type,
+      @NonNull StyledPlayerView videoView) {
     this.rootView = rootView;
     this.editSubmission = editSubmission;
     this.imageView = imageView;
     this.lineBreak = lineBreak;
+    this.loadingProgressBar = loadingProgressBar;
     this.question = question;
     this.questionCard = questionCard;
     this.questionFrameLayout = questionFrameLayout;
@@ -138,6 +144,12 @@ public final class FragmentQuestionBinding implements ViewBinding {
       id = R.id.line_break;
       View lineBreak = ViewBindings.findChildViewById(rootView, id);
       if (lineBreak == null) {
+        break missingId;
+      }
+
+      id = R.id.loading_progress_bar;
+      ProgressBar loadingProgressBar = ViewBindings.findChildViewById(rootView, id);
+      if (loadingProgressBar == null) {
         break missingId;
       }
 
@@ -214,8 +226,8 @@ public final class FragmentQuestionBinding implements ViewBinding {
       }
 
       return new FragmentQuestionBinding((LinearLayout) rootView, editSubmission, imageView,
-          lineBreak, question, questionCard, questionFrameLayout, recyclerView, submit,
-          submitButtons, submittedMessage, teacherFeedback, teacherFeedbackCard,
+          lineBreak, loadingProgressBar, question, questionCard, questionFrameLayout, recyclerView,
+          submit, submitButtons, submittedMessage, teacherFeedback, teacherFeedbackCard,
           teacherFeedbackHeader, type, videoView);
     }
     String missingId = rootView.getResources().getResourceName(id);

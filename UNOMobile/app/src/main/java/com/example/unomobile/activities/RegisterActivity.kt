@@ -160,11 +160,11 @@ class RegisterActivity : AppCompatActivity() {
         if (formFields.validate()) {
 
             val user_info = UserInfoToRegister(
-                first_name = fieldFirstName.value!!,
-                last_name = fieldLastName.value!!,
-                email = fieldEmail.value!!,
+                first_name = fieldFirstName.value!!.trim(),
+                last_name = fieldLastName.value!!.trim(),
+                email = fieldEmail.value!!.trim(),
                 password = fieldPassword.value!!,
-                class_code = fieldClassCode.value!!)
+                class_code = fieldClassCode.value!!.trim())
 
             Api.retrofitService.createAccount(user_info).enqueue(object: Callback<ResponseMessage> {
                 override fun onResponse(call: Call<ResponseMessage>, response: Response<ResponseMessage>) {

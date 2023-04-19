@@ -125,6 +125,7 @@ id input_last_name
 id input_password
 id line
 id line_break
+id loading_progress_bar
 id login_button
 id logout_button
 id mediaFragment

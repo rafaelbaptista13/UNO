@@ -9,10 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -71,6 +68,8 @@ class QuestionFragment : Fragment() {
     // To handle if the user can change their answers or not
     private var editMode: Boolean = true
 
+    private lateinit var loading_bar: ProgressBar
+
     companion object {
         fun newInstance(activity_id: Int, order: Int) = QuestionFragment().apply {
             arguments = bundleOf(
@@ -108,7 +107,7 @@ class QuestionFragment : Fragment() {
         val type_text = view.findViewById<TextView>(R.id.type)
         type_text.text = order.toString() + ". Pergunta"
         val question_text = view.findViewById<TextView>(R.id.question)
-
+        loading_bar = view.findViewById(R.id.loading_progress_bar)
         edit_submission_btn = view.findViewById(R.id.edit_submission)
         edit_submission_btn.setOnClickListener {
             editMode = true
@@ -274,6 +273,9 @@ class QuestionFragment : Fragment() {
     }
 
     private fun submitQuestion() {
+        submit_btn.visibility = View.GONE
+        loading_bar.visibility = View.VISIBLE
+
         var requestBody = HashMap<String, Array<Int>>()
         requestBody["chosen_answers"] = chosen_answers
         val call = Api.retrofitService.submitQuestionActivity(user.class_id!!, activity_id!!, requestBody)
@@ -294,8 +296,10 @@ class QuestionFragment : Fragment() {
                         Log.i("QuestionFragment", "Failed to get Activity")
                     }
                 } else {
+                    submit_btn.visibility = View.VISIBLE
                     Toast.makeText(requireContext(), "Ocorreu um erro ao submeter a resposta.", Toast.LENGTH_SHORT).show()
                 }
+                loading_bar.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

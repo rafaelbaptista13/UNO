@@ -70,7 +70,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/next_activity"
             android:layout_width="match_parent"
-            android:text="Avançar"
+            android:text="Prosseguir"
             android:layout_marginHorizontal="10dp"
             android:textColor="#fff"
             android:layout_height="wrap_content"

@@ -3421,6 +3421,7 @@ id line_break
 id linear
 id listMode
 id list_item
+id loading_progress_bar
 id locale
 id login_button
 id logout_button

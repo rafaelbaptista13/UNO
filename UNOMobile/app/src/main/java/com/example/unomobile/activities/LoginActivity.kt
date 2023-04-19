@@ -90,13 +90,12 @@ class LoginActivity : AppCompatActivity() {
         if (formFields.validate()) {
 
             val user_info = UserInfoToLogin(
-                email = fieldEmail.value!!,
+                email = fieldEmail.value!!.trim(),
                 password = fieldPassword.value!!
             )
 
             Api.retrofitService.login(user_info).enqueue(object: Callback<UserInfo> {
                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
-                    Log.i("LoginActivity", "aqui")
                     Log.i("LoginActivity", response.toString())
                     if (response.isSuccessful) {
                         Log.i("LoginActivity", "Response was successful")

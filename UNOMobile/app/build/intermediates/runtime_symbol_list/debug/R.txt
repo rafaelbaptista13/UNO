@@ -3420,6 +3420,7 @@ int id line_break 0x7f0a0151
 int id linear 0x7f0a0152
 int id listMode 0x7f0a0153
 int id list_item 0x7f0a0154
+int id loading_progress_bar 0x7f0a029d
 int id locale 0x7f0a0155
 int id login_button 0x7f0a0156
 int id logout_button 0x7f0a0157

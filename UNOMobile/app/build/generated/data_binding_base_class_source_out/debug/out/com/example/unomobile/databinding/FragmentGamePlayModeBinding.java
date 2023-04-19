@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +39,9 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
 
   @NonNull
   public final View lineBreak;
+
+  @NonNull
+  public final ProgressBar loadingProgressBar;
 
   @NonNull
   public final ImageView pauseButton;
@@ -99,9 +103,10 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
   private FragmentGamePlayModeBinding(@NonNull LinearLayout rootView, @NonNull TextView description,
       @NonNull AppCompatButton editSubmission, @NonNull MaterialCardView gameCard,
       @NonNull HorizontalScrollView horizontalScrollView, @NonNull View lineBreak,
-      @NonNull ImageView pauseButton, @NonNull ImageView playButton,
-      @NonNull AppCompatButton recordVideo, @NonNull LinearLayout row1, @NonNull LinearLayout row2,
-      @NonNull LinearLayout row3, @NonNull LinearLayout row4, @NonNull AppCompatButton submit,
+      @NonNull ProgressBar loadingProgressBar, @NonNull ImageView pauseButton,
+      @NonNull ImageView playButton, @NonNull AppCompatButton recordVideo,
+      @NonNull LinearLayout row1, @NonNull LinearLayout row2, @NonNull LinearLayout row3,
+      @NonNull LinearLayout row4, @NonNull AppCompatButton submit,
       @NonNull LinearLayout submitButtons, @NonNull TextView teacherFeedback,
       @NonNull MaterialCardView teacherFeedbackCard, @NonNull TextView teacherFeedbackHeader,
       @NonNull TextView title, @NonNull TextView type, @NonNull AppCompatButton uploadVideo,
@@ -113,6 +118,7 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
     this.gameCard = gameCard;
     this.horizontalScrollView = horizontalScrollView;
     this.lineBreak = lineBreak;
+    this.loadingProgressBar = loadingProgressBar;
     this.pauseButton = pauseButton;
     this.playButton = playButton;
     this.recordVideo = recordVideo;
@@ -188,6 +194,12 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
       id = R.id.line_break;
       View lineBreak = ViewBindings.findChildViewById(rootView, id);
       if (lineBreak == null) {
+        break missingId;
+      }
+
+      id = R.id.loading_progress_bar;
+      ProgressBar loadingProgressBar = ViewBindings.findChildViewById(rootView, id);
+      if (loadingProgressBar == null) {
         break missingId;
       }
 
@@ -306,10 +318,10 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
       }
 
       return new FragmentGamePlayModeBinding((LinearLayout) rootView, description, editSubmission,
-          gameCard, horizontalScrollView, lineBreak, pauseButton, playButton, recordVideo, row1,
-          row2, row3, row4, submit, submitButtons, teacherFeedback, teacherFeedbackCard,
-          teacherFeedbackHeader, title, type, uploadVideo, uploadVideoButtons, uploadedVideoMessage,
-          uploadedVideoView, verticalGameLine);
+          gameCard, horizontalScrollView, lineBreak, loadingProgressBar, pauseButton, playButton,
+          recordVideo, row1, row2, row3, row4, submit, submitButtons, teacherFeedback,
+          teacherFeedbackCard, teacherFeedbackHeader, title, type, uploadVideo, uploadVideoButtons,
+          uploadedVideoMessage, uploadedVideoView, verticalGameLine);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

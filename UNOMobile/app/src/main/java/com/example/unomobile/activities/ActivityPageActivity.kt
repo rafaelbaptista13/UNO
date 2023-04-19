@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -29,6 +30,7 @@ class ActivityPageActivity : AppCompatActivity() {
     var activities_status : Array<Boolean>? = null
     var activities_game_mode : Array<String>? = null
     var active_activity : Int = 0
+    lateinit var activitygroup_name : String
     private var user: UserInfo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -198,6 +200,9 @@ class ActivityPageActivity : AppCompatActivity() {
         activities_status = bundle?.getBooleanArray("activities_status")?.toTypedArray()
         activities_game_mode = bundle?.getStringArray("activities_game_mode")
         active_activity = bundle?.getInt("active_activity")!!
+        activitygroup_name = bundle.getString("activitygroup_name")!!
+
+        findViewById<TextView>(R.id.activitygroup_name).text = activitygroup_name
 
         // Fix Buttons
         if (active_activity == activities_id!!.size - 1) {

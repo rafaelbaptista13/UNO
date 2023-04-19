@@ -98,6 +98,8 @@ class GamePlayModeFragment : Fragment() {
     // To handle if the user can change their submission or not
     private var editMode: Boolean = true
 
+    private lateinit var loading_bar: ProgressBar
+
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String?) = GamePlayModeFragment().apply {
             arguments = bundleOf(
@@ -148,6 +150,7 @@ class GamePlayModeFragment : Fragment() {
         } else {
             description_text.visibility = View.GONE
         }
+        loading_bar = view.findViewById(R.id.loading_progress_bar)
         val string1 = view.findViewById<LinearLayout>(R.id.row1)
         val string2 = view.findViewById<LinearLayout>(R.id.row2)
         val string3 = view.findViewById<LinearLayout>(R.id.row3)
@@ -183,6 +186,8 @@ class GamePlayModeFragment : Fragment() {
         submit_btn.setOnClickListener {
             if (chosen_file != null) {
                 submitVideo()
+            } else {
+                Toast.makeText(requireContext(), "Por favor escolha um vídeo antes de submeter.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -404,8 +409,10 @@ class GamePlayModeFragment : Fragment() {
     private fun submitVideo() {
         // Do something with the selected video file URI
         Log.i("GamePlayFragment", chosen_file!!.path!!)
-        val context = requireContext()
+        submit_btn.visibility = View.GONE
+        loading_bar.visibility = View.VISIBLE
 
+        val context = requireContext()
         val video_file = getFileFromUri(chosen_file!!, context)
         val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!, context)!!.toMediaTypeOrNull())
         val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
@@ -429,8 +436,10 @@ class GamePlayModeFragment : Fragment() {
                     edit_submission_btn.visibility = View.VISIBLE
                     upload_video_buttons.visibility = View.GONE
                 } else {
+                    submit_btn.visibility = View.VISIBLE
                     Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
                 }
+                loading_bar.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +36,9 @@ public final class FragmentExerciseBinding implements ViewBinding {
 
   @NonNull
   public final View lineBreak;
+
+  @NonNull
+  public final ProgressBar loadingProgressBar;
 
   @NonNull
   public final FrameLayout mediaView;
@@ -80,7 +84,8 @@ public final class FragmentExerciseBinding implements ViewBinding {
 
   private FragmentExerciseBinding(@NonNull LinearLayout rootView, @NonNull TextView description,
       @NonNull AppCompatButton editSubmission, @NonNull ImageView imageView,
-      @NonNull View lineBreak, @NonNull FrameLayout mediaView, @NonNull AppCompatButton recordVideo,
+      @NonNull View lineBreak, @NonNull ProgressBar loadingProgressBar,
+      @NonNull FrameLayout mediaView, @NonNull AppCompatButton recordVideo,
       @NonNull AppCompatButton submit, @NonNull LinearLayout submitButtons,
       @NonNull TextView teacherFeedback, @NonNull MaterialCardView teacherFeedbackCard,
       @NonNull TextView teacherFeedbackHeader, @NonNull TextView title, @NonNull TextView type,
@@ -92,6 +97,7 @@ public final class FragmentExerciseBinding implements ViewBinding {
     this.editSubmission = editSubmission;
     this.imageView = imageView;
     this.lineBreak = lineBreak;
+    this.loadingProgressBar = loadingProgressBar;
     this.mediaView = mediaView;
     this.recordVideo = recordVideo;
     this.submit = submit;
@@ -156,6 +162,12 @@ public final class FragmentExerciseBinding implements ViewBinding {
       id = R.id.line_break;
       View lineBreak = ViewBindings.findChildViewById(rootView, id);
       if (lineBreak == null) {
+        break missingId;
+      }
+
+      id = R.id.loading_progress_bar;
+      ProgressBar loadingProgressBar = ViewBindings.findChildViewById(rootView, id);
+      if (loadingProgressBar == null) {
         break missingId;
       }
 
@@ -244,9 +256,9 @@ public final class FragmentExerciseBinding implements ViewBinding {
       }
 
       return new FragmentExerciseBinding((LinearLayout) rootView, description, editSubmission,
-          imageView, lineBreak, mediaView, recordVideo, submit, submitButtons, teacherFeedback,
-          teacherFeedbackCard, teacherFeedbackHeader, title, type, uploadVideo, uploadVideoButtons,
-          uploadedVideoMessage, uploadedVideoView, videoView);
+          imageView, lineBreak, loadingProgressBar, mediaView, recordVideo, submit, submitButtons,
+          teacherFeedback, teacherFeedbackCard, teacherFeedbackHeader, title, type, uploadVideo,
+          uploadVideoButtons, uploadedVideoMessage, uploadedVideoView, videoView);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

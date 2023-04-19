@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -78,6 +79,8 @@ class ExerciseFragment : Fragment() {
     // To handle if the user can change their submission or not
     private var editMode: Boolean = true
 
+    private lateinit var loading_bar: ProgressBar
+
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String) = ExerciseFragment().apply {
             arguments = bundleOf(
@@ -121,6 +124,7 @@ class ExerciseFragment : Fragment() {
         title_text.text = title
         val description_text = view.findViewById<TextView>(R.id.description)
         description_text.text = description
+        loading_bar = view.findViewById(R.id.loading_progress_bar)
         edit_submission_btn = view.findViewById(R.id.edit_submission)
         edit_submission_btn.setOnClickListener {
             editMode = true
@@ -132,6 +136,8 @@ class ExerciseFragment : Fragment() {
         submit_btn.setOnClickListener {
             if (chosen_file != null) {
                 submitQuestion()
+            } else {
+                Toast.makeText(requireContext(), "Por favor escolha um vídeo antes de submeter.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -260,6 +266,8 @@ class ExerciseFragment : Fragment() {
     private fun submitQuestion() {
         // Do something with the selected video file URI
         Log.i("ExerciseFragment", chosen_file!!.path!!)
+        submit_btn.visibility = View.GONE
+        loading_bar.visibility = View.VISIBLE
 
         val video_file = getFileFromUri(chosen_file!!)
         val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!)!!.toMediaTypeOrNull())
@@ -284,8 +292,10 @@ class ExerciseFragment : Fragment() {
                     edit_submission_btn.visibility = View.VISIBLE
                     upload_video_buttons.visibility = View.GONE
                 } else {
+                    submit_btn.visibility = View.VISIBLE
                     Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
                 }
+                loading_bar.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

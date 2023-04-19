@@ -102,6 +102,8 @@ class GameBuildModeFragment : Fragment() {
 
     private lateinit var midiDriver: MidiDriver
 
+    private lateinit var loading_bar: ProgressBar
+
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String?) = GameBuildModeFragment().apply {
             arguments = bundleOf(
@@ -151,7 +153,7 @@ class GameBuildModeFragment : Fragment() {
         } else {
             description_text.visibility = View.GONE
         }
-
+        loading_bar = view.findViewById(R.id.loading_progress_bar)
         string1 = view.findViewById(R.id.row1)
         string2 = view.findViewById(R.id.row2)
         string3 = view.findViewById(R.id.row3)
@@ -578,8 +580,10 @@ class GameBuildModeFragment : Fragment() {
     private fun submitGame() {
         // Do something with the selected video file URI
         Log.i("GameBuildFragment", chosen_file!!.path!!)
-        val context = requireContext()
+        submit_btn.visibility = View.GONE
+        loading_bar.visibility = View.VISIBLE
 
+        val context = requireContext()
         val video_file = getFileFromUri(chosen_file!!, context)
         val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!, context)!!.toMediaTypeOrNull())
         val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
@@ -605,8 +609,10 @@ class GameBuildModeFragment : Fragment() {
                     upload_video_buttons.visibility = View.GONE
                     edit_sequence_button.visibility = View.GONE
                 } else {
+                    submit_btn.visibility = View.VISIBLE
                     Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o jogo.", Toast.LENGTH_SHORT).show()
                 }
+                loading_bar.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
