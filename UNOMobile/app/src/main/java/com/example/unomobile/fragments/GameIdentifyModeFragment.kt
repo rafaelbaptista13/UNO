@@ -252,6 +252,14 @@ class GameIdentifyModeFragment : Fragment() {
                             addFinalItems(string3, context, game_card!!, vertical_game_line!!)
                             addFinalItems(string4, context, game_card!!, vertical_game_line!!)
 
+                            if (activity_data.teacher_feedback !== null) {
+                                val teacher_feedback_card = view.findViewById<MaterialCardView>(R.id.teacher_feedback_card)
+                                val teacher_feedback = view.findViewById<TextView>(R.id.teacher_feedback)
+
+                                teacher_feedback_card.visibility = View.VISIBLE
+                                teacher_feedback.text = activity_data.teacher_feedback
+                            }
+
                         }
                     }
 

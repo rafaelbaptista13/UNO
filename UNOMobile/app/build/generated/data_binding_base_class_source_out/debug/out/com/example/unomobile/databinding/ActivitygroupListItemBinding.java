@@ -9,17 +9,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.example.unomobile.R;
+import com.google.android.material.card.MaterialCardView;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
 
 public final class ActivitygroupListItemBinding implements ViewBinding {
   @NonNull
-  private final CardView rootView;
+  private final MaterialCardView rootView;
+
+  @NonNull
+  public final MaterialCardView card;
 
   @NonNull
   public final ImageView image;
@@ -39,10 +42,12 @@ public final class ActivitygroupListItemBinding implements ViewBinding {
   @NonNull
   public final TextView weekTitle;
 
-  private ActivitygroupListItemBinding(@NonNull CardView rootView, @NonNull ImageView image,
-      @NonNull View lineBreak, @NonNull TextView numOfActivities, @NonNull ProgressBar progressBar,
-      @NonNull TextView status, @NonNull TextView weekTitle) {
+  private ActivitygroupListItemBinding(@NonNull MaterialCardView rootView,
+      @NonNull MaterialCardView card, @NonNull ImageView image, @NonNull View lineBreak,
+      @NonNull TextView numOfActivities, @NonNull ProgressBar progressBar, @NonNull TextView status,
+      @NonNull TextView weekTitle) {
     this.rootView = rootView;
+    this.card = card;
     this.image = image;
     this.lineBreak = lineBreak;
     this.numOfActivities = numOfActivities;
@@ -53,7 +58,7 @@ public final class ActivitygroupListItemBinding implements ViewBinding {
 
   @Override
   @NonNull
-  public CardView getRoot() {
+  public MaterialCardView getRoot() {
     return rootView;
   }
 
@@ -78,6 +83,8 @@ public final class ActivitygroupListItemBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      MaterialCardView card = (MaterialCardView) rootView;
+
       id = R.id.image;
       ImageView image = ViewBindings.findChildViewById(rootView, id);
       if (image == null) {
@@ -114,7 +121,7 @@ public final class ActivitygroupListItemBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivitygroupListItemBinding((CardView) rootView, image, lineBreak,
+      return new ActivitygroupListItemBinding((MaterialCardView) rootView, card, image, lineBreak,
           numOfActivities, progressBar, status, weekTitle);
     }
     String missingId = rootView.getResources().getResourceName(id);

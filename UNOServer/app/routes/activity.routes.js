@@ -78,6 +78,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     exerciseactivities.getSubmittedMediaOfStudent
   );
+  // Put Feedback to student
+  router.put(
+    "/teacher/:class_id/:activity_id/exercise/feedback/:student_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    exerciseactivities.putFeedbackToStudent
+  )
 
 
   /**
@@ -110,6 +116,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     questionactivities.getMediaFromAnswer
   );
+  // Put Feedback to student
+  router.put(
+    "/teacher/:class_id/:activity_id/question/feedback/:student_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    questionactivities.putFeedbackToStudent
+  )
 
 
   /**
@@ -150,6 +162,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
     gameactivities.submitGameBuild
   );
+  // Put Feedback to student
+  router.put(
+    "/teacher/:class_id/:activity_id/game/feedback/:student_id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    gameactivities.putFeedbackToStudent
+  )
 
   // Create a new activity
   router.post(

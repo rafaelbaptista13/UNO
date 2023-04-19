@@ -162,6 +162,9 @@ id submit
 id submit_buttons
 id submit_sequence
 id submitted_message
+id teacher_feedback
+id teacher_feedback_card
+id teacher_feedback_header
 id text
 id textView
 id textViewDescription

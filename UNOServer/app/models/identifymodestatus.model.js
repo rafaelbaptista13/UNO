@@ -9,6 +9,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false,
             primaryKey: true
+        },
+        teacher_feedback: {
+            type: Sequelize.STRING,
+            allowNull: true
         }
     });
 

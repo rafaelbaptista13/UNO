@@ -608,6 +608,7 @@ const getExerciseActivityInfo = async (activity, user_id) => {
   });
   if (exercise_activity_status !== null) {
     activity.completed = true;
+    activity.teacher_feedback = exercise_activity_status.teacher_feedback;
   }
   activity.exercise_activity = exercise_info;
   return activity;
@@ -633,6 +634,7 @@ const getQuestionActivityInfo = async (activity, user_id) => {
   });
   let answers = question_info.Answers.map((item) => item.toJSON());
   if (question_activity_status !== null) {
+    activity.teacher_feedback = question_activity_status.teacher_feedback;
     let chosen_answers = await UserAnswered.findAll({
       where: {
         status_id: question_activity_status.id,
@@ -696,6 +698,7 @@ const getGameActivityInfo = async (activity, user_id) => {
       });
       if (identify_mode_status !== null) {
         activity.completed = true;
+        activity.teacher_feedback = identify_mode_status.teacher_feedback;
       }
       break;
     case 2:
@@ -711,6 +714,7 @@ const getGameActivityInfo = async (activity, user_id) => {
       });
       if (play_mode_status !== null) {
         activity.completed = true;
+        activity.teacher_feedback = play_mode_status.teacher_feedback;
       }
       break;
     case 3:
@@ -732,6 +736,7 @@ const getGameActivityInfo = async (activity, user_id) => {
       });
       if (build_mode_status !== null) {
         activity.completed = true;
+        activity.teacher_feedback = build_mode_status.teacher_feedback;
         let user_chosen_notes = await UserChosenNotes.findAll({
           where: {
             status_id: build_mode_status.id,

@@ -1,5 +1,6 @@
 package com.example.unomobile.network
 
+import android.util.Log
 import com.example.unomobile.BuildConfig
 import com.example.unomobile.R
 import com.example.unomobile.models.*
@@ -23,9 +24,12 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 
+
 var BASE_URL = if (BuildConfig.IS_DEVELOPMENT_MODE) {
+    Log.i("ApiService", BuildConfig.IS_DEVELOPMENT_MODE.toString())
     "http://10.0.2.2:8080/api/"
 } else {
+    Log.i("ApiService", BuildConfig.IS_DEVELOPMENT_MODE.toString())
     "https://deti-viola.ua.pt/rb-md-violuno-app-v1/internal-api/api/"
 }
 
