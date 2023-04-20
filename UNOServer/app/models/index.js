@@ -63,6 +63,7 @@ db.buildmode = require("./buildmode.model")(sequelize, Sequelize);
 db.buildmodestatus = require("./buildmodestatus.model")(sequelize, Sequelize);
 db.userchosennotes = require("./userchosennotes.model")(sequelize, Sequelize);
 db.completedactivities = require("./completedactivities.model")(sequelize, Sequelize);
+db.supportmaterials = require("./supportmaterials.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -327,6 +328,13 @@ db.users.beforeDestroy((user, options) => {
       user_id: user.id
     }
   })
+})
+
+// SupportMaterial * - 1 Class
+db.supportmaterials.belongsTo(db.classes, {
+  through: "class",
+  foreignKey: { name: "class_id", allowNull: false },
+  as: "class",
 })
 
 db.ROLES = ["student", "teacher"];
