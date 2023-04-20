@@ -23,10 +23,7 @@ import com.example.unomobile.network.Api
 import com.example.unomobile.utils.*
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.ResponseBody
 import org.billthefarmer.mididriver.MidiDriver
 import retrofit2.Call
@@ -74,6 +71,8 @@ class GameIdentifyModeFragment : Fragment() {
 
     private lateinit var midiDriver: MidiDriver
 
+    private lateinit var _context: Context
+
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String?) = GameIdentifyModeFragment().apply {
             arguments = bundleOf(
@@ -110,6 +109,13 @@ class GameIdentifyModeFragment : Fragment() {
         user = gson.fromJson(user_info, UserInfo::class.java)
 
         if (activity_id == null) {
+            return view
+        }
+
+        if (isAdded) {
+            _context = requireContext()
+        } else {
+            onDestroy()
             return view
         }
 
@@ -161,7 +167,7 @@ class GameIdentifyModeFragment : Fragment() {
                     }   // Note on
 
                     withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(requireContext()), 0)
+                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(_context), 0)
                     }
 
                     delay(2000)
@@ -207,7 +213,7 @@ class GameIdentifyModeFragment : Fragment() {
                 call.enqueue(object : Callback<Activity> {
                     override fun onResponse(call: Call<Activity>, response: Response<Activity>) {
                         if (response.isSuccessful) {
-                            val context = requireContext()
+                            val context = _context
                             Log.i("GameIdentifyFragment", response.body().toString())
                             val activity_data = response.body()!!
                             notes = activity_data.game_activity!!.notes
@@ -311,7 +317,7 @@ class GameIdentifyModeFragment : Fragment() {
 
     private fun defaultMusicalNoteClickListener(clicked_note_view: MusicalNoteView, note_order: Int) {
         if (selected_note != chosen_notes[note_order] && selected_note != null) {
-            val context = requireContext()
+            val context = _context
             clicked_note_view.visibility = View.INVISIBLE
             var note_view: MusicalNoteView? = null
             when (selected_note!!.violin_string) {
@@ -400,7 +406,7 @@ class GameIdentifyModeFragment : Fragment() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.isSuccessful) {
-                        Toast.makeText(requireContext(), "Jogo concluído com sucesso.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(_context, "Jogo concluído com sucesso.", Toast.LENGTH_SHORT).show()
 
                         var activitypageactivity = activity as? ActivityPageActivity
                         if (activitypageactivity != null) {
@@ -413,12 +419,12 @@ class GameIdentifyModeFragment : Fragment() {
                         incorrect_message.visibility = View.GONE
                         correct_card.visibility = View.VISIBLE
                     } else {
-                        Toast.makeText(requireContext(), "Ocorreu um erro ao submeter a sequência.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(_context, "Ocorreu um erro ao submeter a sequência.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Toast.makeText(requireContext(), "Ocorreu um erro ao submeter a sequência.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(_context, "Ocorreu um erro ao submeter a sequência.", Toast.LENGTH_SHORT).show()
                     Log.i("GameIdentifyFragment", t.message.toString())
                 }
             })
@@ -429,7 +435,7 @@ class GameIdentifyModeFragment : Fragment() {
     }
 
     private fun showPossibleNotes() {
-        val context = requireContext()
+        val context = _context
         for (note in available_notes!!) {
             val note_view = createMusicalNoteViewForAvailableNotes(note, context)
 
@@ -468,7 +474,7 @@ class GameIdentifyModeFragment : Fragment() {
     }
 
     private fun showNotesToBeSolved(notes: Array<MusicalNote>, string1: LinearLayout, string2: LinearLayout, string3: LinearLayout, string4: LinearLayout, middle_row: LinearLayout): Array<MusicalNoteView>? {
-        val context = requireContext()
+        val context = _context
         var notes_views = arrayOf<MusicalNoteView>()
         for (note in notes) {
             val note_view = MusicalNoteView(context, null)

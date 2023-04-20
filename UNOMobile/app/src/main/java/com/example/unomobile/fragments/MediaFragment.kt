@@ -1,6 +1,7 @@
 package com.example.unomobile.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -28,6 +29,7 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,6 +46,8 @@ class MediaFragment : Fragment() {
     private var description: String? = null
     private var order: Int? = null
     private var activity_id: Int? = null
+
+    private lateinit var _context: Context
 
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String?) = MediaFragment().apply {
@@ -79,6 +83,13 @@ class MediaFragment : Fragment() {
         val user = gson.fromJson(user_info, UserInfo::class.java)
 
         if (activity_id == null) {
+            return view
+        }
+
+        if (isAdded) {
+            _context = requireContext()
+        } else {
+            onDestroy()
             return view
         }
 
@@ -154,7 +165,7 @@ class MediaFragment : Fragment() {
 
     private fun initPlayer() {
         // Create an ExoPlayer and set it as the player for content.
-        player = ExoPlayer.Builder(requireContext()).build()
+        player = ExoPlayer.Builder(_context).build()
         playerView?.player = player
 
         val uri = Uri.parse(media_path)
@@ -173,7 +184,7 @@ class MediaFragment : Fragment() {
     fun setFullScreenListener() {
         // Adding Full Screen Button Click Listeners.
         playerView?.setFullscreenButtonClickListener {
-            var intent = Intent(requireContext(), FullScreenActivity::class.java)
+            var intent = Intent(_context, FullScreenActivity::class.java)
             var bundle = Bundle()
             bundle.putString("media_path", media_path)
             intent.putExtras(bundle)
@@ -207,4 +218,13 @@ class MediaFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("MediaFragment", "OnDestroy called")
+        if (media_path != null && (media_type == "video" || media_type == "audio")) {
+            playerView?.player = null
+            player?.release()
+            player = null
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.example.unomobile.fragments
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.LightingColorFilter
@@ -49,10 +50,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -101,6 +99,8 @@ class GamePlayModeFragment : Fragment() {
 
     private lateinit var loading_bar: ProgressBar
 
+    private lateinit var _context: Context
+
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String?) = GamePlayModeFragment().apply {
             arguments = bundleOf(
@@ -141,6 +141,13 @@ class GamePlayModeFragment : Fragment() {
             return view
         }
 
+        if (isAdded) {
+            _context = requireContext()
+        } else {
+            onDestroy()
+            return view
+        }
+
         val type_text = view.findViewById<TextView>(R.id.type)
         type_text.text = order.toString() + ". Jogo - Reproduzir"
         val title_text = view.findViewById<TextView>(R.id.title)
@@ -163,10 +170,10 @@ class GamePlayModeFragment : Fragment() {
         upload_video_buttons = view.findViewById(R.id.upload_video_buttons)
         record_video_button = view.findViewById(R.id.record_video)
         upload_video_button = view.findViewById(R.id.upload_video)
-        val record_icon = ContextCompat.getDrawable(requireContext(), R.drawable.record_icon)
+        val record_icon = ContextCompat.getDrawable(_context, R.drawable.record_icon)
         record_icon!!.setBounds(30, 0, 110, 80)
         record_video_button.setCompoundDrawables(record_icon, null, null, null)
-        val upload_icon = ContextCompat.getDrawable(requireContext(), R.drawable.upload_icon)
+        val upload_icon = ContextCompat.getDrawable(_context, R.drawable.upload_icon)
         upload_icon!!.setBounds(20, 0, 110, 80)
         upload_video_button.setCompoundDrawables(upload_icon, null, null, null)
 
@@ -176,8 +183,8 @@ class GamePlayModeFragment : Fragment() {
             val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
             val chooser = Intent.createChooser(intent, "Abrir câmera com")
 
-            if (intent.resolveActivity(requireContext().packageManager) != null) {
-                requireContext().startActivity(chooser)
+            if (intent.resolveActivity(_context.packageManager) != null) {
+                _context.startActivity(chooser)
             } else {
                 // No camera app available
                 Toast.makeText(context, "Não existe nenhuma aplicação de câmera.", Toast.LENGTH_SHORT).show()
@@ -202,7 +209,7 @@ class GamePlayModeFragment : Fragment() {
             if (chosen_file != null) {
                 submitVideo()
             } else {
-                Toast.makeText(requireContext(), "Por favor escolha um vídeo antes de submeter.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "Por favor escolha um vídeo antes de submeter.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -236,7 +243,7 @@ class GamePlayModeFragment : Fragment() {
                     }   // Note on
 
                     withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(requireContext()), 0)
+                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(_context), 0)
                     }
 
                     delay(2000)
@@ -278,7 +285,10 @@ class GamePlayModeFragment : Fragment() {
                 call.enqueue(object : Callback<Activity> {
                     override fun onResponse(call: Call<Activity>, response: Response<Activity>) {
                         if (response.isSuccessful) {
-                            val context = requireContext()
+                            if (context == null) {
+                                return
+                            }
+                            val context = _context
                             Log.i("GamePlayModeFragment", response.body().toString())
                             val activity_data = response.body()!!
                             notes = activity_data.game_activity!!.notes
@@ -288,7 +298,7 @@ class GamePlayModeFragment : Fragment() {
                             addInitialItems(string3, context)
                             addInitialItems(string4, context)
 
-                            notes_views = showSolution(notes!!, string1, string2, string3, string4, requireContext())
+                            notes_views = showSolution(notes!!, string1, string2, string3, string4, context)
 
                             addFinalItems(string1, context, game_card!!, vertical_game_line!!)
                             addFinalItems(string2, context, game_card!!, vertical_game_line!!)
@@ -366,7 +376,7 @@ class GamePlayModeFragment : Fragment() {
 
     private fun initSubmittedPlayer() {
         // Create an ExoPlayer and set it as the player for content.
-        submitted_player = ExoPlayer.Builder(requireContext()).build()
+        submitted_player = ExoPlayer.Builder(_context).build()
         submitted_player_view?.player = submitted_player
 
         val uri = Uri.parse(submitted_media_path)
@@ -385,7 +395,7 @@ class GamePlayModeFragment : Fragment() {
     fun setFullScreenListener(view: StyledPlayerView?, path: String) {
         // Adding Full Screen Button Click Listeners.
         view?.setFullscreenButtonClickListener {
-            var intent = Intent(requireContext(), FullScreenActivity::class.java)
+            var intent = Intent(_context, FullScreenActivity::class.java)
             var bundle = Bundle()
             bundle.putString("media_path", path)
             intent.putExtras(bundle)
@@ -401,7 +411,7 @@ class GamePlayModeFragment : Fragment() {
             submitted_player_view!!.visibility = View.INVISIBLE
 
             submitted_player_view?.setFullscreenButtonClickListener {
-                var intent = Intent(requireContext(), FullScreenActivity::class.java)
+                var intent = Intent(_context, FullScreenActivity::class.java)
                 var bundle = Bundle()
                 Log.i("GamePlayModeFragment", chosen_file!!.path!!);
                 bundle.putParcelable("uri", chosen_file)
@@ -409,7 +419,7 @@ class GamePlayModeFragment : Fragment() {
                 startActivity(intent)
             }
 
-            submitted_player = ExoPlayer.Builder(requireContext()).build()
+            submitted_player = ExoPlayer.Builder(_context).build()
             submitted_player_view?.player = submitted_player
 
             submitted_player!!.setMediaItem(MediaItem.Builder().setUri(chosen_file).build())
@@ -427,7 +437,7 @@ class GamePlayModeFragment : Fragment() {
         submit_btn.visibility = View.GONE
         loading_bar.visibility = View.VISIBLE
 
-        val context = requireContext()
+        val context = _context
         val video_file = getFileFromUri(chosen_file!!, context)
         val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!, context)!!.toMediaTypeOrNull())
         val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
@@ -440,7 +450,7 @@ class GamePlayModeFragment : Fragment() {
                 response: Response<ResponseBody>
             ) {
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Vídeo submetido com sucesso.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(_context, "Vídeo submetido com sucesso.", Toast.LENGTH_SHORT).show()
 
                     var activitypageactivity = activity as? ActivityPageActivity
                     if (activitypageactivity != null) {
@@ -452,13 +462,13 @@ class GamePlayModeFragment : Fragment() {
                     upload_video_buttons.visibility = View.GONE
                 } else {
                     submit_btn.visibility = View.VISIBLE
-                    Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(_context, "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
                 }
                 loading_bar.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
                 Log.i("GamePlayModeFragment", t.message.toString())
             }
 

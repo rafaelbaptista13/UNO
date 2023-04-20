@@ -36,10 +36,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -104,6 +101,7 @@ class GameBuildModeFragment : Fragment() {
     private lateinit var midiDriver: MidiDriver
 
     private lateinit var loading_bar: ProgressBar
+    private lateinit var _context: Context
 
     companion object {
         fun newInstance(activity_id: Int, order: Int, title: String, description: String?) = GameBuildModeFragment().apply {
@@ -144,6 +142,13 @@ class GameBuildModeFragment : Fragment() {
             return view
         }
 
+        if (isAdded) {
+            _context = requireContext()
+        } else {
+            onDestroy()
+            return view
+        }
+
         val type_text = view.findViewById<TextView>(R.id.type)
         type_text.text = order.toString() + ". Jogo - Construir"
         val title_text = view.findViewById<TextView>(R.id.title)
@@ -179,7 +184,7 @@ class GameBuildModeFragment : Fragment() {
                 submit_btn.visibility = View.VISIBLE
                 upload_video_buttons.visibility = View.VISIBLE
             } else {
-                Toast.makeText(requireContext(), "A melodia tem de estar completa.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "A melodia tem de estar completa.", Toast.LENGTH_SHORT).show()
             }
         }
         edit_sequence_button.setOnClickListener {
@@ -226,7 +231,7 @@ class GameBuildModeFragment : Fragment() {
                     }   // Note on
 
                     withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.smoothScrollTo(chosen_notes_views[index]!!.x.toInt() - 5.dpToPx(requireContext()), 0)
+                        horizontal_scroll_view.smoothScrollTo(chosen_notes_views[index]!!.x.toInt() - 5.dpToPx(_context), 0)
                     }
 
                     delay(2000)
@@ -254,10 +259,10 @@ class GameBuildModeFragment : Fragment() {
         upload_video_buttons = view.findViewById(R.id.upload_video_buttons)
         record_video_button = view.findViewById(R.id.record_video)
         upload_video_button = view.findViewById(R.id.upload_video)
-        val record_icon = ContextCompat.getDrawable(requireContext(), R.drawable.record_icon)
+        val record_icon = ContextCompat.getDrawable(_context, R.drawable.record_icon)
         record_icon!!.setBounds(30, 0, 110, 80)
         record_video_button.setCompoundDrawables(record_icon, null, null, null)
-        val upload_icon = ContextCompat.getDrawable(requireContext(), R.drawable.upload_icon)
+        val upload_icon = ContextCompat.getDrawable(_context, R.drawable.upload_icon)
         upload_icon!!.setBounds(20, 0, 110, 80)
         upload_video_button.setCompoundDrawables(upload_icon, null, null, null)
 
@@ -267,8 +272,8 @@ class GameBuildModeFragment : Fragment() {
             val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
             val chooser = Intent.createChooser(intent, "Abrir câmera com")
 
-            if (intent.resolveActivity(requireContext().packageManager) != null) {
-                requireContext().startActivity(chooser)
+            if (intent.resolveActivity(_context.packageManager) != null) {
+                _context.startActivity(chooser)
             } else {
                 // No camera app available
                 Toast.makeText(context, "Não existe nenhuma aplicação de câmera.", Toast.LENGTH_SHORT).show()
@@ -296,7 +301,7 @@ class GameBuildModeFragment : Fragment() {
             if (chosen_file != null) {
                 submitGame()
             } else {
-                Toast.makeText(requireContext(), "Escolha um vídeo para submeter.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "Escolha um vídeo para submeter.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -318,7 +323,7 @@ class GameBuildModeFragment : Fragment() {
                 call.enqueue(object : Callback<Activity> {
                     override fun onResponse(call: Call<Activity>, response: Response<Activity>) {
                         if (response.isSuccessful) {
-                            val context = requireContext()
+                            val context = _context
                             Log.i("GameBuildFragment", response.body().toString())
                             val activity_data = response.body()!!
                             notes = activity_data.game_activity!!.notes
@@ -437,7 +442,7 @@ class GameBuildModeFragment : Fragment() {
     }
 
     private fun showPossibleNotes() {
-        val context = requireContext()
+        val context = _context
         for (note in available_notes!!) {
             val note_view = createMusicalNoteViewForAvailableNotes(note, context)
 
@@ -476,7 +481,7 @@ class GameBuildModeFragment : Fragment() {
     }
 
     private fun showNotesToBeSolved(sequence_length: Int, string1: LinearLayout, string2: LinearLayout, string3: LinearLayout, string4: LinearLayout, middle_row: LinearLayout): Array<MusicalNoteView>? {
-        val context = requireContext()
+        val context = _context
         var notes_views = arrayOf<MusicalNoteView>()
         for (note in 0 until sequence_length) {
             val note_view = MusicalNoteView(context, null)
@@ -504,7 +509,7 @@ class GameBuildModeFragment : Fragment() {
 
     private fun defaultMusicalNoteClickListener(clicked_note_view: MusicalNoteView, note_order: Int) {
         if (selected_note != chosen_notes[note_order] && selected_note != null && edit_sequence_view) {
-            val context = requireContext()
+            val context = _context
             clicked_note_view.visibility = View.INVISIBLE
             var note_view: MusicalNoteView? = null
             when (selected_note!!.violin_string) {
@@ -576,7 +581,7 @@ class GameBuildModeFragment : Fragment() {
             submitted_player_view!!.visibility = View.INVISIBLE
 
             submitted_player_view?.setFullscreenButtonClickListener {
-                var intent = Intent(requireContext(), FullScreenActivity::class.java)
+                var intent = Intent(_context, FullScreenActivity::class.java)
                 var bundle = Bundle()
                 Log.i("GameBuildFragment", chosen_file!!.path!!);
                 bundle.putParcelable("uri", chosen_file)
@@ -598,7 +603,7 @@ class GameBuildModeFragment : Fragment() {
         submit_btn.visibility = View.GONE
         loading_bar.visibility = View.VISIBLE
 
-        val context = requireContext()
+        val context = _context
         val video_file = getFileFromUri(chosen_file!!, context)
         val requestBody = video_file.asRequestBody(getMimeType(chosen_file!!, context)!!.toMediaTypeOrNull())
         val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
@@ -612,7 +617,7 @@ class GameBuildModeFragment : Fragment() {
                 response: Response<ResponseBody>
             ) {
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Jogo submetido com sucesso.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(_context, "Jogo submetido com sucesso.", Toast.LENGTH_SHORT).show()
 
                     var activitypageactivity = activity as? ActivityPageActivity
                     if (activitypageactivity != null) {
@@ -625,13 +630,13 @@ class GameBuildModeFragment : Fragment() {
                     edit_sequence_button.visibility = View.GONE
                 } else {
                     submit_btn.visibility = View.VISIBLE
-                    Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o jogo.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(_context, "Ocorreu um erro ao submeter o jogo.", Toast.LENGTH_SHORT).show()
                 }
                 loading_bar.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(requireContext(), "Ocorreu um erro ao submeter o jogo.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "Ocorreu um erro ao submeter o jogo.", Toast.LENGTH_SHORT).show()
                 Log.i("GameBuildFragment", t.message.toString())
             }
 
@@ -641,7 +646,7 @@ class GameBuildModeFragment : Fragment() {
 
 
     private fun showChosenNotes(notes: Array<MusicalNote>, string1: LinearLayout, string2: LinearLayout, string3: LinearLayout, string4: LinearLayout): Array<MusicalNoteView>? {
-        val context = requireContext()
+        val context = _context
         var notes_views = arrayOf<MusicalNoteView>()
         for ((index, note) in notes.withIndex()) {
             val note_view = MusicalNoteView(context, null)
@@ -718,7 +723,7 @@ class GameBuildModeFragment : Fragment() {
 
     private fun initSubmittedPlayer() {
         // Create an ExoPlayer and set it as the player for content.
-        submitted_player = ExoPlayer.Builder(requireContext()).build()
+        submitted_player = ExoPlayer.Builder(_context).build()
         submitted_player_view?.player = submitted_player
 
         val uri = Uri.parse(submitted_media_path)
@@ -737,7 +742,7 @@ class GameBuildModeFragment : Fragment() {
     fun setFullScreenListener(view: StyledPlayerView?, path: String) {
         // Adding Full Screen Button Click Listeners.
         view?.setFullscreenButtonClickListener {
-            var intent = Intent(requireContext(), FullScreenActivity::class.java)
+            var intent = Intent(_context, FullScreenActivity::class.java)
             var bundle = Bundle()
             bundle.putString("media_path", path)
             intent.putExtras(bundle)
@@ -746,7 +751,7 @@ class GameBuildModeFragment : Fragment() {
     }
 
     private fun initChosenVideoPlayer() {
-        submitted_player = ExoPlayer.Builder(requireContext()).build()
+        submitted_player = ExoPlayer.Builder(_context).build()
         submitted_player_view?.player = submitted_player
 
         submitted_player!!.setMediaItem(MediaItem.Builder().setUri(chosen_file).build())

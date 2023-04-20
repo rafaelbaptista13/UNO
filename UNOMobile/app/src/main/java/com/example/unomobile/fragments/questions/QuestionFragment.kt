@@ -1,6 +1,7 @@
 package com.example.unomobile.fragments.questions
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -35,6 +36,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -71,6 +73,8 @@ class QuestionFragment : Fragment() {
 
     private lateinit var loading_bar: ProgressBar
 
+    private lateinit var _context: Context
+
     companion object {
         fun newInstance(activity_id: Int, order: Int) = QuestionFragment().apply {
             arguments = bundleOf(
@@ -105,6 +109,13 @@ class QuestionFragment : Fragment() {
             return view
         }
 
+        if (isAdded) {
+            _context = requireContext()
+        } else {
+            onDestroy()
+            return view
+        }
+
         val type_text = view.findViewById<TextView>(R.id.type)
         type_text.text = order.toString() + ". Pergunta"
         val question_text = view.findViewById<TextView>(R.id.question)
@@ -132,7 +143,7 @@ class QuestionFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recycler_view)
         manager = LinearLayoutManager(activity)
         recyclerView.layoutManager = manager
-        recyclerView.adapter = AnswersAdapter(listOf(), requireContext())
+        recyclerView.adapter = AnswersAdapter(listOf(), _context)
 
         lifecycleScope.launch {
             try {
@@ -176,7 +187,7 @@ class QuestionFragment : Fragment() {
                                         image.visibility = View.GONE
                                         video.visibility = View.VISIBLE
                                         val params = video.layoutParams
-                                        params.height = 50.dpToPx(requireContext())
+                                        params.height = 50.dpToPx(_context)
                                         video.layoutParams = params
 
                                         playerView = video
@@ -197,7 +208,7 @@ class QuestionFragment : Fragment() {
                                     user.class_id!!, answer.chosen)
                             }.toTypedArray().toList()
                             Log.i("QuestionFragment", data[0].toString())
-                            adapter = AnswersAdapter(data, requireContext())
+                            adapter = AnswersAdapter(data, _context)
                             recyclerView.adapter = adapter
                             (adapter as AnswersAdapter).setOnItemClickListener(object :
                                 AnswersAdapter.onItemClickListener {
@@ -295,7 +306,7 @@ class QuestionFragment : Fragment() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Resposta submetida com sucesso.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(_context, "Resposta submetida com sucesso.", Toast.LENGTH_SHORT).show()
                     editMode = false
                     submit_btn.visibility = View.GONE
                     edit_submission_btn.visibility = View.VISIBLE
@@ -309,13 +320,13 @@ class QuestionFragment : Fragment() {
                     }
                 } else {
                     submit_btn.visibility = View.VISIBLE
-                    Toast.makeText(requireContext(), "Ocorreu um erro ao submeter a resposta.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(_context, "Ocorreu um erro ao submeter a resposta.", Toast.LENGTH_SHORT).show()
                 }
                 loading_bar.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(requireContext(), "Ocorreu um erro ao submeter a resposta.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "Ocorreu um erro ao submeter a resposta.", Toast.LENGTH_SHORT).show()
                 Log.i("QuestionFragment", t.message.toString())
             }
 
@@ -326,7 +337,7 @@ class QuestionFragment : Fragment() {
 
     private fun initPlayer() {
         // Create an ExoPlayer and set it as the player for content.
-        player = ExoPlayer.Builder(requireContext()).build()
+        player = ExoPlayer.Builder(_context).build()
         playerView?.player = player
 
         val uri = Uri.parse(media_path)
@@ -345,13 +356,22 @@ class QuestionFragment : Fragment() {
     fun setFullScreenListener() {
         // Adding Full Screen Button Click Listeners.
         playerView?.setFullscreenButtonClickListener {
-            var intent = Intent(requireContext(), FullScreenActivity::class.java)
+            var intent = Intent(_context, FullScreenActivity::class.java)
             var bundle = Bundle()
             bundle.putString("media_path", media_path)
             intent.putExtras(bundle)
             startActivity(intent)
         }
         onStart()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("QuestionFragment", "OnDestroy called")
+        if (media_path != null && media_type == "video" || media_type == "audio") {
+            player?.release()
+            player = null
+        }
     }
 
     override fun onResume() {
