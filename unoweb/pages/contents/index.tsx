@@ -23,7 +23,7 @@ export default function Contents() {
             <PageCard
               header="Materiais de apoio"
               text="Gerencie o material de apoio das suas turmas."
-              path="/contents/library"
+              path="/contents/supportmaterials"
             />
           </div>
         </div>

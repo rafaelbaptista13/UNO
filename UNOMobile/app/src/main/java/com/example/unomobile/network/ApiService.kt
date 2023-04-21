@@ -100,6 +100,9 @@ interface ApiService {
     @POST("activities/{class_id}/{activity_id}/game/build/submit")
     fun submitGameBuildModeActivity(@Path("class_id") class_id: Number, @Path("activity_id") activity_id: Number, @Part media: MultipartBody.Part, @Part("chosen_notes") chosen_notes: Array<Int>): Call<ResponseBody>
 
+    @GET("supportmaterials/{class_id}")
+    fun getSupportMaterials(@Path("class_id") class_id: Number): Call<List<SupportMaterial>>
+
     @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>
 

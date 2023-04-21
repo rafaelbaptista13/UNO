@@ -144,6 +144,7 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/class.routes")(app);
 require("./app/routes/activitygroup.routes")(app);
 require("./app/routes/activity.routes")(app);
+require("./app/routes/supportmaterial.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

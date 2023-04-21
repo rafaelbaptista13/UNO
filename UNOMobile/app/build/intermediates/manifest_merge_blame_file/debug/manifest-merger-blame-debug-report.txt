@@ -34,7 +34,7 @@
 20    </queries>
 21
 22    <application
-22-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:16:5-74:19
+22-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:16:5-82:19
 23        android:allowBackup="true"
 23-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:17:9-35
 24        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
@@ -118,76 +118,91 @@
 65-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:33:17-33
 66        </activity>
 67        <activity
-67-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:59:9-73:20
-68            android:name="com.example.unomobile.MainActivity"
-68-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:60:13-41
-69            android:configChanges="keyboardHidden|orientation|screenSize"
-69-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:61:13-74
-70            android:exported="true"
-70-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:62:13-36
-71            android:screenOrientation="portrait" >
-71-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:63:13-49
-72            <intent-filter>
-72-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:64:13-68:29
-73                <action android:name="android.intent.action.MAIN" />
-73-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:65:17-69
-73-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:65:25-66
-74
-75                <category android:name="android.intent.category.LAUNCHER" />
-75-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:67:17-77
-75-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:67:27-74
-76            </intent-filter>
-77
-78            <meta-data
-78-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:31:13-33:36
-79                android:name="android.app.lib_name"
-79-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:32:17-52
-80                android:value="" />
-80-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:33:17-33
-81        </activity>
+67-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:59:9-66:20
+68            android:name="com.example.unomobile.activities.SupportMaterialActivity"
+68-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:60:13-63
+69            android:exported="false"
+69-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:61:13-37
+70            android:screenOrientation="portrait" >
+70-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:62:13-49
+71            <meta-data
+71-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:31:13-33:36
+72                android:name="android.app.lib_name"
+72-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:32:17-52
+73                android:value="" />
+73-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:33:17-33
+74        </activity>
+75        <activity
+75-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:67:9-81:20
+76            android:name="com.example.unomobile.MainActivity"
+76-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:68:13-41
+77            android:configChanges="keyboardHidden|orientation|screenSize"
+77-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:69:13-74
+78            android:exported="true"
+78-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:70:13-36
+79            android:screenOrientation="portrait" >
+79-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:71:13-49
+80            <intent-filter>
+80-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:72:13-76:29
+81                <action android:name="android.intent.action.MAIN" />
+81-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:73:17-69
+81-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:73:25-66
 82
-83        <uses-library
-83-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:25:9-27:40
-84            android:name="androidx.window.extensions"
-84-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:26:13-54
-85            android:required="false" />
-85-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:27:13-37
-86        <uses-library
-86-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:28:9-30:40
-87            android:name="androidx.window.sidecar"
-87-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:29:13-51
-88            android:required="false" />
-88-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:30:13-37
-89
-90        <provider
-90-->[com.squareup.picasso:picasso:2.71828] /home/rafael/.gradle/caches/transforms-3/0277a68ea66f09998e4519a73196365b/transformed/jetified-picasso-2.71828/AndroidManifest.xml:8:9-11:40
-91            android:name="com.squareup.picasso.PicassoProvider"
-91-->[com.squareup.picasso:picasso:2.71828] /home/rafael/.gradle/caches/transforms-3/0277a68ea66f09998e4519a73196365b/transformed/jetified-picasso-2.71828/AndroidManifest.xml:9:13-64
-92            android:authorities="com.example.unomobile.com.squareup.picasso"
-92-->[com.squareup.picasso:picasso:2.71828] /home/rafael/.gradle/caches/transforms-3/0277a68ea66f09998e4519a73196365b/transformed/jetified-picasso-2.71828/AndroidManifest.xml:10:13-72
-93            android:exported="false" />
-93-->[com.squareup.picasso:picasso:2.71828] /home/rafael/.gradle/caches/transforms-3/0277a68ea66f09998e4519a73196365b/transformed/jetified-picasso-2.71828/AndroidManifest.xml:11:13-37
-94        <provider
-94-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
-95            android:name="androidx.startup.InitializationProvider"
-95-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
-96            android:authorities="com.example.unomobile.androidx-startup"
-96-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
-97            android:exported="false" >
-97-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
-98            <meta-data
-98-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
-99                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-99-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
-100                android:value="androidx.startup" />
-100-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
-101            <meta-data
-101-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/rafael/.gradle/caches/transforms-3/cd60cef8c249db764f82fed1b267696f/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
-102                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-102-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/rafael/.gradle/caches/transforms-3/cd60cef8c249db764f82fed1b267696f/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
-103                android:value="androidx.startup" />
-103-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/rafael/.gradle/caches/transforms-3/cd60cef8c249db764f82fed1b267696f/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
-104        </provider>
-105    </application>
-106
-107</manifest>
+83                <category android:name="android.intent.category.LAUNCHER" />
+83-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:75:17-77
+83-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:75:27-74
+84            </intent-filter>
+85
+86            <meta-data
+86-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:31:13-33:36
+87                android:name="android.app.lib_name"
+87-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:32:17-52
+88                android:value="" />
+88-->/home/rafael/Desktop/Dissertacao/UNO/UNOMobile/app/src/main/AndroidManifest.xml:33:17-33
+89        </activity>
+90
+91        <uses-library
+91-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:25:9-27:40
+92            android:name="androidx.window.extensions"
+92-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:26:13-54
+93            android:required="false" />
+93-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:27:13-37
+94        <uses-library
+94-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:28:9-30:40
+95            android:name="androidx.window.sidecar"
+95-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:29:13-51
+96            android:required="false" />
+96-->[androidx.window:window:1.0.0] /home/rafael/.gradle/caches/transforms-3/7e2cc39318fbdb8b4bcf8dcaa10dd4ad/transformed/jetified-window-1.0.0/AndroidManifest.xml:30:13-37
+97
+98        <provider
+98-->[com.squareup.picasso:picasso:2.71828] /home/rafael/.gradle/caches/transforms-3/0277a68ea66f09998e4519a73196365b/transformed/jetified-picasso-2.71828/AndroidManifest.xml:8:9-11:40
+99            android:name="com.squareup.picasso.PicassoProvider"
+99-->[com.squareup.picasso:picasso:2.71828] /home/rafael/.gradle/caches/transforms-3/0277a68ea66f09998e4519a73196365b/transformed/jetified-picasso-2.71828/AndroidManifest.xml:9:13-64
+100            android:authorities="com.example.unomobile.com.squareup.picasso"
+100-->[com.squareup.picasso:picasso:2.71828] /home/rafael/.gradle/caches/transforms-3/0277a68ea66f09998e4519a73196365b/transformed/jetified-picasso-2.71828/AndroidManifest.xml:10:13-72
+101            android:exported="false" />
+101-->[com.squareup.picasso:picasso:2.71828] /home/rafael/.gradle/caches/transforms-3/0277a68ea66f09998e4519a73196365b/transformed/jetified-picasso-2.71828/AndroidManifest.xml:11:13-37
+102        <provider
+102-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+103            android:name="androidx.startup.InitializationProvider"
+103-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
+104            android:authorities="com.example.unomobile.androidx-startup"
+104-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
+105            android:exported="false" >
+105-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
+106            <meta-data
+106-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+107                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+107-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
+108                android:value="androidx.startup" />
+108-->[androidx.emoji2:emoji2:1.2.0] /home/rafael/.gradle/caches/transforms-3/fefac874fbeb09fc653d6fb08c7e8844/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
+109            <meta-data
+109-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/rafael/.gradle/caches/transforms-3/cd60cef8c249db764f82fed1b267696f/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+110                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+110-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/rafael/.gradle/caches/transforms-3/cd60cef8c249db764f82fed1b267696f/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+111                android:value="androidx.startup" />
+111-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/rafael/.gradle/caches/transforms-3/cd60cef8c249db764f82fed1b267696f/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+112        </provider>
+113    </application>
+114
+115</manifest>
