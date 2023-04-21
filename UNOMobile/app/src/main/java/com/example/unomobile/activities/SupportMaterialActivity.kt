@@ -22,6 +22,7 @@ import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.client
 import com.example.unomobile.utils.ImageLoader
+import com.example.unomobile.utils.dpToPx
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
@@ -91,11 +92,25 @@ class SupportMaterialActivity : AppCompatActivity() {
                 image.visibility = View.VISIBLE
                 video.visibility = View.GONE
             }
-            "video", "audio" -> {
-                playerView = video
+            "video" -> {
                 image.visibility = View.GONE
                 video.visibility = View.VISIBLE
 
+                val params = video.layoutParams
+                params.height = 150.dpToPx(this)
+                video.layoutParams = params
+                playerView = video
+                setFullScreenListener()
+                initPlayer()
+            }
+            "audio" -> {
+                image.visibility = View.GONE
+                video.visibility = View.VISIBLE
+
+                val params = video.layoutParams
+                params.height = 50.dpToPx(this)
+                video.layoutParams = params
+                playerView = video
                 setFullScreenListener()
                 initPlayer()
             }
