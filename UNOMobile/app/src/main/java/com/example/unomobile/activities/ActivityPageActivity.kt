@@ -60,7 +60,7 @@ class ActivityPageActivity : AppCompatActivity() {
                 previous_activity.visibility = View.INVISIBLE
             } else {
                 previous_activity.visibility = View.VISIBLE
-                next_activity.text = "Avançar"
+                next_activity.text = "Prosseguir"
             }
 
             // Get type of activity
@@ -114,7 +114,7 @@ class ActivityPageActivity : AppCompatActivity() {
                             if (active_activity == activities_id!!.size - 1) {
                                 next_activity.text = "Terminar"
                             } else {
-                                next_activity.text = "Avançar"
+                                next_activity.text = "Prosseguir"
                                 previous_activity.visibility = View.VISIBLE
                             }
 
@@ -163,7 +163,7 @@ class ActivityPageActivity : AppCompatActivity() {
                 if (active_activity == activities_id!!.size - 1) {
                     next_activity.text = "Terminar"
                 } else {
-                    next_activity.text = "Avançar"
+                    next_activity.text = "Prosseguir"
                     previous_activity.visibility = View.VISIBLE
                 }
 

@@ -28,13 +28,13 @@ public final class FragmentHomeBinding implements ViewBinding {
   public final TextView activitygroupsText;
 
   @NonNull
-  public final MaterialCardView helpmaterialCard;
-
-  @NonNull
-  public final TextView helpmaterialText;
-
-  @NonNull
   public final View lineBreak;
+
+  @NonNull
+  public final MaterialCardView supportmaterialCard;
+
+  @NonNull
+  public final TextView supportmaterialText;
 
   @NonNull
   public final TextView title;
@@ -44,14 +44,14 @@ public final class FragmentHomeBinding implements ViewBinding {
 
   private FragmentHomeBinding(@NonNull RelativeLayout rootView,
       @NonNull MaterialCardView activitygroupsCard, @NonNull TextView activitygroupsText,
-      @NonNull MaterialCardView helpmaterialCard, @NonNull TextView helpmaterialText,
-      @NonNull View lineBreak, @NonNull TextView title, @NonNull ImageView unoLogo) {
+      @NonNull View lineBreak, @NonNull MaterialCardView supportmaterialCard,
+      @NonNull TextView supportmaterialText, @NonNull TextView title, @NonNull ImageView unoLogo) {
     this.rootView = rootView;
     this.activitygroupsCard = activitygroupsCard;
     this.activitygroupsText = activitygroupsText;
-    this.helpmaterialCard = helpmaterialCard;
-    this.helpmaterialText = helpmaterialText;
     this.lineBreak = lineBreak;
+    this.supportmaterialCard = supportmaterialCard;
+    this.supportmaterialText = supportmaterialText;
     this.title = title;
     this.unoLogo = unoLogo;
   }
@@ -95,21 +95,21 @@ public final class FragmentHomeBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.helpmaterial_card;
-      MaterialCardView helpmaterialCard = ViewBindings.findChildViewById(rootView, id);
-      if (helpmaterialCard == null) {
-        break missingId;
-      }
-
-      id = R.id.helpmaterial_text;
-      TextView helpmaterialText = ViewBindings.findChildViewById(rootView, id);
-      if (helpmaterialText == null) {
-        break missingId;
-      }
-
       id = R.id.line_break;
       View lineBreak = ViewBindings.findChildViewById(rootView, id);
       if (lineBreak == null) {
+        break missingId;
+      }
+
+      id = R.id.supportmaterial_card;
+      MaterialCardView supportmaterialCard = ViewBindings.findChildViewById(rootView, id);
+      if (supportmaterialCard == null) {
+        break missingId;
+      }
+
+      id = R.id.supportmaterial_text;
+      TextView supportmaterialText = ViewBindings.findChildViewById(rootView, id);
+      if (supportmaterialText == null) {
         break missingId;
       }
 
@@ -126,7 +126,7 @@ public final class FragmentHomeBinding implements ViewBinding {
       }
 
       return new FragmentHomeBinding((RelativeLayout) rootView, activitygroupsCard,
-          activitygroupsText, helpmaterialCard, helpmaterialText, lineBreak, title, unoLogo);
+          activitygroupsText, lineBreak, supportmaterialCard, supportmaterialText, title, unoLogo);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

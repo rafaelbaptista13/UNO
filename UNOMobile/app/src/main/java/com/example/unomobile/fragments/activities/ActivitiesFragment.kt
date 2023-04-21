@@ -63,6 +63,7 @@ class ActivitiesFragment : Fragment() {
         back_button.setOnClickListener {
             Log.i("ActivitiesFragment", "Back Button clicked")
             findNavController().navigate(R.id.action_activitiesFragment_to_activitygroupsFragment)
+            findNavController().popBackStack(R.id.activitiesFragment, true)
         }
 
         val title = view.findViewById<TextView>(R.id.title)
