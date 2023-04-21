@@ -12,6 +12,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
     supportmaterials.create
   );
+  // Change order of support materials
+  router.put(
+    "/:class_id/change_order",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    supportmaterials.change_order
+  );
   // Update a Support Material
   router.put(
     "/:class_id/:supportmaterial_id",
@@ -35,12 +41,6 @@ module.exports = (app) => {
     "/:class_id",
     [authJwt.verifyToken, authJwt.isPartOfRequestedClass],
     supportmaterials.findAll
-  );
-  // Change order of support materials
-  router.put(
-    "/:class_id/change_order",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
-    supportmaterials.change_order
   );
   // Delete a support material by id
   router.delete(

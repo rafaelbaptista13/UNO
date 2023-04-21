@@ -107,15 +107,54 @@ exports.create = async (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.supportmaterial_id;
 
-  if (req.body.hasOwnProperty("class_id")) {
-    delete req.body.class_id;
-  }
-
   // Find Material
   SupportMaterial.findByPk(id)
-    .then((material) => {
+    .then( async (material) => {
       if (material === null) throw new Error();
-      material.update(req.body).then((num) => {
+
+      let updated_material = {
+        title: req.body.title,
+        description: req.body.description
+      }
+
+      if (req.file) {
+        // Save media type
+        let media_type = req.file.mimetype;
+        let secret_key = crypto.randomBytes(16).toString("hex");
+        // Encrypt file
+        const encryptedFile = CryptoJS.AES.encrypt(
+          req.file.buffer.toString("base64"),
+          secret_key
+        );
+
+        // Generate file name
+        let file_name = uuidv4();
+        try {
+          // Upload file in AWS S3 bucket
+          const params = {
+            Bucket: "violuno",
+            Key: file_name,
+            Body: encryptedFile.toString(),
+          };
+
+          await req.s3.upload(params).promise();
+        } catch (err) {
+          console.error(err);
+          res.status(500).send("Error uploading file");
+          return;
+        }
+        updated_material.media_id = file_name;
+        updated_material.media_type = media_type;
+        updated_material.media_secret = secret_key;
+      }
+
+      if (req.body.empty_media === "true") {
+        updated_material.media_id = null;
+        updated_material.media_type = null;
+        updated_material.media_secret = null;
+      }
+
+      material.update(updated_material).then((num) => {
         res.send({
           message: "SupportMaterial was updated successfully.",
         });
