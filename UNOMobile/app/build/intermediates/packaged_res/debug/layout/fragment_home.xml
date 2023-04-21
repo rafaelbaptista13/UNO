@@ -94,7 +94,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/helpmaterial_card"
+            android:id="@+id/supportmaterial_card"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             app:cardCornerRadius="30dp"
@@ -111,7 +111,7 @@
                 >
 
                 <TextView
-                    android:id="@+id/helpmaterial_text"
+                    android:id="@+id/supportmaterial_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
@@ -130,7 +130,7 @@
                     android:layout_height="70dp"
                     android:src="@drawable/helpmaterial_illustration"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/helpmaterial_text"
+                    app:layout_constraintTop_toBottomOf="@+id/supportmaterial_text"
                     android:layout_marginEnd="10dp"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -65,6 +65,14 @@
                 android:value="" />
         </activity>
         <activity
+            android:name="com.example.unomobile.activities.SupportMaterialActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name="com.example.unomobile.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"

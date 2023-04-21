@@ -3145,12 +3145,14 @@ id action_container
 id action_context_bar
 id action_divider
 id action_homeFragment_to_activitygroupsFragment
+id action_homeFragment_to_supportmaterialsFragment
 id action_image
 id action_menu_divider
 id action_menu_presenter
 id action_mode_bar
 id action_mode_bar_stub
 id action_mode_close_button
+id action_supportmaterialsFragment_to_homeFragment
 id action_text
 id actions
 id activitiesFragment
@@ -3376,8 +3378,6 @@ id group_divider
 id grouping
 id groups
 id header_title
-id helpmaterial_card
-id helpmaterial_text
 id hideable
 id home
 id homeAsUp
@@ -3656,6 +3656,12 @@ id submit_buttons
 id submit_sequence
 id submitted_message
 id supportScrollUp
+id supportmaterial_card
+id supportmaterial_order
+id supportmaterial_text
+id supportmaterial_title
+id supportmaterialsFragment
+id supportmaterials_header
 id surface_view
 id tabMode
 id tag_accessibility_actions
@@ -3865,6 +3871,7 @@ layout activity_login
 layout activity_main
 layout activity_page
 layout activity_register
+layout activity_supportmaterial
 layout activitygroup_list_item
 layout answer_list_item
 layout custom_dialog
@@ -3905,6 +3912,7 @@ layout fragment_media
 layout fragment_notification
 layout fragment_profile
 layout fragment_question
+layout fragment_supportmaterials
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title
@@ -3975,6 +3983,7 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
+layout supportmaterial_list_item
 menu menu_main
 mipmap ic_launcher
 mipmap ic_launcher_round

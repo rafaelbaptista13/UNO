@@ -57,6 +57,14 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".activities.SupportMaterialActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"

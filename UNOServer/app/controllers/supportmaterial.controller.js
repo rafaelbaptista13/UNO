@@ -258,7 +258,7 @@ exports.findAll = (req, res) => {
       class_id: class_id,
     },
     order: [["order", "ASC"]],
-    attributes: ["id", "order", "title"],
+    attributes: ["id", "order", "title", "description", "media_type"],
   })
     .then((data) => {
       res.send(data);

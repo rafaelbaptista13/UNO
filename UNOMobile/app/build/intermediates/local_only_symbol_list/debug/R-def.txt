@@ -80,6 +80,8 @@ drawable yellowprogress
 id action_activitiesFragment_to_activitygroupsFragment
 id action_activitygroupFragment_to_activitiesFragment
 id action_homeFragment_to_activitygroupsFragment
+id action_homeFragment_to_supportmaterialsFragment
+id action_supportmaterialsFragment_to_homeFragment
 id activitiesFragment
 id activities_graph
 id activities_status_card
@@ -110,8 +112,6 @@ id game_card
 id game_number_text
 id game_progress_bar
 id game_text
-id helpmaterial_card
-id helpmaterial_text
 id homeFragment
 id horizontal_scroll_view
 id image
@@ -163,6 +163,12 @@ id submit
 id submit_buttons
 id submit_sequence
 id submitted_message
+id supportmaterial_card
+id supportmaterial_order
+id supportmaterial_text
+id supportmaterial_title
+id supportmaterialsFragment
+id supportmaterials_header
 id teacher_feedback
 id teacher_feedback_card
 id teacher_feedback_header
@@ -191,6 +197,7 @@ layout activity_login
 layout activity_main
 layout activity_page
 layout activity_register
+layout activity_supportmaterial
 layout activitygroup_list_item
 layout answer_list_item
 layout fragment_activities
@@ -204,6 +211,8 @@ layout fragment_media
 layout fragment_notification
 layout fragment_profile
 layout fragment_question
+layout fragment_supportmaterials
+layout supportmaterial_list_item
 menu menu_main
 mipmap ic_launcher
 mipmap ic_launcher_round
