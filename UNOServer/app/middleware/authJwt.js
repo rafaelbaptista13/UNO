@@ -5,7 +5,6 @@ const User = db.users;
 const ClassUsers = db.classusers;
 
 const verifyToken = (req, res, next) => {
-  //let token = req.headers["x-access-token"];
   let token = req.session.token;
 
   if (!token) {
@@ -74,7 +73,7 @@ const isTeacherOfRequestedClass = (req, res, next) => {
         return;
       }
     }
-    
+
     res.status(403).send({
       message: "You're not the teacher of this class!",
     });
@@ -94,9 +93,26 @@ const isPartOfRequestedClass = (req, res, next) => {
       next();
       return;
     }
-    
+
     res.status(403).send({
       message: "You're not a student of this class!",
+    });
+  });
+};
+
+const isAdmin = (req, res, next) => {
+  User.findByPk(req.userId).then((user) => {
+    user.getRoles().then((roles) => {
+      for (const element of roles) {
+        if (element.name === "admin") {
+          next();
+          return;
+        }
+      }
+
+      res.status(403).send({
+        message: "Require Admin Role!",
+      });
     });
   });
 };
@@ -106,6 +122,7 @@ const authJwt = {
   isStudent: isStudent,
   isTeacher: isTeacher,
   isTeacherOfRequestedClass: isTeacherOfRequestedClass,
-  isPartOfRequestedClass: isPartOfRequestedClass
+  isPartOfRequestedClass: isPartOfRequestedClass,
+  isAdmin: isAdmin,
 };
 module.exports = authJwt;
