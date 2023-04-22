@@ -4,6 +4,7 @@ const cookieSession = require("cookie-session");
 const AWS = require('aws-sdk');
 require('dotenv').config();
 const s3Config = require("./app/config/s3.config");
+let bcrypt = require("bcryptjs");
 
 const app = express();
 
@@ -40,6 +41,7 @@ const db = require("./app/models");
 const Role = db.roles;
 const ActivityType = db.activitytypes;
 const GameMode = db.gamemodes;
+const User = db.users;
 
 async function synchronize() {
   try {
@@ -59,6 +61,15 @@ async function synchronize() {
       },
       defaults: {
         name: "teacher",
+      },
+    });
+
+    await Role.findOrCreate({
+      where: {
+        id: 3,
+      },
+      defaults: {
+        name: "admin",
       },
     });
 
@@ -125,6 +136,31 @@ async function synchronize() {
         name: "Build"
       }
     });
+
+    let admin_account = await User.findOne({
+      where: {
+        first_name: "admin",
+        last_name: "admin",
+        email: "admin"
+      },
+      include: [{
+        model: Role,
+        where: {
+          id: 3
+        }
+      }]
+    }) 
+    if (admin_account === null) {
+      const admin = {
+        first_name: "admin",
+        last_name: "admin",
+        email: "admin",
+        password: bcrypt.hashSync(process.env.ADMIN_PASSWORD, 8),
+      }
+      const admin_user = await User.create(admin);
+      await admin_user.setRoles([3])
+      console.log("Create admin user");
+    }
     
     console.log("Synced db.");
   } catch (err) {
@@ -145,6 +181,7 @@ require("./app/routes/class.routes")(app);
 require("./app/routes/activitygroup.routes")(app);
 require("./app/routes/activity.routes")(app);
 require("./app/routes/supportmaterial.routes")(app);
+require("./app/routes/admin.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
