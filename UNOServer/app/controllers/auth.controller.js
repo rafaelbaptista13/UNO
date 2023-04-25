@@ -5,8 +5,6 @@ const Role = db.roles;
 const Class = db.classes;
 const ClassUser = db.classusers;
 
-const Op = db.Sequelize.Op;
-
 let jwt = require("jsonwebtoken");
 let bcrypt = require("bcryptjs");
 
@@ -36,6 +34,7 @@ exports.signupStudent = (req, res) => {
     .then((class_entry) => {
       console.log(class_entry);
       if (class_entry) {
+
         const newUser = {
           first_name: req.body.first_name,
           last_name: req.body.last_name,
@@ -52,8 +51,22 @@ exports.signupStudent = (req, res) => {
               UserId: user.id,
               ClassId: class_entry.id,
               user_type: "student",
-            }).then(() => {
-              res.send({ message: "User was registered successfully!" });
+            }).then(async () => {
+
+              // Create Notification topic arn
+              try {
+                // create SNS topic with a unique name
+                const topicName = `${process.env.NODE_ENV}-user-${user.id}-notifications`;
+                const createTopicResult = await req.sns.createTopic({ Name: topicName }).promise();
+                const topicArn = createTopicResult.TopicArn;
+            
+                // update the user's record in the database with the new SNS topic ARN
+                await User.update({ notification_topic_arn: topicArn }, { where: { id: user.id } });
+            
+                res.send({ message: "User was registered successfully!" });
+              } catch (error) {
+                res.status(500).send({ message: error.message });
+              }
             });
           });
         });
@@ -122,7 +135,32 @@ exports.signin = (req, res) => {
             where: {
               userId: user.id,
             },
-          }).then((classuser_item) => {
+          }).then(async (classuser_item) => {
+
+            const deviceToken = req.body.deviceToken;
+
+            const params = {
+              PlatformApplicationArn: process.env.AWS_SNS_PLATFORM_APP_ARN,
+              Token: deviceToken,
+              CustomUserData: 'user_data'
+            };
+            
+            try {
+              const data = await req.sns.createPlatformEndpoint(params).promise()
+              
+              const subscribeParams = {
+                Protocol: 'application',
+                TopicArn: user.notification_topic_arn,
+                Endpoint: data.EndpointArn,
+              };
+
+              await req.sns.subscribe(subscribeParams).promise();
+              
+              console.log("subscribed successfully");
+            } catch (err) {
+              console.log(err);
+            }
+
             res.status(200).send({
               id: user.id,
               first_name: user.first_name,
@@ -130,6 +168,7 @@ exports.signin = (req, res) => {
               email: user.email,
               instrument: user.instrument,
               class_id: classuser_item[0].ClassId,
+              notification_topic_arn: user.notification_topic_arn
             });
           });
         } else {
@@ -150,10 +189,63 @@ exports.signin = (req, res) => {
 
 exports.signout = async (req, res) => {
   try {
-    req.session = null;
-    return res.status(200).send({
-      message: "You've been signed out!",
-    });
+    User.findByPk(req.userId)
+    .then((user) => {
+      req.session = null;
+      user.getRoles()
+      .then(async (roles) => {
+
+        if (roles[0].name === "student") {
+          const deviceToken = req.body.deviceToken;
+
+          try {
+            // Get EndpointArn
+            const listEndpointsParams = {
+              PlatformApplicationArn: process.env.AWS_SNS_PLATFORM_APP_ARN,
+            };
+            let all_endpoints = await req.sns.listEndpointsByPlatformApplication(listEndpointsParams).promise();
+            console.log(all_endpoints);
+            const endpointArn = all_endpoints.Endpoints.find(e => e.Attributes.Token === deviceToken).EndpointArn;
+            if (!endpointArn) {
+              console.log('Endpoint not found');
+              return;
+            }
+
+            // Get subscription
+            const subscriptionsParams = {
+              TopicArn: user.notification_topic_arn
+            };
+            let all_subscriptions = await req.sns.listSubscriptionsByTopic(subscriptionsParams).promise();
+            const subscriptions = all_subscriptions.Subscriptions.filter(subscription => subscription.Endpoint === endpointArn);
+            if (subscriptions.length > 0) {
+              const subscriptionArn = subscriptions[0].SubscriptionArn;
+              console.log('Subscription ARN:', subscriptionArn);
+
+              // Unsubscribe to topic
+              const unsubscribeParams = {
+                SubscriptionArn: subscriptionArn
+              };
+              await req.sns.unsubscribe(unsubscribeParams).promise()
+
+            } else {
+              console.log('Endpoint is not subscribed to the topic.');
+            }
+
+          } catch (err) {
+            console.log('Failed unsubscribe:', err);
+          }
+          
+          return res.status(200).send({
+            message: "You've been signed out!",
+          });
+        } else {
+          return res.status(200).send({
+            message: "You've been signed out!",
+          });
+        }
+
+      })
+    })
   } catch (err) {
     this.next(err);
   }

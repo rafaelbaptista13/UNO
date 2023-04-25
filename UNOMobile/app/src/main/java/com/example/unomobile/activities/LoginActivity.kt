@@ -2,8 +2,10 @@ package com.example.unomobile.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +19,8 @@ import com.example.unomobile.validation.FormFieldText
 import com.example.unomobile.validation.disable
 import com.example.unomobile.validation.enable
 import com.example.unomobile.validation.validate
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,6 +30,8 @@ import reactivecircus.flowbinding.android.view.clicks
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.HttpCookie
+import java.security.MessageDigest
 
 class LoginActivity : AppCompatActivity() {
 
@@ -89,12 +95,22 @@ class LoginActivity : AppCompatActivity() {
         formFields.disable()
         if (formFields.validate()) {
 
-            val user_info = UserInfoToLogin(
-                email = fieldEmail.value!!.trim(),
-                password = fieldPassword.value!!
-            )
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("LoginActivity", "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
 
-            Api.retrofitService.login(user_info).enqueue(object: Callback<UserInfo> {
+                // Get the device token
+                val token = task.result
+
+                val user_info = UserInfoToLogin(
+                    email = fieldEmail.value!!.trim(),
+                    password = fieldPassword.value!!,
+                    deviceToken = token
+                )
+
+                Api.retrofitService.login(user_info).enqueue(object: Callback<UserInfo> {
                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
                     Log.i("LoginActivity", response.toString())
                     if (response.isSuccessful) {
@@ -107,18 +123,27 @@ class LoginActivity : AppCompatActivity() {
 
                         val headerMapList = headerResponse.toMultimap()
 
-                        // Get list of "Set-Cookie" from Map
-                        val allCookies = headerMapList["Set-Cookie"]
-                        var cookieval = ""
-                        for (cookie in allCookies!!) {
-                            cookieval += cookie
-                        }
-
                         // Save cookies value in Application class
                         val sharedPreferences = getSharedPreferences("data", MODE_PRIVATE)
                         val sharedPreferencesEdit = sharedPreferences.edit()
 
+                        // Get list of "Set-Cookie" from Map
+                        val allCookies = headerMapList["Set-Cookie"]
+                        var cookieval = ""
+                        for (cookie in allCookies!!) {
+                            Log.i("Login", cookie)
+                            cookieval += cookie
+                            cookieval += " "
+                        }
+                        Log.i("Login", cookieval)
+
+                        sharedPreferencesEdit.putString("uno-session", allCookies[0])
+                        sharedPreferencesEdit.putString("uno-session.sig", allCookies[1])
+
                         val gson = Gson()
+                        // Get the current time in milliseconds
+                        val currentTimeMillis = System.currentTimeMillis()
+                        sharedPreferencesEdit.putLong("token_timestamp", currentTimeMillis)
                         sharedPreferencesEdit.putString("token", cookieval)
                         sharedPreferencesEdit.putString("user", gson.toJson(loginResponse))
                         sharedPreferencesEdit.apply()
@@ -140,6 +165,7 @@ class LoginActivity : AppCompatActivity() {
                 }
 
             })
+            })
         }
         formFields.enable()
 
@@ -151,4 +177,5 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() { }
+
 }

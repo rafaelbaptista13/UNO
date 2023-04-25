@@ -10,6 +10,7 @@ const ExerciseActivityStatus = db.exerciseactivitystatus;
 const Answer = db.answers;
 const QuestionActivity = db.questionactivities;
 const QuestionActivityStatus = db.questionactivitystatus;
+const User = db.users;
 
 // Create and Save a new Activity of type Question
 exports.createQuestion = async (req, res) => {
@@ -658,9 +659,39 @@ exports.putFeedbackToStudent = async (req, res) => {
       user_id: student_id
     }
   }).then((data) => {
-    res.status(200).send({
-      message: "Activity updated successfully!",
-    });
+
+    User.findByPk(student_id).then((student) => {
+
+      const message = {
+        title: "Feedback do professor!",
+        message: `Recebeu feedback do professor na sua pergunta ${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
+        activity_type: "Question",
+        activity_id: activity_id,
+        activity_order: activity.order,
+        activity_title: activity.title,
+        activity_description: activity.description,
+        activitygroup_name: activity.activitygroup.name
+      }
+      
+      req.sns.publish({
+        TopicArn: student.notification_topic_arn,
+        Message: JSON.stringify({ default: JSON.stringify(message)}),
+        MessageStructure: 'json'
+      }, function(err, data) {
+        if (err) {
+          console.error('Error publishing SNS message:', err);
+          res.status(200).send({
+            message: "There was an error updating the activity.",
+          });
+        } else {
+          console.log('SNS message published:', data);
+          res.status(200).send({
+            message: "Activity updated successfully!",
+          });
+        }
+      })
+    })
+
   }).catch((err) => {
     console.log(error);
     res.status(500).send({
