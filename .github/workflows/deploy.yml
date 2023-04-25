@@ -43,6 +43,7 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_REGION: ${{ secrets.AWS_REGION }}
             ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+            AWS_SNS_PLATFORM_APP_ARN: ${{ secrets.AWS_SNS_PLATFORM_APP_ARN }}
             NODE_ENV: production
         run: |
           echo --- Starting docker ---

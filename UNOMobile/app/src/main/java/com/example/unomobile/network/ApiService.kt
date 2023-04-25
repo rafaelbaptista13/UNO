@@ -2,7 +2,6 @@ package com.example.unomobile.network
 
 import android.util.Log
 import com.example.unomobile.BuildConfig
-import com.example.unomobile.R
 import com.example.unomobile.models.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -16,11 +15,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.net.CookieManager
-import java.security.KeyStore
 import java.security.SecureRandom
-import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 
@@ -110,7 +106,7 @@ interface ApiService {
     fun login(@Body user_data: UserInfoToLogin): Call<UserInfo>
 
     @POST("auth/signout")
-    fun logout(): Call<ResponseMessage>
+    fun logout(@Body device_token: DeviceToken): Call<ResponseMessage>
 }
 
 object Api {

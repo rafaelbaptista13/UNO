@@ -11,8 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.example.unomobile.R
 import com.example.unomobile.activities.LoginActivity
+import com.example.unomobile.models.DeviceToken
 import com.example.unomobile.models.ResponseMessage
+import com.example.unomobile.models.UserInfoToLogin
 import com.example.unomobile.network.Api
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,25 +42,40 @@ class ProfileFragment : Fragment() {
 
         val sharedPreferences = requireActivity().getSharedPreferences("data", AppCompatActivity.MODE_PRIVATE)
 
-        Api.retrofitService.logout().enqueue(object: Callback<ResponseMessage> {
-            override fun onResponse(call: Call<ResponseMessage>, response: Response<ResponseMessage>) {
-                Log.i("ProfileFrament", response.toString())
-                if (response.isSuccessful) {
-                    Log.i("ProfileFragment", "Response is successful")
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("ProfileActivity", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
 
-                    val sharedPreferencesEdit = sharedPreferences.edit()
-                    sharedPreferencesEdit.clear()
-                    sharedPreferencesEdit.apply()
+            // Get the device token
+            val token = task.result
 
-                    val intent = Intent(requireActivity(), LoginActivity::class.java)
-                    startActivity(intent)
+            val device_token = DeviceToken(
+                deviceToken = token
+            )
+
+            Api.retrofitService.logout(device_token).enqueue(object: Callback<ResponseMessage> {
+                override fun onResponse(call: Call<ResponseMessage>, response: Response<ResponseMessage>) {
+                    Log.i("ProfileFrament", response.toString())
+                    if (response.isSuccessful) {
+                        Log.i("ProfileFragment", "Response is successful")
+
+                        val sharedPreferencesEdit = sharedPreferences.edit()
+                        sharedPreferencesEdit.clear()
+                        sharedPreferencesEdit.apply()
+
+                        val intent = Intent(requireActivity(), LoginActivity::class.java)
+                        startActivity(intent)
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<ResponseMessage>, t: Throwable) {
-                t.printStackTrace()
-            }
+                override fun onFailure(call: Call<ResponseMessage>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
         })
+
     }
 
 

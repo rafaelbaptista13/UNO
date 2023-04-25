@@ -196,6 +196,7 @@ layout activity_list_item
 layout activity_login
 layout activity_main
 layout activity_page
+layout activity_page_from_notification
 layout activity_register
 layout activity_supportmaterial
 layout activitygroup_list_item
@@ -226,10 +227,17 @@ string Question
 string app_logo
 string app_name
 string content_title
+string default_web_client_id
+string gcm_defaultSenderId
+string google_api_key
+string google_app_id
+string google_crash_reporting_api_key
+string google_storage_bucket
 string hello_blank_fragment
 string home_title
 string notifications_title
 string profile_title
+string project_id
 style Theme.UNOMobile
 xml backup_rules
 xml data_extraction_rules

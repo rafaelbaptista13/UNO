@@ -30,8 +30,10 @@ app.use(
 );
 
 const s3 = new AWS.S3(s3Config);
+const sns = new AWS.SNS(s3Config);
 
 app.use((req, res, next) => {
+  req.sns = sns;
   req.s3 = s3;
   next();
 })
