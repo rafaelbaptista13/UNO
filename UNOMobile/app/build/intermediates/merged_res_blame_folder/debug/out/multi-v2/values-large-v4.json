@@ -1,20 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.unomobile.app-mergeDebugResources-49:/values-large-v4/values-large-v4.xml",
+            "outputFile": "com.example.unomobile.app-mergeDebugResources-54:/values-large-v4/values-large-v4.xml",
             "map": [
                 {
-                    "source": "/home/rafael/.gradle/caches/transforms-3/3e6ecb1c61db6b5e34610f7bfc12cf5a/transformed/appcompat-1.5.1/res/values-large-v4/values-large-v4.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10",
-                        "startColumns": "4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,114,185,256,326,396,464,532,636",
-                        "endColumns": "58,70,70,69,69,67,67,103,115",
-                        "endOffsets": "109,180,251,321,391,459,527,631,747"
-                    }
-                },
-                {
-                    "source": "/home/rafael/.gradle/caches/transforms-3/3055546eade27779c6aa30f537741feb/transformed/material-1.8.0/res/values-large-v4/values-large-v4.xml",
+                    "source": "/home/rafael/.gradle/caches/transforms-3/08f0dd654aa628cb5a43a87276091969/transformed/material-1.8.0/res/values-large-v4/values-large-v4.xml",
                     "from": {
                         "startLines": "2,3,4,10",
                         "startColumns": "4,4,4,4",
@@ -30,6 +20,16 @@
                         "endLines": "11,12,18,24",
                         "endColumns": "121,133,10,10",
                         "endOffsets": "869,1003,1444,1887"
+                    }
+                },
+                {
+                    "source": "/home/rafael/.gradle/caches/transforms-3/e7745bf30bac1d0241f6994d0fefc02c/transformed/appcompat-1.5.1/res/values-large-v4/values-large-v4.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,114,185,256,326,396,464,532,636",
+                        "endColumns": "58,70,70,69,69,67,67,103,115",
+                        "endOffsets": "109,180,251,321,391,459,527,631,747"
                     }
                 }
             ]

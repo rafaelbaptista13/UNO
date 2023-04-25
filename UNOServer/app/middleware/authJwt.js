@@ -117,6 +117,21 @@ const isAdmin = (req, res, next) => {
   });
 };
 
+const decodeToken = (req, res, next) => {
+  let token = req.session.token;
+
+  if (!token) {
+    return res.status(403).send({
+      message: "No token provided!",
+    });
+  }
+
+  jwt.verify(token, config.secret, (err, decoded) => {
+    req.userId = decoded.id;
+    next();
+  });
+};
+
 const authJwt = {
   verifyToken: verifyToken,
   isStudent: isStudent,
@@ -124,5 +139,6 @@ const authJwt = {
   isTeacherOfRequestedClass: isTeacherOfRequestedClass,
   isPartOfRequestedClass: isPartOfRequestedClass,
   isAdmin: isAdmin,
+  decodeToken: decodeToken
 };
 module.exports = authJwt;

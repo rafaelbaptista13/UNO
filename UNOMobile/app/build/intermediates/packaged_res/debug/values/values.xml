@@ -29,10 +29,17 @@
     <string name="app_logo">App logo</string>
     <string name="app_name">UNOMobile</string>
     <string name="content_title">Conteúdos</string>
+    <string name="default_web_client_id" translatable="false">672349440159-p3i5ulv7or9s6r6ihuvfv86sgmf13q0j.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">672349440159</string>
+    <string name="google_api_key" translatable="false">AIzaSyCchomRKAbWlz4BVXx9gUBdWd0R_h7R7gw</string>
+    <string name="google_app_id" translatable="false">1:672349440159:android:20a208322a75a86f30baaa</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCchomRKAbWlz4BVXx9gUBdWd0R_h7R7gw</string>
+    <string name="google_storage_bucket" translatable="false">violuno-7c8e4.appspot.com</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home_title">Olá Ana!</string>
     <string name="notifications_title">Notificações</string>
     <string name="profile_title">Perfil</string>
+    <string name="project_id" translatable="false">violuno-7c8e4</string>
     <style name="Theme.UNOMobile" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         
         <item name="colorPrimary">@color/purple_500</item>

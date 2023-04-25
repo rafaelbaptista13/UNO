@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.unomobile.app-mergeDebugResources-49:/values-v28/values-v28.xml",
+            "outputFile": "com.example.unomobile.app-mergeDebugResources-54:/values-v28/values-v28.xml",
             "map": [
                 {
-                    "source": "/home/rafael/.gradle/caches/transforms-3/3055546eade27779c6aa30f537741feb/transformed/material-1.8.0/res/values-v28/values-v28.xml",
+                    "source": "/home/rafael/.gradle/caches/transforms-3/08f0dd654aa628cb5a43a87276091969/transformed/material-1.8.0/res/values-v28/values-v28.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/home/rafael/.gradle/caches/transforms-3/3e6ecb1c61db6b5e34610f7bfc12cf5a/transformed/appcompat-1.5.1/res/values-v28/values-v28.xml",
+                    "source": "/home/rafael/.gradle/caches/transforms-3/e7745bf30bac1d0241f6994d0fefc02c/transformed/appcompat-1.5.1/res/values-v28/values-v28.xml",
                     "from": {
                         "startLines": "2,3,4,8",
                         "startColumns": "4,4,4,4",

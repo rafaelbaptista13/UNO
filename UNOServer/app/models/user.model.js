@@ -25,6 +25,10 @@ module.exports = (sequelize, Sequelize) => {
         instrument: {
             type: Sequelize.STRING,
             allowNull: true
+        },
+        notification_topic_arn: {
+            type: Sequelize.STRING,
+            allowNull: true
         }
     });
 
