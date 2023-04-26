@@ -911,7 +911,7 @@ exports.putFeedbackToStudent = async (req, res) => {
 
         const message = {
           title: "Feedback do professor!",
-          message: `Recebeu feedback do professor no seu jogo ${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
+          message: `Jogo ${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
           activity_type: "Game",
           activity_id: activity_id,
           activity_order: activity.order,
