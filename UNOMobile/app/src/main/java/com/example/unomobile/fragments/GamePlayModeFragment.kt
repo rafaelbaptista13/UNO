@@ -351,12 +351,19 @@ class GamePlayModeFragment : Fragment() {
         Log.i("GamePlayModeFragment", "OnDestroy called")
         // Release MIDI driver resources
         midiDriver.stop()
+        if (submitted_media_path != null || chosen_file != null) {
+            submitted_player?.release()
+            submitted_player = null
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (submitted_media_path != null) {
+        if (submitted_media_path != null && chosen_file == null) {
             initSubmittedPlayer()
+        }
+        if (chosen_file != null) {
+            initChosenVideoPlayer()
         }
         midiDriver.start()
         pause_state = false
@@ -364,7 +371,7 @@ class GamePlayModeFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        if (submitted_media_path != null) {
+        if (submitted_media_path != null || chosen_file != null) {
             submitted_player?.release()
             submitted_player = null
         }
@@ -405,6 +412,17 @@ class GamePlayModeFragment : Fragment() {
 
     private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
+
+            val contentResolver = _context.contentResolver
+            val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+            val fileSizeInBytes = fileDescriptor?.statSize ?: -1
+            val fileSizeInMegabytes = fileSizeInBytes.toDouble() / (1024 * 1024)
+            if (fileSizeInMegabytes > 95) {
+                Toast.makeText(_context, "Esse ficheiro é muito grande. Escolhe outro mais pequeno. (Inferior a 95MB)", Toast.LENGTH_SHORT).show()
+                Log.i("ExerciseFragment", "File too big")
+                return@registerForActivityResult
+            }
+
             chosen_file = uri
 
             submitted_video_message!!.visibility = View.VISIBLE
@@ -444,6 +462,8 @@ class GamePlayModeFragment : Fragment() {
 
         val call = Api.retrofitService.submitGamePlayModeActivity(user!!.class_id!!, activity_id!!, mediaPart)
 
+        Toast.makeText(_context, "Espera um pouco... o vídeo está a ser enviado.", Toast.LENGTH_LONG).show()
+
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(
                 call: Call<ResponseBody>,
@@ -468,12 +488,22 @@ class GamePlayModeFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(_context, "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "Ocorreu um erro ao submeter o vídeo. Tenta submeter um vídeo mais pequeno.", Toast.LENGTH_LONG).show()
                 Log.i("GamePlayModeFragment", t.message.toString())
+                submit_btn.visibility = View.VISIBLE
+                loading_bar.visibility = View.GONE
             }
 
         })
 
+    }
+
+    private fun initChosenVideoPlayer() {
+        submitted_player = ExoPlayer.Builder(_context).build()
+        submitted_player_view?.player = submitted_player
+
+        submitted_player!!.setMediaItem(MediaItem.Builder().setUri(chosen_file).build())
+        submitted_player!!.prepare()
     }
 
 }

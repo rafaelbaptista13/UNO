@@ -145,7 +145,7 @@ class ExerciseFragment : Fragment() {
         submit_btn = view.findViewById(R.id.submit)
         submit_btn.setOnClickListener {
             if (chosen_file != null) {
-                submitQuestion()
+                submitExercise()
             } else {
                 Toast.makeText(_context, "Por favor escolha um vídeo antes de submeter.", Toast.LENGTH_SHORT).show()
             }
@@ -223,6 +223,9 @@ class ExerciseFragment : Fragment() {
                                     "video" -> {
                                         image.visibility = View.GONE
                                         video.visibility = View.VISIBLE
+                                        val params = video.layoutParams
+                                        params.height = 100.dpToPx(_context)
+                                        video.layoutParams = params
 
                                         player_view = video
                                         setFullScreenListener(player_view, media_path!!)
@@ -280,7 +283,7 @@ class ExerciseFragment : Fragment() {
         return view
     }
 
-    private fun submitQuestion() {
+    private fun submitExercise() {
         // Do something with the selected video file URI
         Log.i("ExerciseFragment", chosen_file!!.path!!)
         submit_btn.visibility = View.GONE
@@ -291,6 +294,8 @@ class ExerciseFragment : Fragment() {
         val mediaPart = MultipartBody.Part.createFormData("media", video_file.name, requestBody)
 
         val call = Api.retrofitService.submitExerciseActivity(user!!.class_id!!, activity_id!!, mediaPart)
+
+        Toast.makeText(_context, "Espera um pouco... o vídeo está a ser enviado.", Toast.LENGTH_LONG).show()
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(
@@ -316,8 +321,10 @@ class ExerciseFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(_context, "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "Ocorreu um erro ao submeter o vídeo. Tenta submeter um vídeo mais pequeno.", Toast.LENGTH_LONG).show()
                 Log.i("ExerciseFragment", t.message.toString())
+                submit_btn.visibility = View.VISIBLE
+                loading_bar.visibility = View.GONE
             }
 
         })
@@ -377,7 +384,7 @@ class ExerciseFragment : Fragment() {
             player?.release()
             player = null
         }
-        if (submitted_media_path != null) {
+        if (submitted_media_path != null || chosen_file != null) {
             submitted_player?.release()
             submitted_player = null
         }
@@ -389,8 +396,11 @@ class ExerciseFragment : Fragment() {
         if (media_path != null && (media_type == "video" || media_type == "audio")) {
             initPlayer()
         }
-        if (submitted_media_path != null) {
+        if (submitted_media_path != null && chosen_file == null) {
             initSubmittedPlayer()
+        }
+        if (chosen_file != null) {
+            initChosenVideoPlayer()
         }
     }
 
@@ -400,7 +410,7 @@ class ExerciseFragment : Fragment() {
             player?.release()
             player = null
         }
-        if (submitted_media_path != null) {
+        if (submitted_media_path != null || chosen_file != null) {
             submitted_player?.release()
             submitted_player = null
         }
@@ -412,7 +422,7 @@ class ExerciseFragment : Fragment() {
             player?.release()
             player = null
         }
-        if (submitted_media_path != null) {
+        if (submitted_media_path != null || chosen_file != null) {
             submitted_player?.release()
             submitted_player = null
         }
@@ -454,6 +464,17 @@ class ExerciseFragment : Fragment() {
 
     private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
+
+            val contentResolver = _context.contentResolver
+            val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+            val fileSizeInBytes = fileDescriptor?.statSize ?: -1
+            val fileSizeInMegabytes = fileSizeInBytes.toDouble() / (1024 * 1024)
+            if (fileSizeInMegabytes > 95) {
+                Toast.makeText(_context, "Esse ficheiro é muito grande. Escolhe outro mais pequeno. (Inferior a 95MB)", Toast.LENGTH_SHORT).show()
+                Log.i("ExerciseFragment", "File too big")
+                return@registerForActivityResult
+            }
+
             chosen_file = uri
 
             submitted_video_message!!.visibility = View.VISIBLE
@@ -478,6 +499,15 @@ class ExerciseFragment : Fragment() {
         } else {
             Log.i("ExerciseFragment", "URI was null")
         }
+    }
+
+    private fun initChosenVideoPlayer() {
+        // Create an ExoPlayer and set it as the player for content.
+        submitted_player = ExoPlayer.Builder(_context).build()
+        submitted_player_view?.player = submitted_player
+
+        submitted_player!!.setMediaItem(MediaItem.Builder().setUri(chosen_file).build())
+        submitted_player!!.prepare()
     }
 
 }

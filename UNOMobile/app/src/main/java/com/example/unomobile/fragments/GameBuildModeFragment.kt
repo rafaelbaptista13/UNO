@@ -402,6 +402,10 @@ class GameBuildModeFragment : Fragment() {
         Log.i("GameBuildFragment", "OnDestroy called")
         // Release MIDI driver resources
         midiDriver.stop()
+        if (submitted_media_path != null || chosen_file != null) {
+            submitted_player?.release()
+            submitted_player = null
+        }
     }
 
     override fun onResume() {
@@ -575,6 +579,17 @@ class GameBuildModeFragment : Fragment() {
 
     private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
+
+            val contentResolver = _context.contentResolver
+            val fileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+            val fileSizeInBytes = fileDescriptor?.statSize ?: -1
+            val fileSizeInMegabytes = fileSizeInBytes.toDouble() / (1024 * 1024)
+            if (fileSizeInMegabytes > 95) {
+                Toast.makeText(_context, "Esse ficheiro é muito grande. Escolhe outro mais pequeno. (Inferior a 95MB)", Toast.LENGTH_SHORT).show()
+                Log.i("ExerciseFragment", "File too big")
+                return@registerForActivityResult
+            }
+
             chosen_file = uri
 
             submitted_video_message!!.visibility = View.VISIBLE
@@ -611,6 +626,8 @@ class GameBuildModeFragment : Fragment() {
 
         val call = Api.retrofitService.submitGameBuildModeActivity(user!!.class_id!!, activity_id!!, mediaPart, chosen_notes_ids)
 
+        Toast.makeText(_context, "Espera um pouco... o vídeo está a ser enviado.", Toast.LENGTH_LONG).show()
+
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(
                 call: Call<ResponseBody>,
@@ -636,8 +653,10 @@ class GameBuildModeFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(_context, "Ocorreu um erro ao submeter o jogo.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(_context, "Ocorreu um erro ao submeter o jogo. Tenta submeter um vídeo mais pequeno.", Toast.LENGTH_LONG).show()
                 Log.i("GameBuildFragment", t.message.toString())
+                submit_btn.visibility = View.VISIBLE
+                loading_bar.visibility = View.GONE
             }
 
         })

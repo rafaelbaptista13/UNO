@@ -33,6 +33,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/uno_icon"
         android:label="UNO"
+        android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/uno_icon"
         android:supportsRtl="true"

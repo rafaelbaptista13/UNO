@@ -178,6 +178,9 @@ class QuestionFragment : Fragment() {
                                         question_frame_layout.visibility = View.VISIBLE
                                         image.visibility = View.GONE
                                         video.visibility = View.VISIBLE
+                                        val params = video.layoutParams
+                                        params.height = 100.dpToPx(_context)
+                                        video.layoutParams = params
 
                                         playerView = video
                                         setFullScreenListener()
