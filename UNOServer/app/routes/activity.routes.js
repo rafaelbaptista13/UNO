@@ -1,5 +1,5 @@
 const authJwt = require("../middleware/authJwt.js");
-const upload = require("../middleware/upload");
+const { upload, processMedia, deleteUploadedFiles, processMediaInQuestionActivity, deleteUploadedFilesQuestion } = require("../middleware/upload");
 
 module.exports = (app) => {
   const activities = require("../controllers/activity.controller.js");
@@ -16,7 +16,8 @@ module.exports = (app) => {
   // Create a new Media activity
   router.post(
     "/:class_id/media",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     mediaactivities.createMedia
   );
   // Content saw
@@ -28,7 +29,8 @@ module.exports = (app) => {
   // Update a Media activity
   router.put(
     "/:class_id/media/:id",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     mediaactivities.updateMedia
   );
   // Get the media from a Media activity
@@ -45,19 +47,22 @@ module.exports = (app) => {
   // Create a new Exercise activity
   router.post(
     "/:class_id/exercise",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     exerciseactivities.createExercise
   );
   // Submit a video to an exercise
   router.post(
     "/:class_id/:activity_id/exercise/submit",
-    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     exerciseactivities.submitExercise
   );
   // Update an Exercise activity
   router.put(
     "/:class_id/exercise/:id",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     exerciseactivities.updateExercise
   );
   // Get the media from an Exercise activity
@@ -95,7 +100,8 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.fields([
       { name: "question_media", maxCount: 1},
       { name: "answers_media", maxCount: 10}
-    ])],
+    ]), processMediaInQuestionActivity],
+    deleteUploadedFilesQuestion,
     questionactivities.createQuestion
   );
   // Submit an question
@@ -147,7 +153,8 @@ module.exports = (app) => {
   // Submit activity of type Play
   router.post(
     "/:class_id/:activity_id/game/play/submit",
-    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     gameactivities.submitGamePlay
   );
   // Submit activity of type Identify
@@ -159,7 +166,8 @@ module.exports = (app) => {
   // Submit activity of type Build
   router.post(
     "/:class_id/:activity_id/game/build/submit",
-    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isStudent, authJwt.isPartOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     gameactivities.submitGameBuild
   );
   // Put Feedback to student

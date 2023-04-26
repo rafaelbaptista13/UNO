@@ -1,5 +1,5 @@
 const authJwt = require("../middleware/authJwt.js");
-const upload = require("../middleware/upload");
+const { upload, processMedia, deleteUploadedFiles } = require("../middleware/upload");
 
 module.exports = (app) => {
   const supportmaterials = require("../controllers/supportmaterial.controller.js");
@@ -9,7 +9,8 @@ module.exports = (app) => {
   // Create a new Support Material
   router.post(
     "/:class_id",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     supportmaterials.create
   );
   // Change order of support materials
@@ -21,7 +22,8 @@ module.exports = (app) => {
   // Update a Support Material
   router.put(
     "/:class_id/:supportmaterial_id",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media")],
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.single("media"), processMedia],
+    deleteUploadedFiles,
     supportmaterials.update
   );
   // Get the media from a Support Material

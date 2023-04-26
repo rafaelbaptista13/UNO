@@ -61,6 +61,7 @@ exports.createExercise = async (req, res) => {
   let secret_key;
   let file_name;
   if (req.file) {
+    console.log("tenho file");
     // Save media type
     media_type = req.file.mimetype;
     secret_key = crypto.randomBytes(16).toString("hex");
