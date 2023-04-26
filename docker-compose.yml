@@ -34,6 +34,7 @@ services:
       AWS_SNS_PLATFORM_APP_ARN: ${AWS_SNS_PLATFORM_APP_ARN}
       NODE_ENV: ${NODE_ENV}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PATH: $PATH:/usr/bin/ffmpeg
 
   db:
     image: mysql/mysql-server:8.0.23
