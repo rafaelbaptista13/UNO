@@ -126,7 +126,7 @@ const decodeToken = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, config.secret, { ignoreExpiration: true }, (err, decoded) => {
     req.userId = decoded.id;
     next();
   });
