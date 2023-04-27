@@ -154,6 +154,7 @@ export default function GameForm({
                 id="description_input"
                 rows={1}
                 value={description}
+                maxLength={250}
                 onChange={(e) => setDescription(e.target.value)}
               ></textarea>
             </div>

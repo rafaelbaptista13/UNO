@@ -129,6 +129,7 @@ export default function EditMaterialForm({
                 className="form-control"
                 id="title_input"
                 placeholder="Insira um título"
+                maxLength={250}
                 onChange={(event) => setInputTitle(event.target.value)}
                 value={input_title}
               />
@@ -225,6 +226,7 @@ export default function EditMaterialForm({
                 className="form-control"
                 id="description_input"
                 rows={3}
+                maxLength={250}
                 onChange={(event) => setInputDescription(event.target.value)}
                 value={input_description}
               ></textarea>

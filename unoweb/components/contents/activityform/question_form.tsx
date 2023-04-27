@@ -148,6 +148,7 @@ export default function QuestionForm({
                 type="text"
                 className="form-control"
                 id="question_input"
+                maxLength={250}
                 placeholder="Escreva a sua pergunta"
                 onChange={(event) => setQuestion(event.target.value)}
                 value={question}
@@ -202,6 +203,7 @@ export default function QuestionForm({
                   className="form-control"
                   id="add_response_input"
                   placeholder="Escreva a sua resposta"
+                  maxLength={250}
                   onChange={(event) => setNewAnswerText(event.target.value)}
                   value={new_answer_text}
                 />

@@ -77,6 +77,7 @@ export default function MediaForm({
                 type="text"
                 className="form-control"
                 id="title_input"
+                maxLength={250}
                 placeholder="Insira um título"
                 onChange={(event) => setTitle(event.target.value)}
                 value={title}
@@ -117,6 +118,7 @@ export default function MediaForm({
                 className="form-control"
                 id="description_input"
                 rows={3}
+                maxLength={250}
                 onChange={(event) => setDescription(event.target.value)}
                 value={description}
               ></textarea>
