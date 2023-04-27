@@ -27,6 +27,7 @@ import com.example.unomobile.activities.FullScreenActivity
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
+import com.example.unomobile.network.CacheManager
 import com.example.unomobile.network.client
 import com.example.unomobile.utils.ImageLoader
 import com.example.unomobile.utils.dpToPx
@@ -35,6 +36,9 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import kotlinx.coroutines.Job
@@ -254,6 +258,8 @@ class ExerciseFragment : Fragment() {
                                 submit_btn.visibility = View.GONE
                                 edit_submission_btn.visibility = View.VISIBLE
 
+                                CacheManager.getCache().removeResource(submitted_media_path!!)
+
                                 setFullScreenListener(submitted_player_view, submitted_media_path!!)
                                 initSubmittedPlayer()
                             } else {
@@ -337,12 +343,8 @@ class ExerciseFragment : Fragment() {
         submitted_player_view?.player = submitted_player
 
         val uri = Uri.parse(submitted_media_path)
-        val dataSourceFactory = OkHttpDataSource.Factory(
-            client
-        )
-        val mediaSource = ProgressiveMediaSource.Factory(
-            dataSourceFactory
-        ).createMediaSource(MediaItem.Builder().setUri(uri).build())
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(_context, client))
+            .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         submitted_player!!.setMediaSource(mediaSource)
         submitted_player!!.prepare()
@@ -354,12 +356,8 @@ class ExerciseFragment : Fragment() {
         player_view?.player = player
 
         val uri = Uri.parse(media_path)
-        val dataSourceFactory = OkHttpDataSource.Factory(
-            client
-        )
-        val mediaSource = ProgressiveMediaSource.Factory(
-            dataSourceFactory
-        ).createMediaSource(MediaItem.Builder().setUri(uri).build())
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(_context, client))
+            .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         player!!.setMediaSource(mediaSource)
         player!!.prepare()

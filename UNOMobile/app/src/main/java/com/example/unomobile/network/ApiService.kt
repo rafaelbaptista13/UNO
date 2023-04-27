@@ -1,8 +1,13 @@
 package com.example.unomobile.network
 
+import android.content.Context
 import android.util.Log
 import com.example.unomobile.BuildConfig
 import com.example.unomobile.models.*
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.JavaNetCookieJar
@@ -14,6 +19,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
+import java.io.File
 import java.net.CookieManager
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -41,6 +47,29 @@ val client = OkHttpClient.Builder().addNetworkInterceptor(interceptor)
     .sslSocketFactory(TrustAllCerts.sslSocketFactory, TrustAllCerts.trustManager)
     .hostnameVerifier(TrustAllCerts.hostnameVerifier)
     .build()
+
+// Cache for ExoPlayer
+object CacheManager {
+    private var cacheDataSourceFactory: CacheDataSource.Factory? = null
+    private var cache: SimpleCache? = null
+
+    fun getCacheDataSourceFactory(context: Context, client: OkHttpClient): CacheDataSource.Factory {
+        if (cacheDataSourceFactory == null) {
+            cache = SimpleCache(File(context.cacheDir, "media_cache"), LeastRecentlyUsedCacheEvictor(100 * 1024 * 1024)) // 100 MB cache
+            val dataSourceFactory = OkHttpDataSource.Factory(client)
+            cacheDataSourceFactory = CacheDataSource.Factory()
+                .setCache(cache!!)
+                .setUpstreamDataSourceFactory(dataSourceFactory)
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        }
+        return cacheDataSourceFactory!!
+    }
+
+    fun getCache(): SimpleCache {
+        return cache!!
+    }
+}
+
 
 object TrustAllCerts {
     val trustManager = object : X509TrustManager {

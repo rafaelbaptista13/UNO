@@ -26,6 +26,7 @@ import com.example.unomobile.models.Activity
 import com.example.unomobile.models.AnswerWithAdditionalData
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
+import com.example.unomobile.network.CacheManager
 import com.example.unomobile.network.client
 import com.example.unomobile.utils.ImageLoader
 import com.example.unomobile.utils.dpToPx
@@ -344,12 +345,8 @@ class QuestionFragment : Fragment() {
         playerView?.player = player
 
         val uri = Uri.parse(media_path)
-        val dataSourceFactory = OkHttpDataSource.Factory(
-            client
-        )
-        val mediaSource = ProgressiveMediaSource.Factory(
-            dataSourceFactory
-        ).createMediaSource(MediaItem.Builder().setUri(uri).build())
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(_context, client))
+            .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         player!!.setMediaSource(mediaSource)
         player!!.prepare()

@@ -1,5 +1,6 @@
 package com.example.unomobile.activities
 
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
@@ -9,6 +10,7 @@ import android.util.Log
 import android.widget.ImageButton
 import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.unomobile.R
+import com.example.unomobile.network.CacheManager
 import com.example.unomobile.network.client
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -33,7 +35,6 @@ class FullScreenActivity : AppCompatActivity() {
             uri = intent.getParcelableExtra("uri")
             Log.i("FullscreenActivity", uri!!.path!!)
         }
-
 
         playerView = findViewById(R.id.video_view)
         playerView?.findViewById<ImageButton>(com.google.android.exoplayer2.ui.R.id.exo_fullscreen)
@@ -61,12 +62,8 @@ class FullScreenActivity : AppCompatActivity() {
 
         if (media_path != null) {
             val uri = Uri.parse(media_path)
-            val dataSourceFactory = OkHttpDataSource.Factory(
-                client
-            )
-            val mediaSource = ProgressiveMediaSource.Factory(
-                dataSourceFactory
-            ).createMediaSource(MediaItem.Builder().setUri(uri).build())
+            val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(this, client))
+                .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
             player!!.setMediaSource(mediaSource)
         } else {

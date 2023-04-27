@@ -41,6 +41,7 @@ import com.example.unomobile.models.Activity
 import com.example.unomobile.models.MusicalNote
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
+import com.example.unomobile.network.CacheManager
 import com.example.unomobile.network.client
 import com.example.unomobile.utils.*
 import com.google.android.exoplayer2.ExoPlayer
@@ -315,6 +316,8 @@ class GamePlayModeFragment : Fragment() {
                                 submit_btn.visibility = View.GONE
                                 edit_submission_btn.visibility = View.VISIBLE
 
+                                CacheManager.getCache().removeResource(submitted_media_path!!)
+
                                 setFullScreenListener(submitted_player_view, submitted_media_path!!)
                                 initSubmittedPlayer()
                             } else {
@@ -387,12 +390,8 @@ class GamePlayModeFragment : Fragment() {
         submitted_player_view?.player = submitted_player
 
         val uri = Uri.parse(submitted_media_path)
-        val dataSourceFactory = OkHttpDataSource.Factory(
-            client
-        )
-        val mediaSource = ProgressiveMediaSource.Factory(
-            dataSourceFactory
-        ).createMediaSource(MediaItem.Builder().setUri(uri).build())
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(_context, client))
+            .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         submitted_player!!.setMediaSource(mediaSource)
         submitted_player!!.prepare()

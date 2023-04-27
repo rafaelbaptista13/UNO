@@ -129,6 +129,12 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<ResponseMessage>, t: Throwable) {
+                    val sharedPreferencesEdit = sharedPreferences.edit()
+                    sharedPreferencesEdit.clear()
+                    sharedPreferencesEdit.apply()
+
+                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                    startActivity(intent)
                     t.printStackTrace()
                 }
             })

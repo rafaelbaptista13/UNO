@@ -22,6 +22,7 @@ import com.example.unomobile.activities.ActivityPageActivity
 import com.example.unomobile.models.Activity
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
+import com.example.unomobile.network.CacheManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import retrofit2.Call
@@ -62,6 +63,12 @@ class ActivitiesFragment : Fragment() {
         val back_button = view.findViewById<ImageView>(R.id.back_button)
         back_button.setOnClickListener {
             Log.i("ActivitiesFragment", "Back Button clicked")
+
+            val cache_keys = CacheManager.getCache().keys
+            for (item in cache_keys) {
+                CacheManager.getCache().removeResource(item)
+            }
+
             findNavController().navigate(R.id.action_activitiesFragment_to_activitygroupsFragment)
             findNavController().popBackStack(R.id.activitiesFragment, true)
         }
@@ -214,4 +221,5 @@ class ActivitiesFragment : Fragment() {
         progress_bar.visibility = View.VISIBLE
         number_text.visibility = View.VISIBLE
     }
+
 }
