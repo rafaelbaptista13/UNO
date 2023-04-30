@@ -12,6 +12,7 @@ import com.example.unomobile.R
 import com.example.unomobile.fragments.*
 import com.example.unomobile.fragments.questions.QuestionFragment
 import com.example.unomobile.models.UserInfo
+import com.example.unomobile.network.Api
 import com.example.unomobile.network.cookieHandler
 import com.example.unomobile.utils.ImageLoader
 import com.google.gson.Gson
@@ -32,7 +33,7 @@ class ActivityPageFromNotification : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_page_from_notification)
-        ImageLoader.initialize(this, com.example.unomobile.network.client)
+        ImageLoader.initialize(this, Api.client)
 
         val back_button = findViewById<ImageView>(R.id.back_button)
         back_button.setOnClickListener {

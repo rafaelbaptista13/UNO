@@ -27,7 +27,7 @@ import com.example.unomobile.models.AnswerWithAdditionalData
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.CacheManager
-import com.example.unomobile.network.client
+import com.example.unomobile.network.Api.client
 import com.example.unomobile.utils.ImageLoader
 import com.example.unomobile.utils.dpToPx
 import com.google.android.exoplayer2.ExoPlayer

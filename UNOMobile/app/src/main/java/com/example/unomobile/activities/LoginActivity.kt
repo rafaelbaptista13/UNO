@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
 
     lateinit var login_button : AppCompatButton;
     lateinit var register_button : AppCompatButton;
+    private lateinit var loading_bar: ProgressBar
 
     private val fieldEmail by lazy {
         FormFieldText(
@@ -77,6 +80,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        loading_bar = findViewById(R.id.loading_progress_bar)
+
         register_button = findViewById(R.id.register_button)
         register_button.setOnClickListener {
             val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
@@ -94,6 +99,8 @@ class LoginActivity : AppCompatActivity() {
 
         formFields.disable()
         if (formFields.validate()) {
+            loading_bar.visibility = View.VISIBLE
+            login_button.visibility = View.INVISIBLE
 
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -156,12 +163,16 @@ class LoginActivity : AppCompatActivity() {
                     } else {
                         Log.i("LoginActivity", "Response was unsuccessful")
                         showToast("Credenciais inválidas.")
+                        loading_bar.visibility = View.GONE
+                        login_button.visibility = View.VISIBLE
                     }
                 }
 
                 override fun onFailure(call: Call<UserInfo>, t: Throwable) {
                     t.printStackTrace()
                     showToast("Ocorreu um erro ao iniciar sessão! Tente novamente mais tarde.")
+                    loading_bar.visibility = View.GONE
+                    login_button.visibility = View.VISIBLE
                 }
 
             })
