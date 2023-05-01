@@ -148,6 +148,12 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     gameactivities.createGame
   );
+  // Update a Game activity
+  router.put(
+    "/:class_id/game/:id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
+    gameactivities.updateGame
+  );
   // Get the media submitted by an user to a Game activity
   router.get(
     "/:class_id/:activity_id/game/submitted/media",

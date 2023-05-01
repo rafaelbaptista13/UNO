@@ -78,7 +78,7 @@ export default function EditExerciseActivity({
     if (edit_activity_response.error) {
       // An error occured
       setErrorMessage(
-        "Aconteceu um erro ao criar editar a atividade. Por favor tente novamente."
+        "Aconteceu um erro ao editar a atividade. Por favor tente novamente."
       );
     } else {
       // Activity updated successfully
