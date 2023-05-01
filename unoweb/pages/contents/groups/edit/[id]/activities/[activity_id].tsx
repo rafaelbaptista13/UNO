@@ -11,7 +11,6 @@ import ActivitiesService from "../../../../../../services/activities.service";
 import { ActiveClassState } from "../../../../../../redux/features/active_class";
 import ErrorCard from "../../../../../../components/utils/error_card";
 import Loading from "../../../../../../components/utils/loading";
-import EditMediaForm from "../../../../../../components/contents/activityform/edit_media_form";
 import EditMediaActivity from "../../../../../../components/contents/edit_activities/edit_media_activity";
 import EditExerciseActivity from "../../../../../../components/contents/edit_activities/edit_exercise_activity";
 import EditQuestionActivity from "../../../../../../components/contents/edit_activities/edit_question_activity";
