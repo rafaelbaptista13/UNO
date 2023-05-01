@@ -261,7 +261,7 @@ exports.updateExercise = async (req, res) => {
   const empty_media = req.body.empty_media;
 
   // Validate request
-  if (!empty_media || !description || !title) {
+  if (!empty_media || typeof description !== "string" || !title) {
     res.status(400).send({
       message:
         "Content can not be empty! Define the title, description and empty_media parameters in form-data.",

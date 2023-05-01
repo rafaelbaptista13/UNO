@@ -373,6 +373,33 @@ const createGameActivity = (
       return { error: true };
     });
 };
+const updateGameActivity = (
+  class_id,
+  activity_id,
+  description,
+  notes,
+  sequence_length,
+) => {
+  let body = {
+    description: description,
+    notes: notes,
+    sequence_length: sequence_length
+  }
+  console.log(body);
+  return api
+    .put("/activities/" + class_id + "/game/" + activity_id, body)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
+    });
+}
 const getGameActivitySubmittedMedia = (class_id, activity_id, student_id) => {
   return api
     .get(
@@ -548,6 +575,7 @@ const ActivitiesService = {
   getQuestionActivityMedia,
   getQuestionActivityAnswerMedia,
   createGameActivity,
+  updateGameActivity,
   getGameActivitySubmittedMedia,
   updateActivity,
   changeOrder,

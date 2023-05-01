@@ -15,6 +15,7 @@ const BuildMode = db.buildmode;
 const BuildModeStatus = db.buildmodestatus;
 const UserChosenNotes = db.userchosennotes;
 const User = db.users;
+const CompletedActivity = db.completedactivities;
 
 // Create and Save a new Activity of type Game
 exports.createGame = async (req, res) => {
@@ -194,6 +195,183 @@ exports.createGame = async (req, res) => {
           err.message || "Some error occurred while creating the Activity.",
       });
     });
+};
+
+// Update an Activity of type Game
+exports.updateGame = async (req, res) => {
+  const id = req.params.id;
+  const class_id = req.params.class_id;
+  const description = req.body.description;
+  const notes = req.body.notes;
+  const sequence_length = req.body.sequence_length;
+
+  // Validate request
+  if (typeof description !== "string" || !notes) {
+    res.status(400).send({
+      message:
+        "Content can not be empty! Define the description, and notes parameters in body.",
+    });
+    return;
+  }
+
+  // Check if user has access to activity
+  let activity = await Activity.findOne({
+    where: {
+      id: id,
+    },
+    include: [
+      {
+        model: GameActivity,
+      },
+      {
+        model: ActivityGroup,
+        as: "activitygroup",
+        where: {
+          class_id: class_id,
+        },
+      },
+    ],
+  });
+  if (activity === null) {
+    res.status(400).send({
+      message: "You're not the teacher of this Activity.",
+    });
+    return;
+  }
+
+  // Check game mode Build
+  if (activity.GameActivity.gamemode_id === 3 && !sequence_length) {
+    // There must be a sequence_length parameter in body
+    res.status(400).send({
+      message:
+        "Content can not be empty! Define the sequence_length parameter in body.",
+    });
+    return;
+  }
+
+  let new_notes = [];
+  for (let idx in notes) {
+    let note = notes[idx];
+
+    // Validate note
+    if (
+      note.violin_string < 1 ||
+      note.violin_string > 4 ||
+      note.violin_finger < 0 ||
+      note.violin_finger > 4 ||
+      note.viola_finger < 0 ||
+      note.viola_finger > 4 ||
+      note.viola_string < 1 ||
+      note.viola_string > 4 ||
+      (note.type !== "Circle" &&
+        note.type !== "RightTriangle" &&
+        note.type !== "LeftTriangle")
+    ) {
+      res.status(400).send({
+        message: "Invalid note.",
+      });
+      return;
+    }
+
+    const _note = {
+      activity_id: id,
+      order: idx,
+      name: note.name,
+      violin_string: note.violin_string,
+      violin_finger: note.violin_finger,
+      viola_string: note.viola_string,
+      viola_finger: note.viola_finger,
+      note_code: note.note_code,
+      type: note.type,
+    };
+    new_notes.push(_note);
+  }
+
+  try {
+    await sequelize.transaction(async (t) => {
+      await Activity.update(
+        {
+          description: description,
+        },
+        {
+          where: {
+            id: id,
+          },
+          transaction: t,
+        }
+      );
+
+      switch (activity.GameActivity.gamemode_id) {
+        case 1:
+          // Identify
+          // Remove all submitted responses
+          await IdentifyModeStatus.destroy({
+            where: { activity_id: id },
+            transaction: t,
+          });
+          break;
+        case 2:
+          // Play
+          // Remove all submitted responses
+          await PlayModeStatus.destroy({
+            where: { activity_id: id },
+            transaction: t,
+          });
+          break;
+        case 3:
+          // Build
+          // Remove all submitted responses
+          await BuildModeStatus.destroy({
+            where: { activity_id: id },
+            transaction: t,
+          });
+          // Update the sequence_length
+          await BuildMode.update(
+            {
+              sequence_length: sequence_length,
+            },
+            {
+              where: {
+                activity_id: id,
+              },
+              transaction: t,
+            }
+          );
+          break;
+      }
+
+      // Remove the activity completed state from all users
+      await CompletedActivity.destroy({
+        where: {
+          activity_id: id,
+        },
+        transaction: t,
+      });
+
+      // Remove old notes
+      await MusicalNote.destroy({
+        where: {
+          activity_id: id,
+        },
+        transaction: t
+      });
+
+      // Set new musical notes
+      for (let idx in new_notes) {
+        await MusicalNote.create(new_notes[idx], { transaction: t });
+      }
+
+    });
+    res.send({
+      message: "Activity was updated successfully.",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while updating the Activity.",
+    });
+  }
 };
 
 // Submit Game of type Play
@@ -906,9 +1084,7 @@ exports.putFeedbackToStudent = async (req, res) => {
     }
   )
     .then((data) => {
-
       User.findByPk(student_id).then((student) => {
-
         const message = {
           title: "Feedback do professor!",
           message: `Jogo ${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
@@ -918,27 +1094,30 @@ exports.putFeedbackToStudent = async (req, res) => {
           activity_title: activity.title,
           activity_description: activity.description,
           activitygroup_name: activity.activitygroup.name,
-          activity_game_mode: game_mode
-        }
-        
-        req.sns.publish({
-          TopicArn: student.notification_topic_arn,
-          Message: JSON.stringify({ default: JSON.stringify(message)}),
-          MessageStructure: 'json'
-        }, function(err, data) {
-          if (err) {
-            console.error('Error publishing SNS message:', err);
-            res.status(200).send({
-              message: "There was an error updating the activity.",
-            });
-          } else {
-            console.log('SNS message published:', data);
-            res.status(200).send({
-              message: "Activity updated successfully!",
-            });
+          activity_game_mode: game_mode,
+        };
+
+        req.sns.publish(
+          {
+            TopicArn: student.notification_topic_arn,
+            Message: JSON.stringify({ default: JSON.stringify(message) }),
+            MessageStructure: "json",
+          },
+          function (err, data) {
+            if (err) {
+              console.error("Error publishing SNS message:", err);
+              res.status(200).send({
+                message: "There was an error updating the activity.",
+              });
+            } else {
+              console.log("SNS message published:", data);
+              res.status(200).send({
+                message: "Activity updated successfully!",
+              });
+            }
           }
-        })
-      })
+        );
+      });
     })
     .catch((err) => {
       console.log(err);
