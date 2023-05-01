@@ -14,6 +14,7 @@ import Loading from "../../../../../../components/utils/loading";
 import EditMediaActivity from "../../../../../../components/contents/edit_activities/edit_media_activity";
 import EditExerciseActivity from "../../../../../../components/contents/edit_activities/edit_exercise_activity";
 import EditQuestionActivity from "../../../../../../components/contents/edit_activities/edit_question_activity";
+import EditGameActivity from "../../../../../../components/contents/edit_activities/edit_game_activity";
 
 export type ActivityTypeType = {
   id: number;
@@ -185,6 +186,17 @@ export default function EditActivity({
             setErrorMessage={setErrorMessage}
             setSuccessMessage={setSuccessMessage} 
             question_info={activity.question_activity!!}          
+          />
+        )}
+        {activity?.activitytype.name === "Game" && (
+          <EditGameActivity 
+            activity_id={activity_id}
+            description={activity.description}
+            game_info={activity.game_activity!!}
+            setIsLoading={setIsLoading}
+            setErrorMessage={setErrorMessage}
+            setSuccessMessage={setSuccessMessage} 
+            activitygroup_id={activitygroup_id}
           />
         )}
       </div>

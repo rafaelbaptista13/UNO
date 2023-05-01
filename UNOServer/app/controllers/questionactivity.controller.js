@@ -346,7 +346,7 @@ exports.updateQuestion = async (req, res) => {
   const empty_media = req.body.empty_media;
 
   // Validate request
-  if (!question || !answers || !one_answer_only || !empty_media) {
+  if (typeof question !== "string" || !answers || !one_answer_only || !empty_media) {
     res.status(400).send({
       message:
         "Content can not be empty! Define a question, answers, one_answer_only and empty_media parameters in form-data.",
