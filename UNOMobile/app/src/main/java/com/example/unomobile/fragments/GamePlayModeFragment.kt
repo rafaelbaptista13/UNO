@@ -391,7 +391,7 @@ class GamePlayModeFragment : Fragment() {
         submitted_player_view?.player = submitted_player
 
         val uri = Uri.parse(submitted_media_path)
-        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(_context, client))
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(client))
             .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         submitted_player!!.setMediaSource(mediaSource)

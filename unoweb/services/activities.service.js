@@ -75,13 +75,15 @@ const updateMediaActivity = (
   class_id,
   activity_id,
   title,
+  description,
   file,
-  description
+  empty_media
 ) => {
   const formData = new FormData();
   formData.append("media", file);
   formData.append("title", title);
   formData.append("description", description);
+  formData.append("empty_media", empty_media);
 
   return api
     .put("/activities/" + class_id + "/media/" + activity_id, formData, {
@@ -102,7 +104,7 @@ const updateMediaActivity = (
     });
 };
 
-const getActivityMedia = (class_id, activity_id) => {
+const getMediaActivityMedia = (class_id, activity_id) => {
   return api
     .get("/activities/" + class_id + "/" + activity_id + "/media", {
       responseType: "blob",
@@ -130,6 +132,38 @@ const createExerciseActivity = (
 
   return api
     .post("/activities/" + class_id + "/exercise", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
+    });
+};
+const updateExerciseActivity = (
+  class_id,
+  activity_id,
+  title,
+  description,
+  file,
+  empty_media
+) => {
+  const formData = new FormData();
+  formData.append("media", file);
+  formData.append("title", title);
+  formData.append("description", description);
+  formData.append("empty_media", empty_media);
+
+  return api
+    .put("/activities/" + class_id + "/exercise/" + activity_id, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -227,6 +261,53 @@ const createQuestionActivity = (
       return { error: true };
     });
 };
+const updateQuestionActivity = (
+  class_id,
+  activity_id,
+  question,
+  question_file,
+  answers,
+  one_answer_only,
+  empty_media
+) => {
+  const formData = new FormData();
+  if (question_file != null) {
+    formData.append("question_media", question_file);
+  }
+  formData.append("question", question);
+  formData.append("one_answer_only", one_answer_only);
+  formData.append("empty_media", empty_media);
+  for (const element of answers) {
+    if (element.media != null) {
+      const answer = JSON.stringify({ hasMedia: true, answer: element.answer });
+      formData.append("answers", answer);
+      formData.append("answers_media", element.media);
+    } else {
+      const answer = JSON.stringify({
+        hasMedia: false,
+        answer: element.answer,
+      });
+      formData.append("answers", answer);
+    }
+  }
+  return api
+    .put("/activities/" + class_id + "/question/" + activity_id, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
+    });
+}
 const getQuestionActivityMedia = (class_id, activity_id) => {
   return api
     .get("/activities/" + class_id + "/" + activity_id + "/question/media", {
@@ -457,11 +538,13 @@ const ActivitiesService = {
   createActivity,
   createMediaActivity,
   updateMediaActivity,
-  getActivityMedia,
+  getMediaActivityMedia,
   createExerciseActivity,
+  updateExerciseActivity,
   getExerciseActivityMedia,
   getExerciseActivitySubmittedMedia,
   createQuestionActivity,
+  updateQuestionActivity,
   getQuestionActivityMedia,
   getQuestionActivityAnswerMedia,
   createGameActivity,

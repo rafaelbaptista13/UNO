@@ -16,6 +16,7 @@ import com.example.unomobile.databinding.ActivityMainBinding
 import com.example.unomobile.models.DeviceToken
 import com.example.unomobile.models.ResponseMessage
 import com.example.unomobile.network.Api
+import com.example.unomobile.network.CacheManager
 import com.example.unomobile.network.cookieHandler
 import com.example.unomobile.utils.ImageLoader
 import com.google.android.gms.tasks.OnCompleteListener
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CacheManager.init(this)
         Api.init(this)
         ImageLoader.initialize(this, Api.client)
 
@@ -150,5 +152,12 @@ class MainActivity : AppCompatActivity() {
             })
         })
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // Release the cache resources
+        CacheManager.getCache().release()
     }
 }

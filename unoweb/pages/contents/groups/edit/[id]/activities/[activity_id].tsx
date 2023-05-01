@@ -12,51 +12,97 @@ import { ActiveClassState } from "../../../../../../redux/features/active_class"
 import ErrorCard from "../../../../../../components/utils/error_card";
 import Loading from "../../../../../../components/utils/loading";
 import EditMediaForm from "../../../../../../components/contents/activityform/edit_media_form";
+import EditMediaActivity from "../../../../../../components/contents/edit_activities/edit_media_activity";
+import EditExerciseActivity from "../../../../../../components/contents/edit_activities/edit_exercise_activity";
+import EditQuestionActivity from "../../../../../../components/contents/edit_activities/edit_question_activity";
 
-export type MediaActivity = {
-  media_type: string;
-}
+export type ActivityTypeType = {
+  id: number;
+  name: string;
+};
+
+export type MediaActivityType = {
+  media_type: string | null;
+};
+
+export type ExerciseActivityType = {
+  media_type: string | null;
+};
+
+export type QuestionActivityType = {
+  question: string;
+  answers: Array<Answer>;
+  media_type: string | null;
+  one_answer_only: boolean;
+};
+
+export type Answer = {
+  order: number;
+  answer: string;
+  media_type: string | null;
+  chosen: boolean | null;
+};
+
+export type GameActivityType = {
+  mode: string;
+  notes: Array<MusicalNote>;
+  sequence_length: number | null;
+  chosen_notes: Array<{ order: number; note_id: number }> | null;
+};
+
+export type MusicalNote = {
+  id: number;
+  order: number;
+  name: string;
+  violin_string: number;
+  violin_finger: number;
+  viola_string: number;
+  viola_finger: number;
+  note_code: string;
+  type: string;
+};
 
 export type ActivityType = {
   id: number;
-  type: string;
+  activitytype: ActivityTypeType;
   order: number;
+  activitygroup_id: number;
   title: string;
-  description: string;
+  description: string | null;
   createdAt: string;
   updatedAt: string;
-  activitygroup_id: number;
-  media: MediaActivity
+  media_activity: MediaActivityType | null;
+  exercise_activity: ExerciseActivityType | null;
+  question_activity: QuestionActivityType | null;
+  game_activity: GameActivityType | null;
 };
 
 interface EditActivityProps {
+  activitygroup_id: number;
   activity_id: number;
 }
 
-export default function EditActivity({ activity_id }: EditActivityProps) {
-  const dispatch = useDispatch();
+export default function EditActivity({
+  activitygroup_id,
+  activity_id,
+}: EditActivityProps) {
+  // On Page Load
+  const [isPageLoading, setIsPageLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  // Page Data
+  const [activity, setActivity] = useState<ActivityType>();
+
+  // Class state (Redux)
+  const { id: class_id } = useSelector<RootState, ActiveClassState>(
+    (state) => state.active_class
+  );
+
+  const [activitygroup_name, setActivityGroupName] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(true);
-  const { id: class_id } = useSelector<RootState, ActiveClassState>(
-    (state) => state.active_class
-  );
-  const [activity, setActivity] = useState<ActivityType>({
-    id: -1,
-    type: "",
-    order: 0,
-    title: "",
-    description: "",
-    createdAt: "",
-    updatedAt: "",
-    activitygroup_id: 0,
-    media: {
-      media_type: ""
-    }
-  });
-  const [error, setError] = useState(false);
 
   useEffect(() => {
     setIsPageLoading(true);
@@ -64,6 +110,7 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
       .then((data) => {
         console.log(data);
         setActivity(data);
+        setActivityGroupName(data.activitygroup.name);
       })
       .catch((err) => {
         setError(true);
@@ -71,7 +118,7 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
       .finally(() => {
         setIsPageLoading(false);
       });
-  }, [activity_id, class_id, dispatch]);
+  }, [activity_id, class_id]);
 
   if (isPageLoading) return <Loading />;
 
@@ -85,28 +132,62 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
 
       <div className="container px-4">
         <div className="row g-3 mt-2 mb-4">
-          <PageHeader
-            header_text={`${activity.order}. Atividade - Editar`}
-          />
-        </div>
-
-        <div className="row g-3 mt-2 mb-4">
-          {error && (
-            <div className="row g-3 my-2">
-              <ErrorCard message="Ocorreu um erro ao obter a atividade. Por favor tente novamente." />
-            </div>
-          )}
-          {!error && (
-            <EditMediaForm
-              setIsLoading={setIsLoading}
-              setErrorMessage={setErrorMessage}
-              setSuccessMessage={setSuccessMessage}
-              activitygroup_id={activity.activitygroup_id}
-              activity={activity}
+          {activity !== undefined && (
+            <PageHeader
+              header_text={
+                activitygroup_name +
+                " - " +
+                activity.order +
+                ". " +
+                activity.title
+              }
             />
           )}
+          {activity === undefined && (
+            <PageHeader header_text={activitygroup_name + " - Erro"} />
+          )}
         </div>
+        {error && (
+          <div className="row g-3 my-2">
+            <ErrorCard message="Ocorreu um erro ao obter a atividade. Por favor tente novamente." />
+          </div>
+        )}
 
+        {activity?.activitytype.name === "Media" && (
+          <EditMediaActivity
+            activitygroup_id={activitygroup_id}
+            activity_id={activity_id}
+            title={activity.title}
+            description={activity.description}
+            media_type={activity.media_activity!!.media_type}
+            setIsLoading={setIsLoading} 
+            setErrorMessage={setErrorMessage} 
+            setSuccessMessage={setSuccessMessage}
+          />
+        )}
+        {activity?.activitytype.name === "Exercise" && (
+          <EditExerciseActivity
+            activitygroup_id={activitygroup_id}
+            activity_id={activity_id}
+            title={activity.title}
+            description={activity.description}
+            media_type={activity.exercise_activity!!.media_type}
+            setIsLoading={setIsLoading} 
+            setErrorMessage={setErrorMessage} 
+            setSuccessMessage={setSuccessMessage}
+          />
+        )}
+        {activity?.activitytype.name === "Question" && (
+          <EditQuestionActivity
+            activitygroup_id={activitygroup_id}
+            activity_id={activity_id}
+            title={activity.title}
+            setIsLoading={setIsLoading}
+            setErrorMessage={setErrorMessage}
+            setSuccessMessage={setSuccessMessage} 
+            question_info={activity.question_activity!!}          
+          />
+        )}
       </div>
 
       <ErrorModal
@@ -118,7 +199,7 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
         show={successMessage !== ""}
         onHide={() => setSuccessMessage("")}
         message={successMessage}
-        button_link_path={`/contents/groups/edit/${activity.activitygroup_id}`}
+        button_link_path={`/contents/groups/edit/${activitygroup_id}`}
       />
       {isLoading && <LoadingModal />}
     </>
@@ -126,10 +207,12 @@ export default function EditActivity({ activity_id }: EditActivityProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const activitygroup_id = context.query.id;
   const activity_id = context.query.activity_id;
 
   return {
     props: {
+      activitygroup_id: activitygroup_id,
       activity_id: activity_id,
     },
   };
