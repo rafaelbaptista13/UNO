@@ -62,7 +62,7 @@ class FullScreenActivity : AppCompatActivity() {
 
         if (media_path != null) {
             val uri = Uri.parse(media_path)
-            val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(this, client))
+            val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(client))
                 .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
             player!!.setMediaSource(mediaSource)

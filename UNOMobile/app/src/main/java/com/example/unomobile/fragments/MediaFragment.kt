@@ -170,7 +170,7 @@ class MediaFragment : Fragment() {
         playerView?.player = player
 
         val uri = Uri.parse(media_path)
-        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(_context, client))
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(client))
             .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         player!!.setMediaSource(mediaSource)

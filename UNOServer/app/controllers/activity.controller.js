@@ -167,6 +167,7 @@ exports.findOne = (req, res) => {
       res.send(activity);
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving the Activity.",
@@ -378,6 +379,13 @@ exports.delete = async (req, res) => {
           { where: { id: activity.id }, transaction: t }
         );
       }
+      
+      await CompletedActivity.destroy({
+        where: {
+          activity_id: id
+        },
+        transaction: t
+      })
 
       return activity_to_delete;
     });
@@ -639,6 +647,7 @@ const getQuestionActivityInfo = async (activity, user_id) => {
       where: {
         status_id: question_activity_status.id,
       },
+      attributes: ["status_id", "order"]
     });
     activity.completed = true;
     for (let idx in chosen_answers) {

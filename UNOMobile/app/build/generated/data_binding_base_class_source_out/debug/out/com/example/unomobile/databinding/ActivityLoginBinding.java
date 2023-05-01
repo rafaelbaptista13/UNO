@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,9 @@ public final class ActivityLoginBinding implements ViewBinding {
   public final View lineBreak;
 
   @NonNull
+  public final ProgressBar loadingProgressBar;
+
+  @NonNull
   public final AppCompatButton loginButton;
 
   @NonNull
@@ -55,14 +59,16 @@ public final class ActivityLoginBinding implements ViewBinding {
 
   private ActivityLoginBinding(@NonNull ConstraintLayout rootView,
       @NonNull TextInputEditText inputEmail, @NonNull TextInputEditText inputPassword,
-      @NonNull View lineBreak, @NonNull AppCompatButton loginButton,
-      @NonNull AppCompatButton registerButton, @NonNull TextView textView,
-      @NonNull TextView textViewDescription, @NonNull TextInputLayout tvEmail,
-      @NonNull TextInputLayout tvPassword, @NonNull ImageView unoLogo) {
+      @NonNull View lineBreak, @NonNull ProgressBar loadingProgressBar,
+      @NonNull AppCompatButton loginButton, @NonNull AppCompatButton registerButton,
+      @NonNull TextView textView, @NonNull TextView textViewDescription,
+      @NonNull TextInputLayout tvEmail, @NonNull TextInputLayout tvPassword,
+      @NonNull ImageView unoLogo) {
     this.rootView = rootView;
     this.inputEmail = inputEmail;
     this.inputPassword = inputPassword;
     this.lineBreak = lineBreak;
+    this.loadingProgressBar = loadingProgressBar;
     this.loginButton = loginButton;
     this.registerButton = registerButton;
     this.textView = textView;
@@ -117,6 +123,12 @@ public final class ActivityLoginBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.loading_progress_bar;
+      ProgressBar loadingProgressBar = ViewBindings.findChildViewById(rootView, id);
+      if (loadingProgressBar == null) {
+        break missingId;
+      }
+
       id = R.id.login_button;
       AppCompatButton loginButton = ViewBindings.findChildViewById(rootView, id);
       if (loginButton == null) {
@@ -160,8 +172,8 @@ public final class ActivityLoginBinding implements ViewBinding {
       }
 
       return new ActivityLoginBinding((ConstraintLayout) rootView, inputEmail, inputPassword,
-          lineBreak, loginButton, registerButton, textView, textViewDescription, tvEmail,
-          tvPassword, unoLogo);
+          lineBreak, loadingProgressBar, loginButton, registerButton, textView, textViewDescription,
+          tvEmail, tvPassword, unoLogo);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

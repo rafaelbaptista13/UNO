@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -45,6 +46,9 @@ public final class ActivityRegisterBinding implements ViewBinding {
   public final View lineBreak;
 
   @NonNull
+  public final ProgressBar loadingProgressBar;
+
+  @NonNull
   public final AppCompatButton loginButton;
 
   @NonNull
@@ -81,12 +85,13 @@ public final class ActivityRegisterBinding implements ViewBinding {
       @NonNull TextInputEditText inputClassCode, @NonNull TextInputEditText inputConfirmPassword,
       @NonNull TextInputEditText inputEmail, @NonNull TextInputEditText inputFirstName,
       @NonNull TextInputEditText inputLastName, @NonNull TextInputEditText inputPassword,
-      @NonNull View lineBreak, @NonNull AppCompatButton loginButton,
-      @NonNull AppCompatButton registerButton, @NonNull TextView textView,
-      @NonNull TextView textViewDescription, @NonNull TextInputLayout tvClassCode,
-      @NonNull TextInputLayout tvConfirmPassword, @NonNull TextInputLayout tvEmail,
-      @NonNull TextInputLayout tvFirstName, @NonNull TextInputLayout tvLastName,
-      @NonNull TextInputLayout tvPassword, @NonNull ImageView unoLogo) {
+      @NonNull View lineBreak, @NonNull ProgressBar loadingProgressBar,
+      @NonNull AppCompatButton loginButton, @NonNull AppCompatButton registerButton,
+      @NonNull TextView textView, @NonNull TextView textViewDescription,
+      @NonNull TextInputLayout tvClassCode, @NonNull TextInputLayout tvConfirmPassword,
+      @NonNull TextInputLayout tvEmail, @NonNull TextInputLayout tvFirstName,
+      @NonNull TextInputLayout tvLastName, @NonNull TextInputLayout tvPassword,
+      @NonNull ImageView unoLogo) {
     this.rootView = rootView;
     this.inputClassCode = inputClassCode;
     this.inputConfirmPassword = inputConfirmPassword;
@@ -95,6 +100,7 @@ public final class ActivityRegisterBinding implements ViewBinding {
     this.inputLastName = inputLastName;
     this.inputPassword = inputPassword;
     this.lineBreak = lineBreak;
+    this.loadingProgressBar = loadingProgressBar;
     this.loginButton = loginButton;
     this.registerButton = registerButton;
     this.textView = textView;
@@ -177,6 +183,12 @@ public final class ActivityRegisterBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.loading_progress_bar;
+      ProgressBar loadingProgressBar = ViewBindings.findChildViewById(rootView, id);
+      if (loadingProgressBar == null) {
+        break missingId;
+      }
+
       id = R.id.login_button;
       AppCompatButton loginButton = ViewBindings.findChildViewById(rootView, id);
       if (loginButton == null) {
@@ -245,8 +257,8 @@ public final class ActivityRegisterBinding implements ViewBinding {
 
       return new ActivityRegisterBinding((ScrollView) rootView, inputClassCode,
           inputConfirmPassword, inputEmail, inputFirstName, inputLastName, inputPassword, lineBreak,
-          loginButton, registerButton, textView, textViewDescription, tvClassCode,
-          tvConfirmPassword, tvEmail, tvFirstName, tvLastName, tvPassword, unoLogo);
+          loadingProgressBar, loginButton, registerButton, textView, textViewDescription,
+          tvClassCode, tvConfirmPassword, tvEmail, tvFirstName, tvLastName, tvPassword, unoLogo);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

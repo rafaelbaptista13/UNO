@@ -41,14 +41,21 @@ val cookieHandler = CookieManager()
 // Cache for ExoPlayer
 object CacheManager {
     private var cacheDataSourceFactory: CacheDataSource.Factory? = null
-    private var cache: SimpleCache? = null
+    private lateinit var cache: SimpleCache
 
-    fun getCacheDataSourceFactory(context: Context, client: OkHttpClient): CacheDataSource.Factory {
+    fun init(context: Context) {
+        val cacheDir = File(context.cacheDir, "media_cache")
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs()
+        }
+        cache = SimpleCache(cacheDir, LeastRecentlyUsedCacheEvictor(100 * 1024 * 1024)) // 100 MB cache
+    }
+
+    fun getCacheDataSourceFactory(client: OkHttpClient): CacheDataSource.Factory {
         if (cacheDataSourceFactory == null) {
-            cache = SimpleCache(File(context.cacheDir, "media_cache"), LeastRecentlyUsedCacheEvictor(100 * 1024 * 1024)) // 100 MB cache
             val dataSourceFactory = OkHttpDataSource.Factory(client)
             cacheDataSourceFactory = CacheDataSource.Factory()
-                .setCache(cache!!)
+                .setCache(cache)
                 .setUpstreamDataSourceFactory(dataSourceFactory)
                 .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         }
@@ -56,7 +63,7 @@ object CacheManager {
     }
 
     fun getCache(): SimpleCache {
-        return cache!!
+        return cache
     }
 }
 
