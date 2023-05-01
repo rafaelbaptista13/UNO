@@ -64,17 +64,18 @@ export default function FeedbackForm({
                 Feedback
               </label>
               { mode === "view" && 
-                <p id="feedback">{feedback_input}</p>
+                <p style={{ wordBreak: "break-word" }} id="feedback">{feedback_input}</p>
               }
               { mode === "edit" && 
-                <input
-                type="text"
-                className="form-control"
-                id="feedback"
-                placeholder="Escreva o feedback"
-                onChange={(event) => setFeedbackInput(event.target.value)}
-                value={feedback_input}
-              />
+                <textarea
+                  className="form-control mb-2"
+                  id="feedback"
+                  rows={3}
+                  placeholder="Escreva o feedback"
+                  maxLength={500}
+                  onChange={(event) => setFeedbackInput(event.target.value)}
+                  value={feedback_input}
+                />
               }
               { mode === "view" &&
                 <button className="btn btn-warning" onClick={() => setMode("edit")}>{"Editar feedback"}</button>

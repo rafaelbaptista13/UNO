@@ -188,18 +188,21 @@ exports.submit = async (req, res) => {
 exports.updateMedia = async (req, res) => {
   const id = req.params.id;
   const class_id = req.params.class_id;
+  const title = req.body.title;
+  const description = req.body.description;
+  const empty_media = req.body.empty_media;
 
   // Validate request
-  if (!req.body.title || !req.body.description) {
+  if (!empty_media || !description || !title) {
     res.status(400).send({
       message:
-        "Content can not be empty! Define a title, description and media in form-data.",
+        "Content can not be empty! Define the title, description and empty_media parameters in form-data.",
     });
     return;
   }
 
   // Check if user has access to activity
-  const activity = Activity.findOne({
+  const activity = await Activity.findOne({
     where: {
       id: id,
     },
@@ -226,12 +229,18 @@ exports.updateMedia = async (req, res) => {
     return;
   }
 
-  let media_type;
-  let secret_key;
-  let file_name;
-  if (req.file) {
-    media_type = req.file.mimetype;
-    secret_key = crypto.randomBytes(16).toString("hex");
+  let updated_media_activity = { MediaActivity: {} };
+  if (title) {
+    updated_media_activity.title = title;
+  }
+  if (description) {
+    updated_media_activity.description = description;
+  }
+
+  if (empty_media === "false" && req.file) {
+    // Save media type
+    let media_type = req.file.mimetype;
+    let secret_key = crypto.randomBytes(16).toString("hex");
     // Encrypt file
     const encryptedFile = CryptoJS.AES.encrypt(
       req.file.buffer.toString("base64"),
@@ -239,7 +248,7 @@ exports.updateMedia = async (req, res) => {
     );
 
     // Generate file name
-    file_name = uuidv4();
+    let file_name = uuidv4();
     try {
       // Upload file in AWS S3 bucket
       const params = {
@@ -254,66 +263,42 @@ exports.updateMedia = async (req, res) => {
       res.status(500).send("Error uploading file");
       return;
     }
+    updated_media_activity.MediaActivity.media_id = file_name;
+    updated_media_activity.MediaActivity.media_type = media_type;
+    updated_media_activity.MediaActivity.media_secret = secret_key;
+  }
+  if (empty_media === "true") {
+    updated_media_activity.MediaActivity.media_id = null;
+    updated_media_activity.MediaActivity.media_type = null;
+    updated_media_activity.MediaActivity.media_secret = null;
+  }
 
-    const new_activity = {
-      title: req.body.title,
-      description: req.body.description,
-      MediaActivity: {
-        media_id: file_name,
-        media_type: media_type,
-        media_secret: secret_key,
-      },
-    };
+  try {
+    await sequelize.transaction(async (t) => {
+      await Activity.update(updated_media_activity, {
+        where: {
+          id: id,
+        },
+        transaction: t,
+      });
 
-    try {
-      await sequelize.transaction(async (t) => {
-        await Activity.update(new_activity, {
-          where: {
-            id: id,
-          },
-          transaction: t,
-        });
-
-        await MediaActivity.update(new_activity.MediaActivity, {
+      if (Object.keys(updated_media_activity.MediaActivity).length > 0) {
+        await MediaActivity.update(updated_media_activity.MediaActivity, {
           where: {
             activity_id: id,
           },
           transaction: t,
         });
-      });
-      res.send({
-        message: "Activity was updated successfully.",
-      });
-    } catch (err) {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while updating the Activity.",
-      });
-    }
-  } else {
-    // No need to update the media file
-    const new_activity = {
-      title: req.body.title,
-      description: req.body.description,
-    };
-
-    Activity.update(new_activity, {
-      where: {
-        id: id,
-      },
-      transaction: t,
-    })
-      .then(() => {
-        res.send({
-          message: "Activity was updated successfully.",
-        });
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while updating the Activity.",
-        });
-      });
+      }
+    });
+    res.send({
+      message: "Activity was updated successfully.",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while updating the Activity.",
+    });
   }
 };
 

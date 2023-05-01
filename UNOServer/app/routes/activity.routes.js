@@ -104,6 +104,16 @@ module.exports = (app) => {
     deleteUploadedFilesQuestion,
     questionactivities.createQuestion
   );
+  // Update a Question activity
+  router.put(
+    "/:class_id/question/:id",
+    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass, upload.fields([
+      { name: "question_media", maxCount: 1},
+      { name: "answers_media", maxCount: 10}
+    ]), processMediaInQuestionActivity],
+    deleteUploadedFilesQuestion,
+    questionactivities.updateQuestion
+  );
   // Submit an question
   router.post(
     "/:class_id/:activity_id/question/submit",
@@ -178,11 +188,13 @@ module.exports = (app) => {
   )
 
   // Create a new activity
+  /*
   router.post(
     "/:class_id",
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     activities.create
   );
+  */
 
   // Retrieve an activity given the id
   router.get(
@@ -206,11 +218,13 @@ module.exports = (app) => {
   );
 
   // Update an activity
+  /*
   router.put(
     "/:class_id/:id",
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     activities.update
   );
+  */
 
   // Delete an activity given the id
   router.delete(

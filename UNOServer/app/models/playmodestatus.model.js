@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
         teacher_feedback: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(500),
             allowNull: true
         }
     });

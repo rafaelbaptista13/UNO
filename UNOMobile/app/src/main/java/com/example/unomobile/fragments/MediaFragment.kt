@@ -22,7 +22,7 @@ import com.example.unomobile.models.Activity
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.CacheManager
-import com.example.unomobile.network.client
+import com.example.unomobile.network.Api.client
 import com.example.unomobile.utils.ImageLoader
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -170,7 +170,7 @@ class MediaFragment : Fragment() {
         playerView?.player = player
 
         val uri = Uri.parse(media_path)
-        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(_context, client))
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(client))
             .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         player!!.setMediaSource(mediaSource)

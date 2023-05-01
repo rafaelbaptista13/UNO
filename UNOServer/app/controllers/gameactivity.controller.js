@@ -941,7 +941,7 @@ exports.putFeedbackToStudent = async (req, res) => {
       })
     })
     .catch((err) => {
-      console.log(error);
+      console.log(err);
       res.status(500).send({
         message: "Failed to update activity.",
       });

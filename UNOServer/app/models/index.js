@@ -166,9 +166,7 @@ db.questionactivitystatus.belongsTo(db.users, {
 
 db.answers.belongsToMany(db.questionactivitystatus, {
   through: db.useranswered,
-  foreignKey: "order",
   otherKey: "status_id",
-  sourceKey: "order",
   targetKey: "id",
 });
 
@@ -177,8 +175,6 @@ db.questionactivitystatus.belongsToMany(db.answers, {
   through: db.useranswered,
   foreignKey: "status_id",
   otherKey: "order",
-  sourceKey: "id",
-  targetKey: "order",
 });
 
 // GameActivity 1 - 1 Activity

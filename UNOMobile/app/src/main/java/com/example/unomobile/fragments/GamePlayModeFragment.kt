@@ -42,7 +42,7 @@ import com.example.unomobile.models.MusicalNote
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.CacheManager
-import com.example.unomobile.network.client
+import com.example.unomobile.network.Api.client
 import com.example.unomobile.utils.*
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -310,6 +310,7 @@ class GamePlayModeFragment : Fragment() {
                             if (activity_data.completed == true) {
                                 submitted_media_path = com.example.unomobile.network.BASE_URL + "activities/" + user!!.class_id + "/" + activity_data.id + "/game/submitted/media"
                                 submitted_player_view!!.visibility = View.VISIBLE
+                                submitted_video_message!!.text = "Vídeo enviado:"
                                 submitted_video_message!!.visibility = View.VISIBLE
                                 editMode = false
                                 upload_video_buttons.visibility = View.GONE
@@ -390,7 +391,7 @@ class GamePlayModeFragment : Fragment() {
         submitted_player_view?.player = submitted_player
 
         val uri = Uri.parse(submitted_media_path)
-        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(_context, client))
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(client))
             .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         submitted_player!!.setMediaSource(mediaSource)
@@ -423,7 +424,7 @@ class GamePlayModeFragment : Fragment() {
             }
 
             chosen_file = uri
-
+            submitted_video_message!!.text = "Vídeo escolhido:"
             submitted_video_message!!.visibility = View.VISIBLE
             submitted_player_view!!.visibility = View.INVISIBLE
 
@@ -479,6 +480,7 @@ class GamePlayModeFragment : Fragment() {
                     submit_btn.visibility = View.GONE
                     edit_submission_btn.visibility = View.VISIBLE
                     upload_video_buttons.visibility = View.GONE
+                    submitted_video_message!!.text = "Vídeo enviado:"
                 } else {
                     submit_btn.visibility = View.VISIBLE
                     Toast.makeText(_context, "Ocorreu um erro ao submeter o vídeo.", Toast.LENGTH_SHORT).show()

@@ -115,20 +115,19 @@ const processMedia = (req, res, next) => {
 };
 
 const processMediaInQuestionActivity = (req, res, next) => {
+  for (let idx in req.files.answers_media) {
+    try {
+      const data = fs.readFileSync(req.files.answers_media[idx].path);
+      req.files.answers_media[idx].buffer = data;
+    } catch (err) {
+      console.error(`Error reading file: ${err}`);
+      return next(err);
+    }
+  }
+
   if (!req.files.question_media) {
     // If no file skip processing
     return next();
-  }
-
-  for (let idx in req.files.answers_media) {
-    fs.readFile(req.files.answers_media[idx].path, (err, data) => {
-      if (err) {
-        console.error(`Error reading file: ${err}`);
-        return next(err);
-      }
-
-      req.files.answers_media[idx].buffer = data;
-    });
   }
 
   if (req.files.question_media[0].mimetype.startsWith("video/")) {

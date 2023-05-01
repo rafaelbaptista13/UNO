@@ -10,6 +10,8 @@ const ExerciseActivityStatus = db.exerciseactivitystatus;
 const Answer = db.answers;
 const QuestionActivity = db.questionactivities;
 const QuestionActivityStatus = db.questionactivitystatus;
+const UserAnswered = db.useranswered;
+const CompletedActivity = db.completedactivities;
 const User = db.users;
 
 // Create and Save a new Activity of type Question
@@ -120,7 +122,7 @@ exports.createQuestion = async (req, res) => {
   let answer_media_counter = 0;
   let answers = [];
   for (let idx in req.body.answers) {
-    console.log(req.body.answers[idx])
+    console.log(req.body.answers[idx]);
     let answer = JSON.parse(req.body.answers[idx]);
     if (answer.hasMedia) {
       // Save media type
@@ -278,15 +280,20 @@ exports.submitQuestion = async (req, res) => {
     },
   });
   if (data === null) {
-
     try {
       const result = await sequelize.transaction(async (t) => {
+        const status = await QuestionActivityStatus.create(
+          question_activity_status,
+          { transaction: t }
+        );
 
-        const status = await QuestionActivityStatus.create(question_activity_status, {transaction: t});
-        await status.addAnswers(answers, {transaction: t});
+        for (let idx in answers) {
+          let answer = { status_id: status.id, order: answers[idx].order };
+          await UserAnswered.create(answer, { transaction: t });
+        }
 
         return status;
-      })
+      });
       res.send({
         message: "Question submitted successfully",
       });
@@ -300,21 +307,32 @@ exports.submitQuestion = async (req, res) => {
     }
   } else {
     // Update the answers submitted
-    const answersToRemove = await data.getAnswers();
-    await data.removeAnswers(answersToRemove);
-    data.addAnswers(answers)
-      .then(async () => {
-        res.send({
-          message: "Question submitted successfully",
+    try {
+      await sequelize.transaction(async (t) => {
+        await UserAnswered.destroy({
+          where: {
+            status_id: data.id,
+          },
+          transaction: t,
         });
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message:
-            err.message ||
-            "Some error occurred while updating the QuestionActivityStatus.",
-        });
+
+        // Set new answers
+        for (let idx in answers) {
+          let answer = { status_id: data.id, order: answers[idx].order };
+          await UserAnswered.create(answer, { transaction: t });
+        }
       });
+      res.send({
+        message: "Question submitted successfully",
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while updating the QuestionActivityStatus.",
+      });
+    }
   }
 };
 
@@ -322,18 +340,22 @@ exports.submitQuestion = async (req, res) => {
 exports.updateQuestion = async (req, res) => {
   const id = req.params.id;
   const class_id = req.params.class_id;
+  const question = req.body.question;
+  const answers = req.body.answers;
+  const one_answer_only = req.body.one_answer_only;
+  const empty_media = req.body.empty_media;
 
   // Validate request
-  if (!req.body.title || !req.body.description) {
+  if (!question || !answers || !one_answer_only || !empty_media) {
     res.status(400).send({
       message:
-        "Content can not be empty! Define a title, description in form-data.",
+        "Content can not be empty! Define a question, answers, one_answer_only and empty_media parameters in form-data.",
     });
     return;
   }
 
   // Check if user has access to activity
-  const activity = Activity.findOne({
+  const activity = await Activity.findOne({
     where: {
       id: id,
     },
@@ -353,101 +375,171 @@ exports.updateQuestion = async (req, res) => {
   }
 
   // Check activity type
-  if (activity.activitytype_id !== 2) {
+  if (activity.activitytype_id !== 3) {
     res.status(400).send({
-      message: "Activity is not of type Exercise!",
+      message: "Activity is not of type Question!",
     });
     return;
   }
 
-  let media_type;
-  let secret_key;
-  let file_name;
-  if (req.file) {
-    media_type = req.file.mimetype;
-    secret_key = crypto.randomBytes(16).toString("hex");
-    // Encrypt file
-    const encryptedFile = CryptoJS.AES.encrypt(
-      req.file.buffer.toString("base64"),
-      secret_key
-    );
-
-    // Generate file name
-    file_name = uuidv4();
-    try {
-      // Upload file in AWS S3 bucket
-      const params = {
-        Bucket: "violuno",
-        Key: file_name,
-        Body: encryptedFile.toString(),
-      };
-
-      await req.s3.upload(params).promise();
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Error uploading file");
-      return;
-    }
-
-    const new_activity = {
-      title: req.body.title,
-      description: req.body.description,
-      ExerciseActivity: {
-        media_id: file_name,
-        media_type: media_type,
-        media_secret: secret_key,
-      },
-    };
-
-    try {
-      await sequelize.transaction(async (t) => {
-        await Activity.update(new_activity, {
-          where: {
-            id: id,
-          },
-          transaction: t,
-        });
-
-        await ExerciseActivity.update(new_activity.ExerciseActivity, {
-          where: {
-            activity_id: id,
-          },
-          transaction: t,
-        });
-      });
-      res.send({
-        message: "Activity was updated successfully.",
-      });
-    } catch (err) {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while updating the Activity.",
-      });
-    }
+  let updated_question_activity = {
+    question: question,
+    one_answer_only: one_answer_only,
+  };
+  if (empty_media === "true") {
+    updated_question_activity.media_id = null;
+    updated_question_activity.media_type = null;
+    updated_question_activity.media_secret = null;
   } else {
-    // No need to update the media file
-    const new_activity = {
-      title: req.body.title,
-      description: req.body.description,
-    };
+    if (empty_media === "false" && req.files.question_media) {
+      // Save media type
+      let media_type = req.files.question_media[0].mimetype;
+      let secret_key = crypto.randomBytes(16).toString("hex");
+      // Encrypt file
+      const encryptedFile = CryptoJS.AES.encrypt(
+        req.files.question_media[0].buffer.toString("base64"),
+        secret_key
+      );
 
-    Activity.update(new_activity, {
-      where: {
-        id: id,
-      },
-      transaction: t,
-    })
-      .then(() => {
-        res.send({
-          message: "Activity was updated successfully.",
-        });
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while updating the Activity.",
-        });
+      // Generate file name
+      file_name = uuidv4();
+      try {
+        // Upload file in AWS S3 bucket
+        const params = {
+          Bucket: "violuno",
+          Key: file_name,
+          Body: encryptedFile.toString(),
+        };
+
+        await req.s3.upload(params).promise();
+      } catch (err) {
+        console.error(err);
+        res.status(500).send("Error uploading file");
+        return;
+      }
+      updated_question_activity.media_id = file_name;
+      updated_question_activity.media_type = media_type;
+      updated_question_activity.media_secret = secret_key;
+    }
+  }
+
+  let answer_media_counter = 0;
+  let new_answers = [];
+  for (let idx in answers) {
+    let answer = JSON.parse(answers[idx]);
+    if (answer.hasMedia) {
+      // Save media type
+      media_type = req.files.answers_media[answer_media_counter].mimetype;
+      if (media_type.split("/")[0] !== "image") {
+        res.status(400).send("Invalid answer media file. It must be an image.");
+        return;
+      }
+      secret_key = crypto.randomBytes(16).toString("hex");
+      console.log(req.files.answers_media);
+      // Encrypt file
+      const encryptedFile = CryptoJS.AES.encrypt(
+        req.files.answers_media[answer_media_counter].buffer.toString("base64"),
+        secret_key
+      );
+
+      // Generate file name
+      file_name = uuidv4();
+      try {
+        // Upload file in AWS S3 bucket
+        const params = {
+          Bucket: "violuno",
+          Key: file_name,
+          Body: encryptedFile.toString(),
+        };
+
+        await req.s3.upload(params).promise();
+      } catch (err) {
+        console.error(err);
+        res.status(500).send("Error uploading file");
+        return;
+      }
+      answer_media_counter++;
+    } else {
+      media_type = null;
+      secret_key = null;
+      file_name = null;
+    }
+
+    // Create answer
+    const _answer = {
+      activity_id: id,
+      order: idx,
+      answer: answer.answer,
+      media_id: file_name,
+      media_type: media_type,
+      media_secret: secret_key,
+    };
+    new_answers.push(_answer);
+  }
+
+  try {
+    await sequelize.transaction(async (t) => {
+      let all_users_states = await QuestionActivityStatus.findAll({
+        where: { activity_id: id },
       });
+      for (let idx in all_users_states) {
+        let question_state = all_users_states[idx];
+        console.log(question_state.id);
+        // Remove answers given by user
+        await UserAnswered.destroy({
+          where: {
+            status_id: question_state.id,
+          },
+          transaction: t,
+        });
+      }
+
+      // Remove Question Activity Status from all users
+      await QuestionActivityStatus.destroy({
+        where: {
+          activity_id: id,
+        },
+        transaction: t,
+      });
+
+      // Remove the activity completed state from all users
+      await CompletedActivity.destroy({
+        where: {
+          activity_id: id,
+        },
+        transaction: t,
+      });
+
+      // Remove all previous answers
+      await Answer.destroy({
+        where: {
+          activity_id: id,
+        },
+        transaction: t,
+      });
+
+      // Update Activity
+      await QuestionActivity.update(updated_question_activity, {
+        where: {
+          activity_id: id,
+        },
+        transaction: t,
+      });
+      // Set new answers
+      for (let idx in new_answers) {
+        let answer = new_answers[idx];
+        await Answer.create(answer, { transaction: t });
+      }
+    });
+    res.send({
+      message: "Activity was updated successfully.",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while updating the Activity.",
+    });
   }
 };
 
@@ -558,9 +650,9 @@ exports.getMediaFromAnswer = async (req, res) => {
   let answer = await Answer.findOne({
     where: {
       activity_id: activity_id,
-      order: order
-    }
-  })
+      order: order,
+    },
+  });
   if (answer == null) {
     res.status(400).send({
       message: "Answer not found!",
@@ -593,7 +685,6 @@ exports.getMediaFromAnswer = async (req, res) => {
     .status(200)
     .send(Buffer.from(decryptedFile.toString(CryptoJS.enc.Utf8), "base64"));
 };
-
 
 // Put Feedback to student
 exports.putFeedbackToStudent = async (req, res) => {
@@ -650,52 +741,57 @@ exports.putFeedbackToStudent = async (req, res) => {
     });
     return;
   }
-  
-  QuestionActivityStatus.update({
-    teacher_feedback: feedback
-  }, {
-    where: {
-      activity_id: activity_id,
-      user_id: student_id
-    }
-  }).then((data) => {
 
-    User.findByPk(student_id).then((student) => {
-
-      const message = {
-        title: "Feedback do professor!",
-        message: `${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
-        activity_type: "Question",
+  QuestionActivityStatus.update(
+    {
+      teacher_feedback: feedback,
+    },
+    {
+      where: {
         activity_id: activity_id,
-        activity_order: activity.order,
-        activity_title: activity.title,
-        activity_description: activity.description,
-        activitygroup_name: activity.activitygroup.name
-      }
-      
-      req.sns.publish({
-        TopicArn: student.notification_topic_arn,
-        Message: JSON.stringify({ default: JSON.stringify(message)}),
-        MessageStructure: 'json'
-      }, function(err, data) {
-        if (err) {
-          console.error('Error publishing SNS message:', err);
-          res.status(200).send({
-            message: "There was an error updating the activity.",
-          });
-        } else {
-          console.log('SNS message published:', data);
-          res.status(200).send({
-            message: "Activity updated successfully!",
-          });
-        }
-      })
-    })
+        user_id: student_id,
+      },
+    }
+  )
+    .then((data) => {
+      User.findByPk(student_id).then((student) => {
+        const message = {
+          title: "Feedback do professor!",
+          message: `${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
+          activity_type: "Question",
+          activity_id: activity_id,
+          activity_order: activity.order,
+          activity_title: activity.title,
+          activity_description: activity.description,
+          activitygroup_name: activity.activitygroup.name,
+        };
 
-  }).catch((err) => {
-    console.log(error);
-    res.status(500).send({
-      message: "Failed to update activity.",
+        req.sns.publish(
+          {
+            TopicArn: student.notification_topic_arn,
+            Message: JSON.stringify({ default: JSON.stringify(message) }),
+            MessageStructure: "json",
+          },
+          function (err, data) {
+            if (err) {
+              console.error("Error publishing SNS message:", err);
+              res.status(200).send({
+                message: "There was an error updating the activity.",
+              });
+            } else {
+              console.log("SNS message published:", data);
+              res.status(200).send({
+                message: "Activity updated successfully!",
+              });
+            }
+          }
+        );
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: "Failed to update activity.",
+      });
     });
-  })
 };

@@ -20,7 +20,7 @@ import com.example.unomobile.fragments.*
 import com.example.unomobile.fragments.questions.QuestionFragment
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
-import com.example.unomobile.network.client
+import com.example.unomobile.network.Api.client
 import com.example.unomobile.utils.ImageLoader
 import com.example.unomobile.utils.dpToPx
 import com.google.android.exoplayer2.ExoPlayer

@@ -10,6 +10,7 @@ import Loading from "../../utils/loading";
 import ErrorCard from "../../utils/error_card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import EditInputMedia from "../../utils/edit_input_media";
 
 const CardDiv = styled.div`
   position: relative;
@@ -59,14 +60,15 @@ export default function EditMaterialForm({
   const updateSupportMaterial = async () => {
     setIsLoading(true);
 
-    const update_material_response = await SupportMaterialsService.updateMaterial(
-      class_id,
-      supportmaterial_id,
-      input_title,
-      input_description,
-      file,
-      empty_media
-    );
+    const update_material_response =
+      await SupportMaterialsService.updateMaterial(
+        class_id,
+        supportmaterial_id,
+        input_title,
+        input_description,
+        file,
+        empty_media
+      );
 
     setIsLoading(false);
 
@@ -146,51 +148,20 @@ export default function EditMaterialForm({
                 accept="audio/*,video/*,image/*"
               />
 
-              {!file && 
+              {!file && (
                 <>
                   {submitted_media_type !== null && (
-                    <div className="form-group mb-2">
-                      <label className="mb-2 primary-text" htmlFor="media">
-                        {"Ficheiro"}
-                      </label>
-                      <br />
-
-                      {mediaSrc !== "" && (
-                        <>
-                          {submitted_media_type?.split("/")[0] === "video" && (
-                            <video
-                              id="media"
-                              src={mediaSrc}
-                              width={320}
-                              height={240}
-                              controls
-                            />
-                          )}
-                          {submitted_media_type?.split("/")[0] === "image" && (
-                            <Image
-                              id="media"
-                              src={mediaSrc}
-                              width={320}
-                              height={240}
-                              alt={"Imagem submetida"}
-                            />
-                          )}
-                          {submitted_media_type?.split("/")[0] === "audio" && (
-                            <audio id="media" src={mediaSrc} controls />
-                          )}
-                          <br/>
-                          <button className="btn btn-secondary" onClick={() => {setSubmittedMediaType(null); setFile(null); setMediaSrc(""); setEmptyMedia(true);}}>
-                            <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon> Remover mídia
-                          </button>
-                        </>
-                      )}
-                      {mediaSrc === "" && (
-                        <Loading />
-                      )}
-                    </div>
+                    <EditInputMedia
+                      mediaSrc={mediaSrc}
+                      submitted_media_type={submitted_media_type}
+                      setSubmittedMediaType={setSubmittedMediaType}
+                      setFile={setFile}
+                      setMediaSrc={setMediaSrc}
+                      setEmptyMedia={setEmptyMedia}
+                    />
                   )}
                 </>
-              }
+              )}
 
               {file && <p>Ficheiro submetido: {file.name}</p>}
               {file?.type.split("/")[0] === "video" && (
@@ -207,16 +178,23 @@ export default function EditMaterialForm({
               {file?.type.split("/")[0] === "audio" && (
                 <audio src={mediaSrc} controls />
               )}
-              {file && 
+              {file && (
                 <>
                   <br />
-                  <button className="btn btn-secondary mt-2" onClick={() => {setSubmittedMediaType(null); setFile(null); setMediaSrc(""); setEmptyMedia(true);}}>
-                    <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon> Remover mídia
+                  <button
+                    className="btn btn-secondary mt-2"
+                    onClick={() => {
+                      setSubmittedMediaType(null);
+                      setFile(null);
+                      setMediaSrc("");
+                      setEmptyMedia(true);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon> Remover
+                    mídia
                   </button>
                 </>
-              }
-            
-
+              )}
             </div>
             <div className="form-group mb-2">
               <label className="mb-2 primary-text" htmlFor="description_input">
@@ -236,18 +214,11 @@ export default function EditMaterialForm({
       </div>
       <div className="row g-3 my-2">
         <div className="col gap-3 d-flex justify-content-end">
-          <button
-            className="btn btn-success"
-            onClick={updateSupportMaterial}
-          >
+          <button className="btn btn-success" onClick={updateSupportMaterial}>
             Concluir
           </button>
           <Link href={"/contents/supportmaterials"}>
-            <button
-              className="btn btn-danger"
-            >
-              Cancelar
-            </button>
+            <button className="btn btn-danger">Cancelar</button>
           </Link>
         </div>
       </div>

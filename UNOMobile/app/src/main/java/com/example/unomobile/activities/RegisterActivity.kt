@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -36,6 +38,7 @@ class RegisterActivity : AppCompatActivity() {
         "User Not found." to "Utilizador não encontrado.",
         "Invalid class code." to "Código de turma inválido."
     )
+    private lateinit var loading_bar: ProgressBar
 
     private val fieldFirstName by lazy {
         FormFieldText(
@@ -141,6 +144,8 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        loading_bar = findViewById(R.id.loading_progress_bar)
+
         login_button = findViewById(R.id.login_button)
         login_button.setOnClickListener {
             val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
@@ -158,6 +163,9 @@ class RegisterActivity : AppCompatActivity() {
 
         formFields.disable()
         if (formFields.validate()) {
+
+            loading_bar.visibility = View.VISIBLE
+            register_button.visibility = View.INVISIBLE
 
             val user_info = UserInfoToRegister(
                 first_name = fieldFirstName.value!!.trim(),
@@ -193,6 +201,8 @@ class RegisterActivity : AppCompatActivity() {
                         }
 
                         showToast(translated_error_message!!)
+                        loading_bar.visibility = View.GONE
+                        register_button.visibility = View.VISIBLE
                     }
                 }
 
@@ -200,6 +210,8 @@ class RegisterActivity : AppCompatActivity() {
                     t.printStackTrace()
                     Log.i("RegisterActivity", t.message!!)
                     showToast("Ocorreu um erro ao criar a sua conta! Tente novamente mais tarde.")
+                    loading_bar.visibility = View.GONE
+                    register_button.visibility = View.VISIBLE
                 }
 
             })

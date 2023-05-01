@@ -16,6 +16,7 @@ import com.example.unomobile.databinding.ActivityMainBinding
 import com.example.unomobile.models.DeviceToken
 import com.example.unomobile.models.ResponseMessage
 import com.example.unomobile.network.Api
+import com.example.unomobile.network.CacheManager
 import com.example.unomobile.network.cookieHandler
 import com.example.unomobile.utils.ImageLoader
 import com.google.android.gms.tasks.OnCompleteListener
@@ -36,7 +37,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ImageLoader.initialize(this, com.example.unomobile.network.client)
+        CacheManager.init(this)
+        Api.init(this)
+        ImageLoader.initialize(this, Api.client)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -55,8 +58,11 @@ class MainActivity : AppCompatActivity() {
         // Get the current time in milliseconds
         val currentTimeMillis = System.currentTimeMillis()
 
+        Log.i("MainActivity", "Comecei")
+
         // Check if the token exists in SharedPreferences
         if (sharedPreferences.contains("uno-session") && sharedPreferences.contains("uno-session.sig")) {
+            Log.i("MainActivity", "tem token guardado")
 
             // Get the token's timestamp from SharedPreferences
             val tokenTimestamp = sharedPreferences.getLong("token_timestamp", 0L)
@@ -67,8 +73,12 @@ class MainActivity : AppCompatActivity() {
             // If the time difference is greater than or equal to 24 hours, remove the token from SharedPreferences
             val uno_session_sig = HttpCookie.parse(sharedPreferences.getString("uno-session.sig", ""))
             val uno_session = HttpCookie.parse(sharedPreferences.getString("uno-session", ""))
+            Log.i("MainActivity", sharedPreferences.getString("uno-session", "")!!)
             cookieHandler.cookieStore.add(URI.create(com.example.unomobile.network.BASE_URL), uno_session[0])
             cookieHandler.cookieStore.add(URI.create(com.example.unomobile.network.BASE_URL), uno_session_sig[0])
+
+
+            Log.i("MainActivity", cookieHandler.cookieStore.cookies.toString())
             if (timeDiffMillis >= 24 * 60 * 60 * 1000) {
                 forceLogout()
                 Log.i("MainActivity", "User is not logged in.")
@@ -80,7 +90,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendToLoginActivity() {
+        Log.i("MainActivity", "Vou criar intent")
         var intent = Intent(this@MainActivity, LoginActivity::class.java)
+        Log.i("MainActivity", "Launching Login")
         startActivity(intent)
     }
 
@@ -140,5 +152,12 @@ class MainActivity : AppCompatActivity() {
             })
         })
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // Release the cache resources
+        CacheManager.getCache().release()
     }
 }

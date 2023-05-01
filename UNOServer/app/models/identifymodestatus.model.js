@@ -11,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true
         },
         teacher_feedback: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(500),
             allowNull: true
         }
     });

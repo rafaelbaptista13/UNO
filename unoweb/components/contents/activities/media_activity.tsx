@@ -39,7 +39,7 @@ export default function MediaActivity({
 
   useEffect(() => {
     if (media_type !== null) {
-      ActivitiesService.getActivityMedia(class_id, activity_id)
+      ActivitiesService.getMediaActivityMedia(class_id, activity_id)
         .then((blob) => {
           const src = URL.createObjectURL(blob);
           setMediaSrc(src);

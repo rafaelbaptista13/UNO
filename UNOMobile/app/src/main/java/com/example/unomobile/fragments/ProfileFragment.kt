@@ -1,5 +1,6 @@
 package com.example.unomobile.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.example.unomobile.R
@@ -23,6 +26,11 @@ import retrofit2.Response
 
 class ProfileFragment : Fragment() {
 
+    private lateinit var loading_bar: ProgressBar
+    private lateinit var logout_button: AppCompatButton
+
+    private lateinit var _context: Context
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,7 +38,16 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        val logout_button = view.findViewById<AppCompatButton>(R.id.logout_button)
+        if (isAdded) {
+            _context = requireContext()
+        } else {
+            onDestroy()
+            return view
+        }
+
+        loading_bar = view.findViewById(R.id.loading_progress_bar)
+
+        logout_button = view.findViewById(R.id.logout_button)
         logout_button.setOnClickListener {
             logout()
         }
@@ -39,6 +56,9 @@ class ProfileFragment : Fragment() {
     }
 
     private fun logout() {
+
+        logout_button.visibility = View.GONE
+        loading_bar.visibility = View.VISIBLE
 
         val sharedPreferences = requireActivity().getSharedPreferences("data", AppCompatActivity.MODE_PRIVATE)
 
@@ -67,10 +87,17 @@ class ProfileFragment : Fragment() {
 
                         val intent = Intent(requireActivity(), LoginActivity::class.java)
                         startActivity(intent)
+                    } else {
+                        Toast.makeText(_context, "Ocorreu um erro ao sair da conta.", Toast.LENGTH_SHORT).show()
+                        logout_button.visibility = View.VISIBLE
+                        loading_bar.visibility = View.GONE
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseMessage>, t: Throwable) {
+                    logout_button.visibility = View.VISIBLE
+                    loading_bar.visibility = View.GONE
+                    Toast.makeText(_context, "Ocorreu um erro ao sair da conta. onFailure", Toast.LENGTH_SHORT).show()
                     t.printStackTrace()
                 }
             })

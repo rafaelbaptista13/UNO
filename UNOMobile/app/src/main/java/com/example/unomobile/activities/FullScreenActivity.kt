@@ -10,8 +10,8 @@ import android.util.Log
 import android.widget.ImageButton
 import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.unomobile.R
+import com.example.unomobile.network.Api.client
 import com.example.unomobile.network.CacheManager
-import com.example.unomobile.network.client
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
@@ -62,7 +62,7 @@ class FullScreenActivity : AppCompatActivity() {
 
         if (media_path != null) {
             val uri = Uri.parse(media_path)
-            val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(this, client))
+            val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(client))
                 .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
             player!!.setMediaSource(mediaSource)
@@ -71,35 +71,29 @@ class FullScreenActivity : AppCompatActivity() {
         }
 
         player!!.prepare()
+    }
 
-        // Set Player Properties
-        player!!.playWhenReady = true
+    override fun onDestroy() {
+        super.onDestroy()
+        player?.release()
+        player = null
     }
 
     override fun onResume() {
         super.onResume()
-        if (Build.VERSION.SDK_INT <= 23 && media_path != null) {
-            initPlayer()
-            playerView?.onResume()
-        }
+        initPlayer()
     }
 
     override fun onPause() {
         super.onPause()
-        if (Build.VERSION.SDK_INT <= 23) {
-            playerView?.player = null
-            player?.release()
-            player = null
-        }
+        player?.release()
+        player = null
     }
 
     override fun onStop() {
         super.onStop()
-        if (Build.VERSION.SDK_INT > 23) {
-            playerView?.player = null
-            player?.release()
-            player = null
-        }
+        player?.release()
+        player = null
     }
 
 }
