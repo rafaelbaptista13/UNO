@@ -12,7 +12,15 @@ const getActivity = (class_id, activity_id) => {
   return api
     .get("/activities/" + class_id + "/" + activity_id)
     .then((response) => {
-      return response.data;
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return { error: true };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return { error: true };
     });
 };
 
