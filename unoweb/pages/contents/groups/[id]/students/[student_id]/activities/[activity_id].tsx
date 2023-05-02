@@ -162,7 +162,7 @@ export default function StudentActivityPage({
         </div>
         {error && (
           <div className="row g-3 my-2">
-            <ErrorCard message="Ocorreu um erro ao obter os grupos de atividades. Por favor tente novamente." />
+            <ErrorCard message="Ocorreu um erro ao obter a atividade. Por favor tente novamente." />
           </div>
         )}
 
