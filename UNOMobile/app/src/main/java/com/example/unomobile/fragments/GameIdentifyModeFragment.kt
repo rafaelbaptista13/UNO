@@ -430,7 +430,38 @@ class GameIdentifyModeFragment : Fragment() {
             })
 
         } else {
-            incorrect_message.visibility = View.VISIBLE
+            val incorrect_positions = mutableListOf<Int>()
+
+            for (i in solution.indices) {
+                if (solution[i] != chosen_notes[i]) {
+                    incorrect_positions.add(i+1)
+                }
+            }
+
+            if (incorrect_positions.isEmpty()) {
+                // all notes are correct
+                incorrect_message.visibility = View.GONE
+            } else {
+                // construct incorrect message
+                var incorrect_text = "Incorreto. "
+                if (incorrect_positions.size == 1) {
+                    incorrect_text += "A nota ${incorrect_positions[0]} está errada. "
+                } else {
+                    incorrect_text += "As notas "
+                    for (i in incorrect_positions.indices) {
+                        incorrect_text += incorrect_positions[i]
+                        if (i < incorrect_positions.size - 2) {
+                            incorrect_text += ", "
+                        } else if (i == incorrect_positions.size - 2) {
+                            incorrect_text += " e "
+                        }
+                    }
+                    incorrect_text += " estão erradas. "
+                }
+                incorrect_text += "Tenta outra sequência."
+                incorrect_message.text = incorrect_text
+                incorrect_message.visibility = View.VISIBLE
+            }
         }
     }
 
