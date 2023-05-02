@@ -85,6 +85,13 @@ export default function ActivityCard({
         </div>
         <div className="col-md-4 d-flex align-items-center justify-content-center justify-content-md-end d-grid gap-3 mt-2 mt-md-0">
           <CardLink
+            href={`/contents/groups/${activitygroup_id}/activities/${activity_id}`}
+          >
+            <button className="btn btn-warning">
+              {"Ver atividade"}
+            </button>
+          </CardLink>
+          <CardLink
             href={`/contents/groups/edit/${activitygroup_id}/activities/${activity_id}`}
           >
             <button className="btn btn-secondary">
