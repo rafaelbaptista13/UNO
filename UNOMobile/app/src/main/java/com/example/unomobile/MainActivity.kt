@@ -2,8 +2,11 @@ package com.example.unomobile
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +20,7 @@ import com.example.unomobile.models.DeviceToken
 import com.example.unomobile.models.ResponseMessage
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.CacheManager
+import com.example.unomobile.network.NetworkChangeReceiver
 import com.example.unomobile.network.cookieHandler
 import com.example.unomobile.utils.ImageLoader
 import com.google.android.gms.tasks.OnCompleteListener
@@ -34,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private var isLoggedIn = false
     private var cookies = cookieHandler.cookieStore.cookies
     private val CHANNEL_ID = "notification_channel"
+    private lateinit var networkChangeReceiver : BroadcastReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +51,10 @@ class MainActivity : AppCompatActivity() {
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_container)
         setupWithNavController(binding.bottomNavigationView, navController)
+
+        networkChangeReceiver = NetworkChangeReceiver()
+        val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, intentFilter)
 
         createNotificationChannel()
     }
@@ -159,5 +168,6 @@ class MainActivity : AppCompatActivity() {
 
         // Release the cache resources
         CacheManager.getCache().release()
+        unregisterReceiver(networkChangeReceiver)
     }
 }
