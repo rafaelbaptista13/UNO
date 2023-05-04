@@ -3,6 +3,7 @@ package com.example.unomobile.fragments
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -148,41 +149,61 @@ class GameIdentifyModeFragment : Fragment() {
             midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
 
             lifecycleScope.launch {
-                for (note in notes!!) {
+                Log.i("GameIdentifyMode", horizontal_scroll_view.scrollX.toString())
+                val scrollX = horizontal_scroll_view.scrollX + 50.dpToPx(_context)
 
-                    if (pause_state) {
-                        withContext(Dispatchers.Main) {
-                            horizontal_scroll_view.scrollTo(0, 0)
+                var startNote: MusicalNote? = null
+                for (note in notes!!) {
+                    val noteView = notes_views!![note.order!!]
+                    val noteViewX = noteView.x.toInt()
+                    val noteViewWidth = noteView.width
+                    val noteViewEndX = noteViewX + noteViewWidth
+
+                    // Check if the note view is visible in the ScrollView
+                    if (noteViewEndX > scrollX) {
+                        startNote = note
+                        break
+                    }
+                }
+
+                if (startNote != null) {
+
+                    for (i in (startNote.order!!) until notes!!.size) {
+                        val note = notes!![i]
+
+                        if (pause_state) {
                             pause_button!!.visibility = View.GONE
                             play_button!!.visibility = View.VISIBLE
                             pause_state = false
+                            return@launch
                         }
-                        return@launch
+
+                        // Get Midi Code
+                        val midi_code = noteToMidiMap[note.note_code]
+                        if (midi_code != null) {
+                            midiDriver.write(byteArrayOf(0x90.toByte(), midi_code.toByte(), 127))
+                        }   // Note on
+
+                        withContext(Dispatchers.Main) {
+                            horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(_context), 0)
+                        }
+
+                        delay(2000)
+
+                        if (midi_code != null) {
+                            midiDriver.write(byteArrayOf(0x80.toByte(), midi_code.toByte(),0))
+                        } // Note off, middle C, zero velocity
                     }
 
-                    // Get Midi Code
-                    val midi_code = noteToMidiMap[note.note_code]
-                    if (midi_code != null) {
-                        midiDriver.write(byteArrayOf(0x90.toByte(), midi_code.toByte(), 127))
-                    }   // Note on
-
-                    withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(_context), 0)
-                    }
-
-                    delay(2000)
-
-                    if (midi_code != null) {
-                        midiDriver.write(byteArrayOf(0x80.toByte(), midi_code.toByte(),0))
-                    } // Note off, middle C, zero velocity
+                } else {
+                    // No start note found
+                    Log.i("GameIdentifyMode", "No start note found")
                 }
+
                 pause_button!!.visibility = View.GONE
                 it.visibility = View.VISIBLE
                 if (pause_state) {
-                    withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.scrollTo(0, 0)
-                        pause_state = false
-                    }
+                    pause_state = false
                     return@launch
                 }
             }

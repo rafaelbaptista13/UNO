@@ -206,48 +206,72 @@ class GameBuildModeFragment : Fragment() {
             pause_button!!.visibility = View.VISIBLE
             midiDriver.write(byteArrayOf((0xC0 + 0).toByte(), 40))
 
-            horizontal_scroll_view.scrollTo(0, 0)
-
             lifecycleScope.launch {
-                for ((index, note) in chosen_notes.withIndex()) {
-                    Log.i("GameBuildFragment", note.toString())
-                    if (note == null) {
-                        break;
+                val scrollX = horizontal_scroll_view.scrollX + 50.dpToPx(_context)
+
+                if (chosen_notes.all { note -> note == null }) {
+                    pause_button!!.visibility = View.GONE
+                    it.visibility = View.VISIBLE
+                    return@launch
+                }
+
+                var startNote: Int = -1
+                for (index in chosen_notes.indices) {
+                    val noteView = notes_views!![index]
+                    val noteViewX = noteView.x.toInt()
+                    val noteViewWidth = noteView.width
+                    val noteViewEndX = noteViewX + noteViewWidth
+
+                    // Check if the note view is visible in the ScrollView
+                    if (noteViewEndX > scrollX) {
+                        startNote = index
+                        break
                     }
-                    if (pause_state) {
-                        withContext(Dispatchers.Main) {
-                            horizontal_scroll_view.scrollTo(0, 0)
+                }
+
+                if (startNote != -1) {
+                    for (index in startNote until chosen_notes.size) {
+                        val note = chosen_notes[index]
+
+                        if (pause_state) {
                             pause_button!!.visibility = View.GONE
                             play_button!!.visibility = View.VISIBLE
                             pause_state = false
+                            return@launch
                         }
-                        return@launch
+                        if (note == null) {
+                            withContext(Dispatchers.Main) {
+                                horizontal_scroll_view.smoothScrollTo(notes_views!![index].x.toInt() - 5.dpToPx(_context), 0)
+                            }
+                            delay(2000)
+                            continue
+                        }
+
+                        // Get Midi Code
+                        val midi_code = noteToMidiMap[note.note_code]
+                        Log.i("GameBuildFragment", midi_code.toString())
+                        if (midi_code != null) {
+                            midiDriver.write(byteArrayOf(0x90.toByte(), midi_code.toByte(), 127))
+                        }   // Note on
+
+                        withContext(Dispatchers.Main) {
+                            horizontal_scroll_view.smoothScrollTo(chosen_notes_views[index]!!.x.toInt() - 5.dpToPx(_context), 0)
+                        }
+
+                        delay(2000)
+
+                        if (midi_code != null) {
+                            midiDriver.write(byteArrayOf(0x80.toByte(), midi_code.toByte(), 0))
+                        }
                     }
-
-                    // Get Midi Code
-                    val midi_code = noteToMidiMap[note.note_code]
-                    Log.i("GameBuildFragment", midi_code.toString())
-                    if (midi_code != null) {
-                        midiDriver.write(byteArrayOf(0x90.toByte(), midi_code.toByte(), 127))
-                    }   // Note on
-
-                    withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.smoothScrollTo(chosen_notes_views[index]!!.x.toInt() - 5.dpToPx(_context), 0)
-                    }
-
-                    delay(2000)
-
-                    if (midi_code != null) {
-                        midiDriver.write(byteArrayOf(0x80.toByte(), midi_code.toByte(), 0))
-                    }
+                } else {
+                    Log.i("GameBuildMode", "No start note found")
                 }
+
                 pause_button!!.visibility = View.GONE
                 it.visibility = View.VISIBLE
                 if (pause_state) {
-                    withContext(Dispatchers.Main) {
-                        horizontal_scroll_view.scrollTo(0, 0)
-                        pause_state = false
-                    }
+                    pause_state = false
                     return@launch
                 }
             }
