@@ -25,6 +25,9 @@ module.exports = (sequelize, Sequelize) => {
         teacher_feedback: {
             type: Sequelize.STRING(500),
             allowNull: true
+        },
+        trophy_id: {
+            type: Sequelize.INTEGER,
         }
     });
 

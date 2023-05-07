@@ -16,6 +16,8 @@ const BuildModeStatus = db.buildmodestatus;
 const UserChosenNotes = db.userchosennotes;
 const User = db.users;
 const CompletedActivity = db.completedactivities;
+const Trophy = db.trophies;
+const UserTrophies = db.usertrophies;
 
 // Create and Save a new Activity of type Game
 exports.createGame = async (req, res) => {
@@ -353,14 +355,13 @@ exports.updateGame = async (req, res) => {
         where: {
           activity_id: id,
         },
-        transaction: t
+        transaction: t,
       });
 
       // Set new musical notes
       for (let idx in new_notes) {
         await MusicalNote.create(new_notes[idx], { transaction: t });
       }
-
     });
     res.send({
       message: "Activity was updated successfully.",
@@ -1002,6 +1003,7 @@ exports.putFeedbackToStudent = async (req, res) => {
   const activity_id = req.params.activity_id;
   const student_id = req.params.student_id;
   const feedback = req.body.feedback;
+  const trophy = req.body.trophy_id;
 
   if (!feedback) {
     res.status(400).send({
@@ -1072,57 +1074,118 @@ exports.putFeedbackToStudent = async (req, res) => {
     return;
   }
 
-  GameTypeStatus.update(
-    {
-      teacher_feedback: feedback,
-    },
-    {
-      where: {
-        activity_id: activity_id,
-        user_id: student_id,
-      },
+  const status = {
+    teacher_feedback: feedback,
+  }
+  let trophy_to_delete = null;
+  if (trophy != null) {
+    // Check Trophy
+    let _trophy = await Trophy.findByPk(trophy);
+    if (_trophy == null) {
+      res.status(400).send({
+        message: "Invalid trophy!",
+      });
+      return;
     }
-  )
-    .then((data) => {
-      User.findByPk(student_id).then((student) => {
-        const message = {
-          title: "Feedback do professor!",
-          message: `Jogo ${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
-          activity_type: "Game",
-          activity_id: activity_id,
-          activity_order: activity.order,
-          activity_title: activity.title,
-          activity_description: activity.description,
-          activitygroup_name: activity.activitygroup.name,
-          activity_game_mode: game_mode,
-        };
+    if (activity_game_status.trophy_id !== trophy) {
+      _trophy = await UserTrophies.findOne({
+        where: {
+          userId: student_id,
+          trophyId: trophy,
+        },
+      });
+      if (_trophy != null) {
+        res.status(400).send({
+          message: "User already has the trophy.",
+        });
+        return;
+      }
+      status.trophy_id = trophy;
+    }
+  } else {
+    status.trophy_id = null;
+    trophy_to_delete = activity_game_status.trophy_id;
+  }
 
-        req.sns.publish(
-          {
-            TopicArn: student.notification_topic_arn,
-            Message: JSON.stringify({ default: JSON.stringify(message) }),
-            MessageStructure: "json",
+  try {
+    const result = await sequelize.transaction(async (t) => {
+      await GameTypeStatus.update(status,
+        {
+          where: {
+            activity_id: activity_id,
+            user_id: student_id,
           },
-          function (err, data) {
-            if (err) {
-              console.error("Error publishing SNS message:", err);
+          transaction: t,
+        }
+      );
+
+      if (status.trophy_id != null) {
+        await UserTrophies.create(
+          {
+            UserId: student_id,
+            TrophyId: trophy,
+          },
+          { transaction: t }
+        );
+      }
+
+      if (trophy_to_delete != null) {
+        await UserTrophies.destroy({
+          where: {
+            UserId: student_id,
+            TrophyId: trophy_to_delete
+          },
+          transaction: t
+        })
+      }
+
+      let student = await User.findByPk(student_id);
+      const message = {
+        title: "Feedback do professor!",
+        message: `Jogo ${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
+        activity_type: "Game",
+        activity_id: activity_id,
+        activity_order: activity.order,
+        activity_title: activity.title,
+        activity_description: activity.description,
+        activitygroup_name: activity.activitygroup.name,
+        activity_game_mode: game_mode,
+      };
+
+      req.sns.publish(
+        {
+          TopicArn: student.notification_topic_arn,
+          Message: JSON.stringify({ default: JSON.stringify(message) }),
+          MessageStructure: "json",
+        },
+        function (err, data) {
+          if (err) {
+            console.error("Error publishing SNS message:", err);
+            res.status(200).send({
+              message: "There was an error updating the activity.",
+            });
+          } else {
+            console.log("SNS message published:", data);
+
+            if (status.trophy_id != null) {
+              // TODO: Send Notification
               res.status(200).send({
-                message: "There was an error updating the activity.",
+                message: "Activity updated successfully!",
               });
             } else {
-              console.log("SNS message published:", data);
               res.status(200).send({
                 message: "Activity updated successfully!",
               });
             }
           }
-        );
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({
-        message: "Failed to update activity.",
-      });
+        }
+      );
     });
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message ||
+        "Could not set feedback in the activity with id=" + activity_id,
+    });
+  }
 };

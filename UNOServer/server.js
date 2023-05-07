@@ -44,6 +44,7 @@ const Role = db.roles;
 const ActivityType = db.activitytypes;
 const GameMode = db.gamemodes;
 const User = db.users;
+const Trophie = db.trophies;
 
 async function synchronize() {
   try {
@@ -163,6 +164,33 @@ async function synchronize() {
       await admin_user.setRoles([3])
       console.log("Create admin user");
     }
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 1,
+      },
+      defaults: {
+        name: "Arrasaste!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 2,
+      },
+      defaults: {
+        name: "Muito bem!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 3,
+      },
+      defaults: {
+        name: "Parabéns!"
+      }
+    });
     
     console.log("Synced db.");
   } catch (err) {
@@ -184,6 +212,7 @@ require("./app/routes/activitygroup.routes")(app);
 require("./app/routes/activity.routes")(app);
 require("./app/routes/supportmaterial.routes")(app);
 require("./app/routes/admin.routes")(app);
+require("./app/routes/trophies.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

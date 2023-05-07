@@ -193,15 +193,6 @@ module.exports = (app) => {
     gameactivities.putFeedbackToStudent
   )
 
-  // Create a new activity
-  /*
-  router.post(
-    "/:class_id",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
-    activities.create
-  );
-  */
-
   // Retrieve an activity given the id
   router.get(
     "/:class_id/:id",
@@ -222,15 +213,6 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
     activities.change_order
   );
-
-  // Update an activity
-  /*
-  router.put(
-    "/:class_id/:id",
-    [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
-    activities.update
-  );
-  */
 
   // Delete an activity given the id
   router.delete(

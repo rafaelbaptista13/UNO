@@ -537,7 +537,7 @@ const deleteActivity = (class_id, activity_id, activitygroup_id) => {
     });
 };
 
-const sendFeedback = (class_id, activity_id, student_id, type, feedback) => {
+const sendFeedback = (class_id, activity_id, student_id, type, feedback, trophy) => {
   return api
     .put(
       "/activities/teacher/" +
@@ -550,6 +550,7 @@ const sendFeedback = (class_id, activity_id, student_id, type, feedback) => {
         student_id,
       {
         feedback: feedback,
+        trophy: trophy !== -1 ? trophy : null
       }
     )
     .then((response) => {
