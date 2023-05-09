@@ -83,6 +83,18 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
   public final TextView title;
 
   @NonNull
+  public final MaterialCardView trophyCard;
+
+  @NonNull
+  public final TextView trophyHeader;
+
+  @NonNull
+  public final ImageView trophyImage;
+
+  @NonNull
+  public final TextView trophyName;
+
+  @NonNull
   public final TextView type;
 
   @NonNull
@@ -109,9 +121,11 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
       @NonNull LinearLayout row4, @NonNull AppCompatButton submit,
       @NonNull LinearLayout submitButtons, @NonNull TextView teacherFeedback,
       @NonNull MaterialCardView teacherFeedbackCard, @NonNull TextView teacherFeedbackHeader,
-      @NonNull TextView title, @NonNull TextView type, @NonNull AppCompatButton uploadVideo,
-      @NonNull LinearLayout uploadVideoButtons, @NonNull TextView uploadedVideoMessage,
-      @NonNull StyledPlayerView uploadedVideoView, @NonNull View verticalGameLine) {
+      @NonNull TextView title, @NonNull MaterialCardView trophyCard, @NonNull TextView trophyHeader,
+      @NonNull ImageView trophyImage, @NonNull TextView trophyName, @NonNull TextView type,
+      @NonNull AppCompatButton uploadVideo, @NonNull LinearLayout uploadVideoButtons,
+      @NonNull TextView uploadedVideoMessage, @NonNull StyledPlayerView uploadedVideoView,
+      @NonNull View verticalGameLine) {
     this.rootView = rootView;
     this.description = description;
     this.editSubmission = editSubmission;
@@ -132,6 +146,10 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
     this.teacherFeedbackCard = teacherFeedbackCard;
     this.teacherFeedbackHeader = teacherFeedbackHeader;
     this.title = title;
+    this.trophyCard = trophyCard;
+    this.trophyHeader = trophyHeader;
+    this.trophyImage = trophyImage;
+    this.trophyName = trophyName;
     this.type = type;
     this.uploadVideo = uploadVideo;
     this.uploadVideoButtons = uploadVideoButtons;
@@ -281,6 +299,30 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.trophy_card;
+      MaterialCardView trophyCard = ViewBindings.findChildViewById(rootView, id);
+      if (trophyCard == null) {
+        break missingId;
+      }
+
+      id = R.id.trophy_header;
+      TextView trophyHeader = ViewBindings.findChildViewById(rootView, id);
+      if (trophyHeader == null) {
+        break missingId;
+      }
+
+      id = R.id.trophy_image;
+      ImageView trophyImage = ViewBindings.findChildViewById(rootView, id);
+      if (trophyImage == null) {
+        break missingId;
+      }
+
+      id = R.id.trophy_name;
+      TextView trophyName = ViewBindings.findChildViewById(rootView, id);
+      if (trophyName == null) {
+        break missingId;
+      }
+
       id = R.id.type;
       TextView type = ViewBindings.findChildViewById(rootView, id);
       if (type == null) {
@@ -320,8 +362,9 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
       return new FragmentGamePlayModeBinding((LinearLayout) rootView, description, editSubmission,
           gameCard, horizontalScrollView, lineBreak, loadingProgressBar, pauseButton, playButton,
           recordVideo, row1, row2, row3, row4, submit, submitButtons, teacherFeedback,
-          teacherFeedbackCard, teacherFeedbackHeader, title, type, uploadVideo, uploadVideoButtons,
-          uploadedVideoMessage, uploadedVideoView, verticalGameLine);
+          teacherFeedbackCard, teacherFeedbackHeader, title, trophyCard, trophyHeader, trophyImage,
+          trophyName, type, uploadVideo, uploadVideoButtons, uploadedVideoMessage,
+          uploadedVideoView, verticalGameLine);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

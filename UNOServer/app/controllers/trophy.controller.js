@@ -2,6 +2,7 @@ const { sequelize } = require("../models");
 const db = require("../models");
 const User = db.users;
 const Trophy = db.trophies;
+const UserTrophies = db.usertrophies;
 const ClassUsers = db.classusers;
 const Role = db.roles;
 const Op = db.Sequelize.Op;
@@ -103,7 +104,20 @@ exports.getUserTrophies = async (req, res) => {
     });
     return
   } else {
-    const trophies = await student.getTrophies();
+    //const trophies = await student.getTrophies();
+    const user_trophies = await UserTrophies.findAll({
+      where: {
+        userId: user_id
+      }
+    });
+
+    let trophies = [];
+    for (let idx in user_trophies) {
+      let user_trophy = user_trophies[idx];
+      let trophy = await Trophy.findByPk(user_trophy.TrophyId);
+      trophies.push({id: trophy.id, name: trophy.name, createdAt: user_trophy.createdAt})
+    }
+
     res.send(trophies);
   }
 };

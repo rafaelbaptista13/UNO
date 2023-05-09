@@ -5,6 +5,8 @@ import android.content.Context
 import android.net.Uri
 import android.util.TypedValue
 import android.webkit.MimeTypeMap
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.SimpleExoPlayer
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*

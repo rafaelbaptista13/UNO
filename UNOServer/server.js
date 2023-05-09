@@ -5,6 +5,7 @@ const AWS = require('aws-sdk');
 require('dotenv').config();
 const s3Config = require("./app/config/s3.config");
 let bcrypt = require("bcryptjs");
+const path = require('path');
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use(
     httpOnly: true,
   })
 );
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 const s3 = new AWS.S3(s3Config);
 const sns = new AWS.SNS(s3Config);
@@ -213,6 +216,7 @@ require("./app/routes/activity.routes")(app);
 require("./app/routes/supportmaterial.routes")(app);
 require("./app/routes/admin.routes")(app);
 require("./app/routes/trophies.routes")(app);
+require("./app/routes/public.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

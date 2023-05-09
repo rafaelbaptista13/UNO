@@ -40,23 +40,107 @@
         android:layout_below="@+id/title"
         android:layout_marginTop="10dp" />
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/profile_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="10dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="10dp"
+        android:layout_below="@+id/line">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="30dp"
+            android:layout_marginHorizontal="25dp">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="22sp"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:text="Ana Rodrigues"/>
+
+            <TextView
+                android:id="@+id/activities_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/activities_number_icon"
+                android:textSize="16sp"
+                android:textColor="@color/primary_text"
+                android:layout_marginEnd="10dp"
+                android:text="1"/>
+
+            <ImageView
+                android:id="@+id/activities_number_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/trophy_complete"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/trophies_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="10dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="10dp"
+        android:layout_below="@+id/profile_card">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:layout_marginHorizontal="25dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="20sp"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold"
+                android:text="Os meus troféus"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/logout_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sair"
-        android:layout_below="@+id/line"
+        android:layout_below="@+id/trophies_button"
         android:background="@drawable/inverse_primary_button"
         android:textColor="@color/primary_text"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="30dp"/>
 
     <ProgressBar
         android:id="@+id/loading_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/line"
+        android:layout_below="@+id/trophies_button"
         android:layout_centerInParent="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:visibility="visible"/>
 
 </RelativeLayout>

@@ -10,6 +10,7 @@ import LoadingModal from "../../utils/loading_modal";
 import Image from "next/image";
 import getBasePath from "../../utils/basePath";
 import Loading from "../../utils/loading";
+import { API_URL } from "../../../services/api";
 
 const CardDiv = styled.div`
   position: relative;
@@ -132,7 +133,7 @@ export default function FeedbackForm({
                       <>
                         <p style={{ wordBreak: "break-word" }} id="trophie">{trophies.find(obj => obj.id === chosenTrophie)?.name}</p>
                         <Image 
-                          src={basePath + "/img/trophies/" + chosenTrophie + ".png"}
+                          src={basePath + "/api/images/" + chosenTrophie}
                           alt={""}        
                           width={100}    
                           height={100}      
@@ -156,7 +157,7 @@ export default function FeedbackForm({
                   </select>
                   {chosenTrophie !== -1 &&
                     <Image 
-                      src={basePath + "/img/trophies/" + chosenTrophie + ".png"}
+                      src={basePath + "/api/images/" + chosenTrophie}
                       alt={""}        
                       width={100}    
                       height={100}      

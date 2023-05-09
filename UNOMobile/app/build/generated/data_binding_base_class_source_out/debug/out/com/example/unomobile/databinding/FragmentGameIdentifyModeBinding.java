@@ -84,6 +84,18 @@ public final class FragmentGameIdentifyModeBinding implements ViewBinding {
   public final TextView title;
 
   @NonNull
+  public final MaterialCardView trophyCard;
+
+  @NonNull
+  public final TextView trophyHeader;
+
+  @NonNull
+  public final ImageView trophyImage;
+
+  @NonNull
+  public final TextView trophyName;
+
+  @NonNull
   public final TextView type;
 
   @NonNull
@@ -98,7 +110,9 @@ public final class FragmentGameIdentifyModeBinding implements ViewBinding {
       @NonNull LinearLayout row2, @NonNull LinearLayout row3, @NonNull LinearLayout row4,
       @NonNull AppCompatButton submit, @NonNull TextView teacherFeedback,
       @NonNull MaterialCardView teacherFeedbackCard, @NonNull TextView teacherFeedbackHeader,
-      @NonNull TextView title, @NonNull TextView type, @NonNull View verticalGameLine) {
+      @NonNull TextView title, @NonNull MaterialCardView trophyCard, @NonNull TextView trophyHeader,
+      @NonNull ImageView trophyImage, @NonNull TextView trophyName, @NonNull TextView type,
+      @NonNull View verticalGameLine) {
     this.rootView = rootView;
     this.correctCard = correctCard;
     this.description = description;
@@ -120,6 +134,10 @@ public final class FragmentGameIdentifyModeBinding implements ViewBinding {
     this.teacherFeedbackCard = teacherFeedbackCard;
     this.teacherFeedbackHeader = teacherFeedbackHeader;
     this.title = title;
+    this.trophyCard = trophyCard;
+    this.trophyHeader = trophyHeader;
+    this.trophyImage = trophyImage;
+    this.trophyName = trophyName;
     this.type = type;
     this.verticalGameLine = verticalGameLine;
   }
@@ -271,6 +289,30 @@ public final class FragmentGameIdentifyModeBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.trophy_card;
+      MaterialCardView trophyCard = ViewBindings.findChildViewById(rootView, id);
+      if (trophyCard == null) {
+        break missingId;
+      }
+
+      id = R.id.trophy_header;
+      TextView trophyHeader = ViewBindings.findChildViewById(rootView, id);
+      if (trophyHeader == null) {
+        break missingId;
+      }
+
+      id = R.id.trophy_image;
+      ImageView trophyImage = ViewBindings.findChildViewById(rootView, id);
+      if (trophyImage == null) {
+        break missingId;
+      }
+
+      id = R.id.trophy_name;
+      TextView trophyName = ViewBindings.findChildViewById(rootView, id);
+      if (trophyName == null) {
+        break missingId;
+      }
+
       id = R.id.type;
       TextView type = ViewBindings.findChildViewById(rootView, id);
       if (type == null) {
@@ -286,8 +328,8 @@ public final class FragmentGameIdentifyModeBinding implements ViewBinding {
       return new FragmentGameIdentifyModeBinding((LinearLayout) rootView, correctCard, description,
           gameCard, horizontalScrollView, incorrectText, lineBreak, middleRow, notesAvailable,
           notesHorizontalScrollView, pauseButton, playButton, row1, row2, row3, row4, submit,
-          teacherFeedback, teacherFeedbackCard, teacherFeedbackHeader, title, type,
-          verticalGameLine);
+          teacherFeedback, teacherFeedbackCard, teacherFeedbackHeader, title, trophyCard,
+          trophyHeader, trophyImage, trophyName, type, verticalGameLine);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

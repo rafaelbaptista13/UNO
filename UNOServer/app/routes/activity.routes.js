@@ -200,6 +200,13 @@ module.exports = (app) => {
     activities.findOne
   );
 
+  // Get number of completed activities
+  router.get(
+    "/completed",
+    [authJwt.verifyToken, authJwt.isStudent],
+    activities.getCompletedActivities
+  );
+
   // Retrieve activities with filters
   router.get(
     "/:class_id",

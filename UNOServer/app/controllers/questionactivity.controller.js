@@ -699,7 +699,7 @@ exports.putFeedbackToStudent = async (req, res) => {
   const activity_id = req.params.activity_id;
   const student_id = req.params.student_id;
   const feedback = req.body.feedback;
-  const trophy = req.body.trophy_id;
+  const trophy = req.body.trophy;
 
   if (!feedback) {
     res.status(400).send({
@@ -816,6 +816,7 @@ exports.putFeedbackToStudent = async (req, res) => {
 
       let student = await User.findByPk(student_id);
       const message = {
+        type: "feedback_activity",
         title: "Feedback do professor!",
         message: `${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
         activity_type: "Question",
@@ -842,10 +843,33 @@ exports.putFeedbackToStudent = async (req, res) => {
             console.log("SNS message published:", data);
 
             if (status.trophy_id != null) {
-              // TODO: Send Notification
-              res.status(200).send({
-                message: "Activity updated successfully!",
-              });
+
+              const trophy_message = {
+                type: "new_trophy",
+                title: "Troféu novo!",
+                message: `Ganhaste um troféu novo!`,
+              };
+
+              req.sns.publish(
+                {
+                  TopicArn: student.notification_topic_arn,
+                  Message: JSON.stringify({ default: JSON.stringify(trophy_message) }),
+                  MessageStructure: "json",
+                },
+                function (err, data) {
+                  if (err) {
+                    console.error("Error publishing SNS message:", err);
+                    res.status(200).send({
+                      message: "There was an error notifying about the trophy.",
+                    });
+                  } else {
+                    res.status(200).send({
+                      message: "Activity updated successfully!",
+                    });
+                  }
+                }
+              );
+              
             } else {
               res.status(200).send({
                 message: "Activity updated successfully!",
