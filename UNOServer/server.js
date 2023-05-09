@@ -173,7 +173,7 @@ async function synchronize() {
         id: 1,
       },
       defaults: {
-        name: "Arrasaste!"
+        name: "Uau, estás a arrasar!"
       }
     });
 
@@ -182,7 +182,7 @@ async function synchronize() {
         id: 2,
       },
       defaults: {
-        name: "Muito bem!"
+        name: "Boa, estás a ir bem!"
       }
     });
 
@@ -191,7 +191,7 @@ async function synchronize() {
         id: 3,
       },
       defaults: {
-        name: "Parabéns!"
+        name: "Isso, continua a praticar!"
       }
     });
     
