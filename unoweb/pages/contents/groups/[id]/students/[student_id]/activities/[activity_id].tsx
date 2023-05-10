@@ -62,6 +62,11 @@ export type MusicalNote = {
   type: string;
 };
 
+interface TrophyType {
+  id: number;
+  name: string;
+}
+
 export type ActivityType = {
   id: number;
   activitytype: ActivityTypeType;
@@ -71,6 +76,7 @@ export type ActivityType = {
   description: string | null;
   completed: boolean;
   teacher_feedback: string;
+  trophy: TrophyType | null;
   createdAt: string;
   updatedAt: string;
   media_activity: MediaActivityType | null;
@@ -189,7 +195,7 @@ export default function StudentActivityPage({
               completed={activity.completed}
             />
             {activity.completed && 
-              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"exercise"} />
+              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} trophy={activity.trophy ? activity.trophy : null } type={"exercise"} />
             }
           </>
         )}
@@ -205,7 +211,7 @@ export default function StudentActivityPage({
               question_info={activity.question_activity!!}
             />
             {activity.completed && 
-              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"question"} />
+              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} trophy={activity.trophy ? activity.trophy : null } type={"question"} />
             }
           </>
         )}
@@ -221,7 +227,7 @@ export default function StudentActivityPage({
               completed={activity.completed}
             />
             {activity.completed && 
-              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} type={"game"} />
+              <FeedbackForm student_id={student_id} activity_id={activity_id} feedback={activity.teacher_feedback} trophy={activity.trophy ? activity.trophy : null } type={"game"} />
             }
           </>
         )}

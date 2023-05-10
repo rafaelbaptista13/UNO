@@ -34,11 +34,6 @@
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
     <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.unomobile.fragments.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
-    <fragment
         android:id="@+id/activitiesFragment"
         android:name="com.example.unomobile.fragments.activities.ActivitiesFragment"
         android:label="fragment_activities"
@@ -61,5 +56,23 @@
         <action
             android:id="@+id/action_supportmaterialsFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/trophiesFragment"
+        android:name="com.example.unomobile.fragments.trophies.TrophiesFragment"
+        android:label="fragment_trophies"
+        tools:layout="@layout/fragment_trophies" >
+        <action
+            android:id="@+id/action_trophiesFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.unomobile.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_trophiesFragment"
+            app:destination="@id/trophiesFragment" />
     </fragment>
 </navigation>

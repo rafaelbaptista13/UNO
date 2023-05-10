@@ -12,9 +12,7 @@ import com.example.unomobile.R
 import com.example.unomobile.fragments.*
 import com.example.unomobile.fragments.questions.QuestionFragment
 import com.example.unomobile.models.UserInfo
-import com.example.unomobile.network.Api
 import com.example.unomobile.network.cookieHandler
-import com.example.unomobile.utils.ImageLoader
 import com.google.gson.Gson
 import java.net.HttpCookie
 import java.net.URI
@@ -33,13 +31,10 @@ class ActivityPageFromNotification : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_page_from_notification)
-        ImageLoader.initialize(this, Api.client)
 
         val back_button = findViewById<ImageView>(R.id.back_button)
         back_button.setOnClickListener {
             var intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         }
 
@@ -149,8 +144,6 @@ class ActivityPageFromNotification : AppCompatActivity() {
 
     override fun onBackPressed() {
         var intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
 

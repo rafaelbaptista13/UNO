@@ -2,8 +2,10 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { logout } from "../redux/features/auth";
 
+export const API_URL = process.env.NODE_ENV === "production" ? "https://deti-viola.ua.pt/rb-md-violuno-app-v1/api" : "http://localhost:3000/api";
+
 const axiosInstance = axios.create({
-  baseURL: process.env.NODE_ENV === "production" ? "https://deti-viola.ua.pt/rb-md-violuno-app-v1/api" : "http://localhost:3000/api",
+  baseURL: API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

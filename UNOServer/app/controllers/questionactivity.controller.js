@@ -13,6 +13,8 @@ const QuestionActivityStatus = db.questionactivitystatus;
 const UserAnswered = db.useranswered;
 const CompletedActivity = db.completedactivities;
 const User = db.users;
+const Trophy = db.trophies;
+const UserTrophies = db.usertrophies;
 
 // Create and Save a new Activity of type Question
 exports.createQuestion = async (req, res) => {
@@ -346,7 +348,12 @@ exports.updateQuestion = async (req, res) => {
   const empty_media = req.body.empty_media;
 
   // Validate request
-  if (typeof question !== "string" || !answers || !one_answer_only || !empty_media) {
+  if (
+    typeof question !== "string" ||
+    !answers ||
+    !one_answer_only ||
+    !empty_media
+  ) {
     res.status(400).send({
       message:
         "Content can not be empty! Define a question, answers, one_answer_only and empty_media parameters in form-data.",
@@ -692,6 +699,7 @@ exports.putFeedbackToStudent = async (req, res) => {
   const activity_id = req.params.activity_id;
   const student_id = req.params.student_id;
   const feedback = req.body.feedback;
+  const trophy = req.body.trophy;
 
   if (!feedback) {
     res.status(400).send({
@@ -742,56 +750,140 @@ exports.putFeedbackToStudent = async (req, res) => {
     return;
   }
 
-  QuestionActivityStatus.update(
-    {
-      teacher_feedback: feedback,
-    },
-    {
-      where: {
-        activity_id: activity_id,
-        user_id: student_id,
-      },
+  const status = {
+    teacher_feedback: feedback,
+  }
+  let trophy_to_delete = null;
+  if (trophy != null) {
+    // Check Trophy
+    let _trophy = await Trophy.findByPk(trophy);
+    if (_trophy == null) {
+      res.status(400).send({
+        message: "Invalid trophy!",
+      });
+      return;
     }
-  )
-    .then((data) => {
-      User.findByPk(student_id).then((student) => {
-        const message = {
-          title: "Feedback do professor!",
-          message: `${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
-          activity_type: "Question",
-          activity_id: activity_id,
-          activity_order: activity.order,
-          activity_title: activity.title,
-          activity_description: activity.description,
-          activitygroup_name: activity.activitygroup.name,
-        };
+    if (activity_question.QuestionActivityStatus.trophy_id !== trophy) {
+      _trophy = await UserTrophies.findOne({
+        where: {
+          userId: student_id,
+          trophyId: trophy,
+        },
+      });
+      if (_trophy != null) {
+        res.status(400).send({
+          message: "User already has the trophy.",
+        });
+        return;
+      }
+      status.trophy_id = trophy;
+    }
+  } else {
+    status.trophy_id = null;
+    trophy_to_delete = activity_question.QuestionActivityStatus.trophy_id;
+  }
 
-        req.sns.publish(
-          {
-            TopicArn: student.notification_topic_arn,
-            Message: JSON.stringify({ default: JSON.stringify(message) }),
-            MessageStructure: "json",
+  try {
+    const result = await sequelize.transaction(async (t) => {
+      await QuestionActivityStatus.update(status,
+        {
+          where: {
+            activity_id: activity_id,
+            user_id: student_id,
           },
-          function (err, data) {
-            if (err) {
-              console.error("Error publishing SNS message:", err);
-              res.status(200).send({
-                message: "There was an error updating the activity.",
-              });
+          transaction: t
+        }
+      );
+
+      if (status.trophy_id != null) {
+        await UserTrophies.create(
+          {
+            UserId: student_id,
+            TrophyId: trophy,
+          },
+          { transaction: t }
+        );
+      }
+      if (trophy_to_delete != null) {
+        await UserTrophies.destroy({
+          where: {
+            UserId: student_id,
+            TrophyId: trophy_to_delete
+          },
+          transaction: t
+        })
+      }
+
+      let student = await User.findByPk(student_id);
+      const message = {
+        type: "feedback_activity",
+        title: "Feedback do professor!",
+        message: `${activity.order}. ${activity.title} no grupo de atividades ${activity.activitygroup.name}!`,
+        activity_type: "Question",
+        activity_id: activity_id,
+        activity_order: activity.order,
+        activity_title: activity.title,
+        activity_description: activity.description,
+        activitygroup_name: activity.activitygroup.name,
+      };
+
+      req.sns.publish(
+        {
+          TopicArn: student.notification_topic_arn,
+          Message: JSON.stringify({ default: JSON.stringify(message) }),
+          MessageStructure: "json",
+        },
+        function (err, data) {
+          if (err) {
+            console.error("Error publishing SNS message:", err);
+            res.status(200).send({
+              message: "There was an error updating the activity.",
+            });
+          } else {
+            console.log("SNS message published:", data);
+
+            if (status.trophy_id != null) {
+
+              const trophy_message = {
+                type: "new_trophy",
+                title: "Troféu novo!",
+                message: `Ganhaste um troféu novo!`,
+              };
+
+              req.sns.publish(
+                {
+                  TopicArn: student.notification_topic_arn,
+                  Message: JSON.stringify({ default: JSON.stringify(trophy_message) }),
+                  MessageStructure: "json",
+                },
+                function (err, data) {
+                  if (err) {
+                    console.error("Error publishing SNS message:", err);
+                    res.status(200).send({
+                      message: "There was an error notifying about the trophy.",
+                    });
+                  } else {
+                    res.status(200).send({
+                      message: "Activity updated successfully!",
+                    });
+                  }
+                }
+              );
+              
             } else {
-              console.log("SNS message published:", data);
               res.status(200).send({
                 message: "Activity updated successfully!",
               });
             }
           }
-        );
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({
-        message: "Failed to update activity.",
-      });
+        }
+      );
     });
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message ||
+        "Could not set feedback in the activity with id=" + activity_id,
+    });
+  }
 };

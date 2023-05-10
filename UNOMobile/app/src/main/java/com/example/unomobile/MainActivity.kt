@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.example.unomobile.activities.LoginActivity
 import com.example.unomobile.databinding.ActivityMainBinding
+import com.example.unomobile.fragments.trophies.TrophiesFragment
 import com.example.unomobile.models.DeviceToken
 import com.example.unomobile.models.ResponseMessage
 import com.example.unomobile.network.Api
@@ -23,6 +24,7 @@ import com.example.unomobile.network.CacheManager
 import com.example.unomobile.network.NetworkChangeReceiver
 import com.example.unomobile.network.cookieHandler
 import com.example.unomobile.utils.ImageLoader
+import com.google.android.exoplayer2.util.NotificationUtil.createNotificationChannel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
@@ -42,9 +44,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        CacheManager.init(this)
-        Api.init(this)
-        ImageLoader.initialize(this, Api.client)
+        //CacheManager.init(this)
+        Log.d("MainActivity", "onCreate")
+        //Api.init(this)
+        //ImageLoader.initialize(this, Api.client)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -55,6 +58,11 @@ class MainActivity : AppCompatActivity() {
         networkChangeReceiver = NetworkChangeReceiver()
         val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, intentFilter)
+
+        val fragmentName = intent.getStringExtra("FRAGMENT_NAME")
+        if (fragmentName == "TROPHIES_FRAGMENT") {
+            navController.navigate(R.id.trophiesFragment)
+        }
 
         createNotificationChannel()
     }
@@ -166,8 +174,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        // Release the cache resources
-        CacheManager.getCache().release()
         unregisterReceiver(networkChangeReceiver)
     }
 }

@@ -274,6 +274,17 @@ class ExerciseFragment : Fragment() {
                                 teacher_feedback_card.visibility = View.VISIBLE
                                 teacher_feedback.text = activity_data.teacher_feedback
                             }
+
+                            if (activity_data.trophy !== null) {
+                                val trophy_card = view.findViewById<MaterialCardView>(R.id.trophy_card)
+                                val trophy_image = view.findViewById<ImageView>(R.id.trophy_image)
+                                val trophy_name = view.findViewById<TextView>(R.id.trophy_name)
+
+                                trophy_card.visibility = View.VISIBLE
+                                val media_path = com.example.unomobile.network.BASE_URL + "images/" + activity_data.trophy.id
+                                ImageLoader.picasso.load(media_path).into(trophy_image)
+                                trophy_name.text = activity_data.trophy.name
+                            }
                         }
                     }
 
