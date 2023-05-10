@@ -4,42 +4,61 @@ import { RootState } from "../../../redux/store";
 import styled from "styled-components";
 import { ActiveClassState } from "../../../redux/features/active_class";
 import ActivitiesService from "../../../services/activities.service";
+import TrophiesService from "../../../services/trophies.service";
 import ErrorModal from "../../utils/error_modal";
 import LoadingModal from "../../utils/loading_modal";
+import Image from "next/image";
+import getBasePath from "../../utils/basePath";
+import Loading from "../../utils/loading";
+import { API_URL } from "../../../services/api";
 
 const CardDiv = styled.div`
   position: relative;
 `;
 
+interface TrophyType {
+  id: number;
+  name: string;
+}
+
 export default function FeedbackForm({
   student_id,
   activity_id,
   feedback,
+  trophy,
   type,
 }: {
   student_id: number;
   activity_id: number;
   feedback: string;
+  trophy: TrophyType | null;
   type: string;
 }) {
   const { id: class_id } = useSelector<RootState, ActiveClassState>(
     (state) => state.active_class
   );
+  const basePath = getBasePath();
 
   const [feedback_input, setFeedbackInput] = useState(feedback !== null ? feedback : "");
   const [mode, setMode] = useState(feedback !== null ? "view" : "edit");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(false);
+
+  const [trophies, setTrophies] = useState<TrophyType[]>([]);
+  const [chosenTrophie, setChosenTrophie] = useState(trophy !== null ? trophy.id : -1);
   
   const sendFeedback = async () => {
     setIsLoading(true);
-    
+    console.log(chosenTrophie);
     const change_order_response = await ActivitiesService.sendFeedback(
       class_id,
       activity_id,
       student_id,
       type,
-      feedback_input
+      feedback_input,
+      chosenTrophie
     );
 
     setIsLoading(false);
@@ -53,6 +72,33 @@ export default function FeedbackForm({
       setMode("view");
     }
   };
+
+  useEffect(() => {
+    setIsPageLoading(true);
+    // Get available trophies
+    TrophiesService.getAvailableTrophies(class_id, student_id)
+      .then((data) => {
+        if (trophy !== null) {
+          setTrophies([trophy, ...data]);
+        } else {
+          setTrophies(data);
+        }
+      })
+      .catch((err) => {
+        setError(true);
+      })
+      .finally(() => {
+        setIsPageLoading(false);
+      });
+  }, [class_id, student_id, trophy])
+
+  if (isPageLoading) return <Loading />;
+
+  if (error) return (
+    <div>
+      Ocorreu um erro ao obter os troféus.
+    </div>
+  )
 
   return (
     <>
@@ -76,6 +122,48 @@ export default function FeedbackForm({
                   onChange={(event) => setFeedbackInput(event.target.value)}
                   value={feedback_input}
                 />
+              }
+              <label className="mb-2 primary-text" htmlFor="trophie">
+                Troféu
+              </label>
+              { mode === "view" && 
+                <>
+                  { chosenTrophie != -1 ?
+                    (
+                      <>
+                        <p style={{ wordBreak: "break-word" }} id="trophie">{trophies.find(obj => obj.id === chosenTrophie)?.name}</p>
+                        <Image 
+                          src={basePath + "/api/images/" + chosenTrophie}
+                          alt={""}        
+                          width={100}    
+                          height={100}      
+                        />
+                        <br />
+                      </>
+                    ) : (
+                      <p style={{ wordBreak: "break-word" }} id="trophie">{"Sem prémio."}</p>
+                  )}
+                </>
+              }
+              { mode === "edit" && 
+                <>
+                  <select className="form-control mb-2" id="trophie" value={chosenTrophie} onChange={(e) => setChosenTrophie(parseInt(e.target.value))}>
+                    <option value={-1}>Sem prémio.</option>
+                    {trophies.map((trophie) => {
+                      return (
+                        <option key={trophie.id} value={trophie.id}>{trophie.name}</option>
+                      )
+                    })}
+                  </select>
+                  {chosenTrophie !== -1 &&
+                    <Image 
+                      src={basePath + "/api/images/" + chosenTrophie}
+                      alt={""}        
+                      width={100}    
+                      height={100}      
+                    />
+                  }
+                </>
               }
               { mode === "view" &&
                 <button className="btn btn-warning" onClick={() => setMode("edit")}>{"Editar feedback"}</button>

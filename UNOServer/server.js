@@ -5,6 +5,7 @@ const AWS = require('aws-sdk');
 require('dotenv').config();
 const s3Config = require("./app/config/s3.config");
 let bcrypt = require("bcryptjs");
+const path = require('path');
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use(
   })
 );
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 const s3 = new AWS.S3(s3Config);
 const sns = new AWS.SNS(s3Config);
 
@@ -44,6 +47,7 @@ const Role = db.roles;
 const ActivityType = db.activitytypes;
 const GameMode = db.gamemodes;
 const User = db.users;
+const Trophie = db.trophies;
 
 async function synchronize() {
   try {
@@ -163,6 +167,33 @@ async function synchronize() {
       await admin_user.setRoles([3])
       console.log("Create admin user");
     }
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 1,
+      },
+      defaults: {
+        name: "Uau, estás a arrasar!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 2,
+      },
+      defaults: {
+        name: "Boa, estás a ir bem!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 3,
+      },
+      defaults: {
+        name: "Isso, continua a praticar!"
+      }
+    });
     
     console.log("Synced db.");
   } catch (err) {
@@ -184,6 +215,8 @@ require("./app/routes/activitygroup.routes")(app);
 require("./app/routes/activity.routes")(app);
 require("./app/routes/supportmaterial.routes")(app);
 require("./app/routes/admin.routes")(app);
+require("./app/routes/trophies.routes")(app);
+require("./app/routes/public.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

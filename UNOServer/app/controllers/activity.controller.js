@@ -25,6 +25,7 @@ const User = db.users;
 const Class = db.classes;
 const CompletedActivity = db.completedactivities;
 const Role = db.roles;
+const Trophy = db.trophies;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Activity
@@ -175,6 +176,28 @@ exports.findOne = (req, res) => {
     });
 };
 
+exports.getCompletedActivities = (req, res) => {
+  
+  CompletedActivity.findAll({
+    where: {
+      user_id: req.userId
+    }
+  })
+  .then((data) => {
+    res.status(200).send({
+      completed_activities: data.length
+    })
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving Activities.",
+    });
+  })
+
+}
+
 // Retrieve all activities from the database.
 exports.findAll = (req, res) => {
   const activitygroup_id = req.query.activitygroup_id;
@@ -237,37 +260,6 @@ exports.findAll = (req, res) => {
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving Activities.",
-      });
-    });
-};
-
-// Update a Activity by the id in the request
-exports.update = (req, res) => {
-  const id = req.params.id;
-
-  // Find Activity
-  Activity.findOne({
-    where: { id: id },
-    include: [
-      {
-        model: ActivityGroup,
-        as: "activitygroup",
-        where: { class_id: req.params.class_id },
-      },
-    ],
-  })
-    .then((activity) => {
-      if (activity === null) throw new Error();
-      activity.update(req.body).then((num) => {
-        res.send({
-          message: "Activity was updated successfully.",
-        });
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({
-        message: "Error updating Activity with id=" + id,
       });
     });
 };
@@ -617,6 +609,15 @@ const getExerciseActivityInfo = async (activity, user_id) => {
   if (exercise_activity_status !== null) {
     activity.completed = true;
     activity.teacher_feedback = exercise_activity_status.teacher_feedback;
+    if (exercise_activity_status.trophy_id !== null) {
+      // Get trophy name
+      let trophy = await Trophy.findByPk(exercise_activity_status.trophy_id);
+      activity.trophy = {
+        id: exercise_activity_status.trophy_id,
+        name: trophy.name,
+        createdAt: trophy.createdAt
+      }
+    }
   }
   activity.exercise_activity = exercise_info;
   return activity;
@@ -643,6 +644,15 @@ const getQuestionActivityInfo = async (activity, user_id) => {
   let answers = question_info.Answers.map((item) => item.toJSON());
   if (question_activity_status !== null) {
     activity.teacher_feedback = question_activity_status.teacher_feedback;
+    if (question_activity_status.trophy_id !== null) {
+      // Get trophy name
+      let trophy = await Trophy.findByPk(question_activity_status.trophy_id);
+      activity.trophy = {
+        id: question_activity_status.trophy_id,
+        name: trophy.name,
+        createdAt: trophy.createdAt
+      }
+    }
     let chosen_answers = await UserAnswered.findAll({
       where: {
         status_id: question_activity_status.id,
@@ -708,6 +718,15 @@ const getGameActivityInfo = async (activity, user_id) => {
       if (identify_mode_status !== null) {
         activity.completed = true;
         activity.teacher_feedback = identify_mode_status.teacher_feedback;
+        if (identify_mode_status.trophy_id !== null) {
+          // Get trophy name
+          let trophy = await Trophy.findByPk(identify_mode_status.trophy_id);
+          activity.trophy = {
+            id: identify_mode_status.trophy_id,
+            name: trophy.name,
+            createdAt: trophy.createdAt
+          }
+        }
       }
       break;
     case 2:
@@ -724,6 +743,15 @@ const getGameActivityInfo = async (activity, user_id) => {
       if (play_mode_status !== null) {
         activity.completed = true;
         activity.teacher_feedback = play_mode_status.teacher_feedback;
+        if (play_mode_status.trophy_id !== null) {
+          // Get trophy name
+          let trophy = await Trophy.findByPk(play_mode_status.trophy_id);
+          activity.trophy = {
+            id: play_mode_status.trophy_id,
+            name: trophy.name,
+            createdAt: trophy.createdAt
+          }
+        }
       }
       break;
     case 3:
@@ -746,6 +774,15 @@ const getGameActivityInfo = async (activity, user_id) => {
       if (build_mode_status !== null) {
         activity.completed = true;
         activity.teacher_feedback = build_mode_status.teacher_feedback;
+        if (build_mode_status.trophy_id !== null) {
+          // Get trophy name
+          let trophy = await Trophy.findByPk(build_mode_status.trophy_id);
+          activity.trophy = {
+            id: build_mode_status.trophy_id,
+            name: trophy.name,
+            createdAt: trophy.createdAt
+          }
+        }
         let user_chosen_notes = await UserChosenNotes.findAll({
           where: {
             status_id: build_mode_status.id,

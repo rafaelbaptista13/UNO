@@ -57,7 +57,6 @@ object CacheManager {
             cacheDataSourceFactory = CacheDataSource.Factory()
                 .setCache(cache)
                 .setUpstreamDataSourceFactory(dataSourceFactory)
-                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         }
         return cacheDataSourceFactory!!
     }
@@ -118,6 +117,12 @@ interface ApiService {
 
     @GET("supportmaterials/{class_id}")
     fun getSupportMaterials(@Path("class_id") class_id: Number): Call<List<SupportMaterial>>
+
+    @GET("trophies")
+    fun getTrophies(): Call<List<Trophy>>
+
+    @GET("activities/completed")
+    fun getCompletedActivities(): Call<CompletedActivites>
 
     @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>

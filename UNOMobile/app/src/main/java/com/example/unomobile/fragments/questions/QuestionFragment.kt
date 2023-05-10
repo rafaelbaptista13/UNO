@@ -159,6 +159,7 @@ class QuestionFragment : Fragment() {
                         if (response.isSuccessful) {
                             val activity_data = response.body()
                             media_path = com.example.unomobile.network.BASE_URL + "activities/" + user.class_id + "/" + activity_data!!.id + "/question/media"
+                            Log.i("QuestionFragment", media_path!!)
                             one_answer_only = activity_data.question_activity!!.one_answer_only
                             question_text.text = activity_data.question_activity.question
                             if (activity_data.question_activity.media_type != null) {
@@ -280,6 +281,17 @@ class QuestionFragment : Fragment() {
                                 teacher_feedback.text = activity_data.teacher_feedback
                             }
 
+                            if (activity_data.trophy !== null) {
+                                val trophy_card = view.findViewById<MaterialCardView>(R.id.trophy_card)
+                                val trophy_image = view.findViewById<ImageView>(R.id.trophy_image)
+                                val trophy_name = view.findViewById<TextView>(R.id.trophy_name)
+
+                                trophy_card.visibility = View.VISIBLE
+                                val media_path = com.example.unomobile.network.BASE_URL + "images/" + activity_data.trophy.id
+                                ImageLoader.picasso.load(media_path).into(trophy_image)
+                                trophy_name.text = activity_data.trophy.name
+                            }
+
                         }
                     }
 
@@ -336,7 +348,6 @@ class QuestionFragment : Fragment() {
 
         })
 
-
     }
 
     private fun initPlayer() {
@@ -368,7 +379,8 @@ class QuestionFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.i("QuestionFragment", "OnDestroy called")
-        if (media_path != null && media_type == "video" || media_type == "audio") {
+        if (media_path != null && (media_type == "video" || media_type == "audio")) {
+            Log.i("QuestionFragment", "Released")
             player?.release()
             player = null
         }
@@ -377,14 +389,14 @@ class QuestionFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if (media_path != null && media_type == "video" || media_type == "audio") {
+        if (media_path != null && (media_type == "video" || media_type == "audio")) {
             initPlayer()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        if (media_path != null && media_type == "video" || media_type == "audio") {
+        if (media_path != null && (media_type == "video" || media_type == "audio")) {
             player?.release()
             player = null
         }
@@ -392,7 +404,7 @@ class QuestionFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        if (media_path != null && media_type == "video" || media_type == "audio") {
+        if (media_path != null && (media_type == "video" || media_type == "audio")) {
             player?.release()
             player = null
         }

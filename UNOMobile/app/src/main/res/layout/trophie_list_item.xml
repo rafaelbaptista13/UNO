@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    android:id="@+id/card"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="10dp"
+    android:layout_marginHorizontal="10dp"
+    app:strokeWidth="3dp"
+    android:layout_marginVertical="10dp"
+    app:cardBackgroundColor="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="10dp"
+        android:layout_marginHorizontal="30dp">
+
+        <ImageView
+            android:id="@+id/trophy_image"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/trophy_complete"
+            android:elevation="20dp"
+            />
+
+        <TextView
+            android:id="@+id/trophy_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="16/2/2023"
+            android:textColor="@color/primary_text"
+            android:textSize="16sp"
+            android:layout_marginHorizontal="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/trophy_image"
+            app:layout_constraintTop_toBottomOf="@+id/trophy_name"
+            android:layout_marginVertical="5dp"/>
+
+        <TextView
+            android:id="@+id/trophy_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Estás a arrasar!"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/trophy_date"
+            app:layout_constraintLeft_toRightOf="@id/trophy_image"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginHorizontal="20dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/primary_text"
+            android:layout_marginVertical="5dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
