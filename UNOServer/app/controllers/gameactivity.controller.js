@@ -1088,18 +1088,8 @@ exports.putFeedbackToStudent = async (req, res) => {
       return;
     }
     if (activity_game_status.trophy_id !== trophy) {
-      _trophy = await UserTrophies.findOne({
-        where: {
-          userId: student_id,
-          trophyId: trophy,
-        },
-      });
-      if (_trophy != null) {
-        res.status(400).send({
-          message: "User already has the trophy.",
-        });
-        return;
-      }
+      // The user is changing the trophy given
+      trophy_to_delete = activity_game_status.trophy_id;
       status.trophy_id = trophy;
     }
   } else {
@@ -1120,23 +1110,11 @@ exports.putFeedbackToStudent = async (req, res) => {
       );
 
       if (status.trophy_id != null) {
-        await UserTrophies.create(
-          {
-            UserId: student_id,
-            TrophyId: trophy,
-          },
-          { transaction: t }
-        );
+        await createTrophy(student_id, status.trophy_id, t);
       }
 
       if (trophy_to_delete != null) {
-        await UserTrophies.destroy({
-          where: {
-            UserId: student_id,
-            TrophyId: trophy_to_delete
-          },
-          transaction: t
-        })
+        await deleteTrophy(student_id, trophy_to_delete, t);
       }
 
       let student = await User.findByPk(student_id);
@@ -1213,3 +1191,62 @@ exports.putFeedbackToStudent = async (req, res) => {
     });
   }
 };
+
+
+
+const deleteTrophy = async (student_id, trophy_to_delete, t) => {
+  // Get count of user trophies
+  let user_trophy = await UserTrophies.findOne({
+    where: {
+      UserId: student_id,
+      TrophyId: trophy_to_delete
+    },
+    transaction: t
+  })
+  if (user_trophy.count === 1) {
+    await UserTrophies.destroy({
+      where: {
+        UserId: student_id,
+        TrophyId: trophy_to_delete
+      },
+      transaction: t
+    })
+  } else {
+    await UserTrophies.update({
+      count: user_trophy.count - 1
+    }, {
+      where: {
+        UserId: student_id,
+        TrophyId: trophy_to_delete
+      },
+      transaction: t
+    })
+  }
+}
+
+const createTrophy = async (student_id, new_trophy, t) => {
+  let user_trophy = await UserTrophies.findOne({
+    where: {
+      UserId: student_id,
+      TrophyId: new_trophy
+    },
+    transaction: t
+  })
+  if (user_trophy === null) {
+    await UserTrophies.create({
+      UserId: student_id,
+      TrophyId: new_trophy,
+      count: 1
+    }, {transaction: t})
+  } else {
+    await UserTrophies.update({
+      count: user_trophy.count + 1
+    }, {
+      where: {
+        UserId: student_id,
+        TrophyId: new_trophy
+      },
+      transaction: t
+    })
+  }
+}

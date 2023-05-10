@@ -22,6 +22,7 @@ class TrophiesAdapter(private val data: List<Trophy>, val context: Context) : Re
         val image : ImageView = view.findViewById(R.id.trophy_image)
         val name : TextView = view.findViewById(R.id.trophy_name)
         val date : TextView = view.findViewById(R.id.trophy_date)
+        val count: TextView = view.findViewById(R.id.trophy_count)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -32,9 +33,10 @@ class TrophiesAdapter(private val data: List<Trophy>, val context: Context) : Re
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentItem = data[position]
         holder.name.text = currentItem.name
-        holder.date.text = currentItem.createdAt.split("T")[0]
+        holder.date.text = currentItem.updatedAt.split("T")[0]
         val media_path = com.example.unomobile.network.BASE_URL + "images/" + currentItem.id
         ImageLoader.picasso.load(media_path).into(holder.image)
+        holder.count.text = currentItem.count.toString()
     }
 
     override fun getItemCount(): Int {

@@ -7,9 +7,9 @@ module.exports = (app) => {
 
   // Retrieve the trophies a user does not has yet 
   router.get(
-    "/:class_id/available/:student_id",
+    "/:class_id/available/",
     [authJwt.verifyToken, authJwt.isTeacher, authJwt.isTeacherOfRequestedClass],
-    trophy.getUserAvailableTrophies
+    trophy.getAvailableTrophies
   );
 
   // Retrieve all trophies a user has

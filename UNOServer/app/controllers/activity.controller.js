@@ -615,7 +615,7 @@ const getExerciseActivityInfo = async (activity, user_id) => {
       activity.trophy = {
         id: exercise_activity_status.trophy_id,
         name: trophy.name,
-        createdAt: trophy.createdAt
+        updatedAt: exercise_activity_status.updatedAt
       }
     }
   }
@@ -650,7 +650,7 @@ const getQuestionActivityInfo = async (activity, user_id) => {
       activity.trophy = {
         id: question_activity_status.trophy_id,
         name: trophy.name,
-        createdAt: trophy.createdAt
+        updatedAt: question_activity_status.updatedAt
       }
     }
     let chosen_answers = await UserAnswered.findAll({
@@ -724,7 +724,7 @@ const getGameActivityInfo = async (activity, user_id) => {
           activity.trophy = {
             id: identify_mode_status.trophy_id,
             name: trophy.name,
-            createdAt: trophy.createdAt
+            updatedAt: identify_mode_status.updatedAt
           }
         }
       }
@@ -749,7 +749,7 @@ const getGameActivityInfo = async (activity, user_id) => {
           activity.trophy = {
             id: play_mode_status.trophy_id,
             name: trophy.name,
-            createdAt: trophy.createdAt
+            updatedAt: play_mode_status.updatedAt
           }
         }
       }
@@ -780,7 +780,7 @@ const getGameActivityInfo = async (activity, user_id) => {
           activity.trophy = {
             id: build_mode_status.trophy_id,
             name: trophy.name,
-            createdAt: trophy.createdAt
+            updatedAt: build_mode_status.updatedAt
           }
         }
         let user_chosen_notes = await UserChosenNotes.findAll({

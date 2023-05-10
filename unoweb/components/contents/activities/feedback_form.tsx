@@ -76,13 +76,9 @@ export default function FeedbackForm({
   useEffect(() => {
     setIsPageLoading(true);
     // Get available trophies
-    TrophiesService.getAvailableTrophies(class_id, student_id)
+    TrophiesService.getAvailableTrophies(class_id)
       .then((data) => {
-        if (trophy !== null) {
-          setTrophies([trophy, ...data]);
-        } else {
-          setTrophies(data);
-        }
+        setTrophies(data);
       })
       .catch((err) => {
         setError(true);

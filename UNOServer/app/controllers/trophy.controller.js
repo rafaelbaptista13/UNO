@@ -3,71 +3,13 @@ const db = require("../models");
 const User = db.users;
 const Trophy = db.trophies;
 const UserTrophies = db.usertrophies;
-const ClassUsers = db.classusers;
 const Role = db.roles;
-const Op = db.Sequelize.Op;
 
-// Retrieve the trophies a user does not has yet 
-exports.getUserAvailableTrophies = async (req, res) => {
-  const class_id = req.params.class_id;
-  const user_id = req.params.student_id;
+// Retrieve the trophies
+exports.getAvailableTrophies = async (req, res) => {
+  const availableTrophies = await Trophy.findAll();
 
-  // Get student
-  let student;
-  try {
-    student = await User.findOne({
-      attributes: ["id", "first_name", "last_name"],
-      where: { id: user_id },
-      include: [
-        {
-          model: Role,
-          where: {
-            name: "student",
-          },
-          attributes: [],
-        },
-      ],
-    });
-
-    let class_entry = await ClassUsers.findOne({
-      where: {
-        ClassId: class_id,
-        UserId: user_id
-      }
-    });
-    if (!class_entry) {
-      res.status(403).send({
-        message: "The student is not from this class!",
-      });
-      return;
-    }
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      message: "An error occured.",
-    });
-    return;
-  }
-
-  if (!student) {
-    res.status(400).send({
-      message: `User is not a student.`,
-    });
-    return
-  } else {
-    const user_trophies = await student.getTrophies();
-
-    const availableTrophies = await Trophy.findAll({
-      where: {
-        id: {
-          [db.Sequelize.Op.notIn]: user_trophies.map((trophy) => trophy.id),
-        },
-      },
-    });
-
-    res.send(availableTrophies);
-  }
+  res.send(availableTrophies);
 };
 
 // Retrieve all trophies a user has
@@ -115,7 +57,7 @@ exports.getUserTrophies = async (req, res) => {
     for (let idx in user_trophies) {
       let user_trophy = user_trophies[idx];
       let trophy = await Trophy.findByPk(user_trophy.TrophyId);
-      trophies.push({id: trophy.id, name: trophy.name, createdAt: user_trophy.createdAt})
+      trophies.push({id: trophy.id, name: trophy.name, updatedAt: user_trophy.updatedAt, count: user_trophy.count})
     }
 
     res.send(trophies);
