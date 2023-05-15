@@ -1,6 +1,7 @@
 package com.example.unomobile.fragments.activities
 
 import android.app.Activity.RESULT_OK
+import android.app.PendingIntent.getActivities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -56,8 +57,9 @@ class ActivitiesFragment : Fragment() {
     ): View? {
         // Hide Navbar
         val navBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-        navBar.visibility = View.GONE
-
+        if (navBar != null) {
+            navBar.visibility = View.GONE
+        }
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_activities, container, false)
         val back_button = view.findViewById<ImageView>(R.id.back_button)
