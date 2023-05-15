@@ -182,7 +182,7 @@ async function synchronize() {
         id: 2,
       },
       defaults: {
-        name: "Boa, estás a ir bem!"
+        name: "Muito bem, estás a caprichar!"
       }
     });
 
@@ -191,7 +191,88 @@ async function synchronize() {
         id: 3,
       },
       defaults: {
-        name: "Isso, continua a praticar!"
+        name: "Boa, estás a ir bem!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 4,
+      },
+      defaults: {
+        name: "Parabéns, continua a praticar!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 5,
+      },
+      defaults: {
+        name: "Viva, segue assim, mas ainda há trabalho!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 6,
+      },
+      defaults: {
+        name: "Isso, deste um salto!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 7,
+      },
+      defaults: {
+        name: "Vamos, mais um pouco vais arrasar!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 8,
+      },
+      defaults: {
+        name: "Vais bem, mas atenção, precisas continuar!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 9,
+      },
+      defaults: {
+        name: "Vá em frente, estás no caminho!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 10,
+      },
+      defaults: {
+        name: "Vamos, o caminho é praticar!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 11,
+      },
+      defaults: {
+        name: "Vá em frente, é mais simples do que parece!"
+      }
+    });
+
+    await Trophie.findOrCreate({
+      where: {
+        id: 12,
+      },
+      defaults: {
+        name: "Avante, tocar requer prática!"
       }
     });
     
