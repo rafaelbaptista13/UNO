@@ -21,6 +21,7 @@ import com.example.unomobile.fragments.questions.QuestionFragment
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
 import com.example.unomobile.network.Api.client
+import com.example.unomobile.network.CacheManager
 import com.example.unomobile.utils.ImageLoader
 import com.example.unomobile.utils.dpToPx
 import com.google.android.exoplayer2.ExoPlayer
@@ -135,12 +136,8 @@ class SupportMaterialActivity : AppCompatActivity() {
         playerView?.player = player
 
         val uri = Uri.parse(media_path)
-        val dataSourceFactory = OkHttpDataSource.Factory(
-            client
-        )
-        val mediaSource = ProgressiveMediaSource.Factory(
-            dataSourceFactory
-        ).createMediaSource(MediaItem.Builder().setUri(uri).build())
+        val mediaSource = ProgressiveMediaSource.Factory(CacheManager.getCacheDataSourceFactory(client))
+            .createMediaSource(MediaItem.Builder().setUri(uri).build())
 
         player!!.setMediaSource(mediaSource)
         player!!.prepare()
