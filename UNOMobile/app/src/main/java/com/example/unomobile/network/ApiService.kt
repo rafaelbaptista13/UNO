@@ -35,7 +35,7 @@ var BASE_URL = if (BuildConfig.IS_DEVELOPMENT_MODE) {
 }
 
 private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-private val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+private val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
 val cookieHandler = CookieManager()
 
 // Cache for ExoPlayer
