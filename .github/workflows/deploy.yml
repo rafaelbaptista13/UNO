@@ -45,6 +45,7 @@ jobs:
             ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
             AWS_SNS_PLATFORM_APP_ARN: ${{ secrets.AWS_SNS_PLATFORM_APP_ARN }}
             NODE_ENV: production
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           echo --- Starting docker ---
           docker-compose up -d

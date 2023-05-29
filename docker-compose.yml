@@ -34,6 +34,7 @@ services:
       AWS_SNS_PLATFORM_APP_ARN: ${AWS_SNS_PLATFORM_APP_ARN}
       NODE_ENV: ${NODE_ENV}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
       PATH: $PATH:/usr/bin/ffmpeg
 
   db:

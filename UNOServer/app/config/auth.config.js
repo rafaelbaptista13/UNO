@@ -1,3 +1,3 @@
 module.exports = {
-  secret: "uno-secret-key-this-must-be-random",
+  secret: process.env.JWT_SECRET,
 };
