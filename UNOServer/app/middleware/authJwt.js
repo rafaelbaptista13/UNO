@@ -127,7 +127,7 @@ const decodeToken = (req, res, next) => {
   }
 
   jwt.verify(token, config.secret, { ignoreExpiration: true }, (err, decoded) => {
-    if (err) {
+    if (err || decoded == undefined) {
       return res.status(403).send({
         message: "Invalid token.",
       });
