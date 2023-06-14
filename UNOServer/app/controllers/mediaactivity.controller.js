@@ -7,6 +7,7 @@ const Activity = db.activities;
 const ActivityGroup = db.activitygroups;
 const MediaActivity = db.mediaactivities;
 const MediaActivityStatus = db.mediaactivitystatus;
+const cache = require("../middleware/cache");
 
 // Create and Save a new Activity of type Media
 exports.createMedia = async (req, res) => {
@@ -350,6 +351,13 @@ exports.getMedia = async (req, res) => {
   // Save media type
   const media_type = activity.MediaActivity.media_type;
 
+  const cached_data = cache.get(activity.MediaActivity.media_id);
+  if (cached_data) {
+    res.set("Content-Type", cached_data.media_type);
+    res.status(200).send(Buffer.from(cached_data.data, "base64"));
+    return;
+  }
+
   // Get Media from aws s3
   const s3Object = await req.s3
     .getObject({ Bucket: "violuno", Key: activity.MediaActivity.media_id })
@@ -360,6 +368,12 @@ exports.getMedia = async (req, res) => {
     s3Object.Body.toString(),
     activity.MediaActivity.media_secret
   );
+
+  const new_cached_data = {
+    media_type,
+    data: decryptedFile.toString(CryptoJS.enc.Utf8)
+  }
+  cache.set(activity.MediaActivity.media_id, new_cached_data);
 
   res.set("Content-Type", media_type);
   res
