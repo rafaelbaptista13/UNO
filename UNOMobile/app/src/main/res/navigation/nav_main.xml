@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.example.unomobile.fragments.NotificationFragment"
+        android:name="com.example.unomobile.fragments.notifications.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
     <fragment

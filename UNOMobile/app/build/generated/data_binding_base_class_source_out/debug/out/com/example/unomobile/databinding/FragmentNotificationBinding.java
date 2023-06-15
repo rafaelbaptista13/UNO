@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.example.unomobile.R;
@@ -21,14 +22,22 @@ public final class FragmentNotificationBinding implements ViewBinding {
   private final RelativeLayout rootView;
 
   @NonNull
+  public final View lineBreak;
+
+  @NonNull
+  public final RecyclerView recyclerView;
+
+  @NonNull
   public final TextView title;
 
   @NonNull
   public final ImageView unoLogo;
 
-  private FragmentNotificationBinding(@NonNull RelativeLayout rootView, @NonNull TextView title,
-      @NonNull ImageView unoLogo) {
+  private FragmentNotificationBinding(@NonNull RelativeLayout rootView, @NonNull View lineBreak,
+      @NonNull RecyclerView recyclerView, @NonNull TextView title, @NonNull ImageView unoLogo) {
     this.rootView = rootView;
+    this.lineBreak = lineBreak;
+    this.recyclerView = recyclerView;
     this.title = title;
     this.unoLogo = unoLogo;
   }
@@ -60,6 +69,18 @@ public final class FragmentNotificationBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.line_break;
+      View lineBreak = ViewBindings.findChildViewById(rootView, id);
+      if (lineBreak == null) {
+        break missingId;
+      }
+
+      id = R.id.recycler_view;
+      RecyclerView recyclerView = ViewBindings.findChildViewById(rootView, id);
+      if (recyclerView == null) {
+        break missingId;
+      }
+
       id = R.id.title;
       TextView title = ViewBindings.findChildViewById(rootView, id);
       if (title == null) {
@@ -72,7 +93,8 @@ public final class FragmentNotificationBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentNotificationBinding((RelativeLayout) rootView, title, unoLogo);
+      return new FragmentNotificationBinding((RelativeLayout) rootView, lineBreak, recyclerView,
+          title, unoLogo);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

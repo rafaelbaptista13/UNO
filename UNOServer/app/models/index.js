@@ -66,6 +66,7 @@ db.completedactivities = require("./completedactivities.model")(sequelize, Seque
 db.supportmaterials = require("./supportmaterials.model")(sequelize, Sequelize);
 db.trophies = require("./trophies.model")(sequelize, Sequelize);
 db.usertrophies = require("./usertrophies.model")(sequelize, Sequelize);
+db.notifications = require("./notifications.model")(sequelize, Sequelize);
 
 db.roles.belongsToMany(db.users, {
   through: "UserRoles",
@@ -340,6 +341,12 @@ db.trophies.belongsToMany(db.users, {
 });
 db.users.belongsToMany(db.trophies, {
   through: db.usertrophies,
+});
+
+db.notifications.belongsTo(db.users, {
+  through: "user",
+  foreignKey: { name: "user_id", allowNull: false },
+  as: "user",
 });
 
 db.ROLES = ["student", "teacher"];

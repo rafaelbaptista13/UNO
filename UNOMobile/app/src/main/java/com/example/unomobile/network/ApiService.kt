@@ -124,6 +124,12 @@ interface ApiService {
     @GET("activities/completed")
     fun getCompletedActivities(): Call<CompletedActivites>
 
+    @GET("notifications")
+    fun getNotifications(): Call<List<Notification>>
+
+    @DELETE("notifications/{notification_id}")
+    fun deleteNotification(@Path("notification_id") notification_id: Number): Call<ResponseMessage>
+
     @POST("auth/student/signup")
     fun createAccount(@Body user_data: UserInfoToRegister): Call<ResponseMessage>
 

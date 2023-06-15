@@ -298,6 +298,7 @@ require("./app/routes/supportmaterial.routes")(app);
 require("./app/routes/admin.routes")(app);
 require("./app/routes/trophies.routes")(app);
 require("./app/routes/public.routes")(app);
+require("./app/routes/notifications.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

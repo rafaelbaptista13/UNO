@@ -16,6 +16,7 @@ const User = db.users;
 const Trophy = db.trophies;
 const UserTrophies = db.usertrophies;
 const cache = require("../middleware/cache");
+const Notification = db.notifications;
 
 // Create and Save a new Activity of type Question
 exports.createQuestion = async (req, res) => {
@@ -819,6 +820,10 @@ exports.putFeedbackToStudent = async (req, res) => {
         activity_description: activity.description,
         activitygroup_name: activity.activitygroup.name,
       };
+      await Notification.create({
+        ...message,
+        user_id: student_id
+      });
 
       req.sns.publish(
         {
@@ -826,7 +831,7 @@ exports.putFeedbackToStudent = async (req, res) => {
           Message: JSON.stringify({ default: JSON.stringify(message) }),
           MessageStructure: "json",
         },
-        function (err, data) {
+        async function (err, data) {
           if (err) {
             console.error("Error publishing SNS message:", err);
             res.status(200).send({
@@ -842,6 +847,10 @@ exports.putFeedbackToStudent = async (req, res) => {
                 title: "Troféu novo!",
                 message: `Ganhaste um troféu novo!`,
               };
+              await Notification.create({
+                ...trophy_message,
+                user_id: student_id
+              });
 
               req.sns.publish(
                 {
