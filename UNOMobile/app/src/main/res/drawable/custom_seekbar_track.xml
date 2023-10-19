@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <solid android:color="#000000" /> <!-- Set the color to black -->
+            <size
+                android:height="1dp"
+            />
+        </shape>
+    </item>
+</layer-list>

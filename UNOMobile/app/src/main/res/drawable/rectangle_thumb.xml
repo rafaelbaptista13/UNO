@@ -1,0 +1,18 @@
+<!-- rectangle_thumb.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Grey rectangle background -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#808080" /> <!-- Grey color for the rectangle background -->
+            <size
+                android:width="36dp"
+                android:height="18dp"
+            />
+        </shape>
+    </item>
+
+    <item
+        android:drawable="@drawable/dj_thumb_smaller"
+        android:gravity="center"
+        />
+</layer-list>

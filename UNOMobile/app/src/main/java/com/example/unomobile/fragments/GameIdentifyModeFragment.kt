@@ -54,6 +54,7 @@ class GameIdentifyModeFragment : Fragment() {
     private var game_card: MaterialCardView? = null
     private var play_button: ImageView? = null
     private var pause_button: ImageView? = null
+    private lateinit var seekBar: SeekBar
 
     private var selected_note: MusicalNote? = null
     private var selected_note_cardview: MaterialCardView? = null
@@ -188,7 +189,7 @@ class GameIdentifyModeFragment : Fragment() {
                             horizontal_scroll_view.smoothScrollTo(notes_views!![note.order!!].x.toInt() - 5.dpToPx(_context), 0)
                         }
 
-                        delay(2000)
+                        delay(60000 / (seekBar.progress.toLong() + 50))
 
                         if (midi_code != null) {
                             midiDriver.write(byteArrayOf(0x80.toByte(), midi_code.toByte(),0))
@@ -211,6 +212,23 @@ class GameIdentifyModeFragment : Fragment() {
         pause_button!!.setOnClickListener {
             pause_state = true
         }
+        seekBar = view.findViewById(R.id.seekBar)
+        seekBar.progress = 10  // Default value
+        val seekBarValue = view.findViewById<TextView>(R.id.seekBarValue)
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val playbackSpeed = progress + 50
+                seekBarValue.text = playbackSpeed.toString() + " Bpm"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // O usuário tocou na SeekBar
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // O usuário parou de arrastar a SeekBar
+            }
+        })
 
         Log.i("GameIdentifyFragment", order.toString())
         Log.i("GameIdentifyFragment", activity_id.toString())

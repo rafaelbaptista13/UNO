@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,6 +66,12 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
   public final LinearLayout row4;
 
   @NonNull
+  public final SeekBar seekBar;
+
+  @NonNull
+  public final TextView seekBarValue;
+
+  @NonNull
   public final AppCompatButton submit;
 
   @NonNull
@@ -118,10 +125,11 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
       @NonNull ProgressBar loadingProgressBar, @NonNull ImageView pauseButton,
       @NonNull ImageView playButton, @NonNull AppCompatButton recordVideo,
       @NonNull LinearLayout row1, @NonNull LinearLayout row2, @NonNull LinearLayout row3,
-      @NonNull LinearLayout row4, @NonNull AppCompatButton submit,
-      @NonNull LinearLayout submitButtons, @NonNull TextView teacherFeedback,
-      @NonNull MaterialCardView teacherFeedbackCard, @NonNull TextView teacherFeedbackHeader,
-      @NonNull TextView title, @NonNull MaterialCardView trophyCard, @NonNull TextView trophyHeader,
+      @NonNull LinearLayout row4, @NonNull SeekBar seekBar, @NonNull TextView seekBarValue,
+      @NonNull AppCompatButton submit, @NonNull LinearLayout submitButtons,
+      @NonNull TextView teacherFeedback, @NonNull MaterialCardView teacherFeedbackCard,
+      @NonNull TextView teacherFeedbackHeader, @NonNull TextView title,
+      @NonNull MaterialCardView trophyCard, @NonNull TextView trophyHeader,
       @NonNull ImageView trophyImage, @NonNull TextView trophyName, @NonNull TextView type,
       @NonNull AppCompatButton uploadVideo, @NonNull LinearLayout uploadVideoButtons,
       @NonNull TextView uploadedVideoMessage, @NonNull StyledPlayerView uploadedVideoView,
@@ -140,6 +148,8 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
     this.row2 = row2;
     this.row3 = row3;
     this.row4 = row4;
+    this.seekBar = seekBar;
+    this.seekBarValue = seekBarValue;
     this.submit = submit;
     this.submitButtons = submitButtons;
     this.teacherFeedback = teacherFeedback;
@@ -263,6 +273,18 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.seekBar;
+      SeekBar seekBar = ViewBindings.findChildViewById(rootView, id);
+      if (seekBar == null) {
+        break missingId;
+      }
+
+      id = R.id.seekBarValue;
+      TextView seekBarValue = ViewBindings.findChildViewById(rootView, id);
+      if (seekBarValue == null) {
+        break missingId;
+      }
+
       id = R.id.submit;
       AppCompatButton submit = ViewBindings.findChildViewById(rootView, id);
       if (submit == null) {
@@ -361,10 +383,10 @@ public final class FragmentGamePlayModeBinding implements ViewBinding {
 
       return new FragmentGamePlayModeBinding((LinearLayout) rootView, description, editSubmission,
           gameCard, horizontalScrollView, lineBreak, loadingProgressBar, pauseButton, playButton,
-          recordVideo, row1, row2, row3, row4, submit, submitButtons, teacherFeedback,
-          teacherFeedbackCard, teacherFeedbackHeader, title, trophyCard, trophyHeader, trophyImage,
-          trophyName, type, uploadVideo, uploadVideoButtons, uploadedVideoMessage,
-          uploadedVideoView, verticalGameLine);
+          recordVideo, row1, row2, row3, row4, seekBar, seekBarValue, submit, submitButtons,
+          teacherFeedback, teacherFeedbackCard, teacherFeedbackHeader, title, trophyCard,
+          trophyHeader, trophyImage, trophyName, type, uploadVideo, uploadVideoButtons,
+          uploadedVideoMessage, uploadedVideoView, verticalGameLine);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

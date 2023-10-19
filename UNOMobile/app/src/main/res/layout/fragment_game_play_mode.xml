@@ -189,6 +189,28 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:layout_marginTop="16dp"
+                android:max="50"
+                android:thumb="@drawable/rectangle_thumb"
+            />
+
+            <TextView
+                android:id="@+id/seekBarValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="60 Bpm"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+            />
+
             <LinearLayout
                 android:id="@+id/upload_video_buttons"
                 android:layout_width="match_parent"
