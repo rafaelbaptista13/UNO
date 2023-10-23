@@ -9,7 +9,7 @@
     tools:context=".fragments.ExerciseFragment"
     android:orientation="vertical">
 
-    <TextView
+    <com.example.unomobile.utils.BorderedTextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,10 +17,11 @@
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:text="1. Exercício"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/exercise"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:gravity="center"/>
+        android:gravity="center"
+        app:borderColor="@color/exercise_border"/>
 
     <View
         android:id="@+id/line_break"
@@ -42,18 +43,19 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <com.example.unomobile.utils.BorderedTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Vamos respirar?"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/exercise"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"
-                android:gravity="center"/>
+                android:gravity="center"
+                app:borderColor="@color/exercise_border"/>
 
             <TextView
                 android:id="@+id/description"
@@ -62,7 +64,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginVertical="10dp"
                 android:text="Descrição"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/exercise"
                 android:textSize="18sp"
                 android:layout_gravity="center"
                 android:gravity="center"/>

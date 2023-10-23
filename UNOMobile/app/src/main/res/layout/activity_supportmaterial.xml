@@ -4,115 +4,134 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginHorizontal="20dp"
     tools:context=".activities.ActivityPageActivity">
 
     <ImageView
-        android:id="@+id/back_button"
-        android:layout_width="fill_parent"
-        android:layout_height="35dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/back_icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"
-        android:contentDescription="Back button" />
-
-    <LinearLayout
-        app:layout_constraintTop_toBottomOf="@+id/back_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:alpha="0.8"
+        />
 
-        <TextView
-            android:id="@+id/supportmaterials_header"
-            android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="20dp">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="fill_parent"
+            android:layout_height="35dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/back_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="20dp"
+            android:contentDescription="Back button" />
+
+        <LinearLayout
+            app:layout_constraintTop_toBottomOf="@+id/back_button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="1. Material de apoio"
-            android:textColor="@color/primary_text"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical">
 
-        <View
-            android:id="@+id/line_break"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/primary_text"
-            android:layout_below="@+id/type"
-            android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="20dp"/>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            >
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.example.unomobile.utils.BorderedTextView
+                android:id="@+id/supportmaterials_header"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="1. Material de apoio"
+                android:textColor="@color/support_materials"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:borderColor="@color/support_materials_border"/>
 
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_gravity="center"
-                    android:text="Vamos respirar?"
-                    android:textColor="@color/primary_text"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:gravity="center"/>
+            <View
+                android:id="@+id/line_break"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/primary_text"
+                android:layout_below="@+id/type"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="20dp"/>
 
-                <TextView
-                    android:id="@+id/description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginVertical="10dp"
-                    android:layout_gravity="center"
-                    android:text="Descrição"
-                    android:textColor="@color/primary_text"
-                    android:textSize="18sp"
-                    android:gravity="center"/>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                >
 
-                <FrameLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center">
+                    android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/image_view"
+                    <com.example.unomobile.utils.BorderedTextView
+                        android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/content_icon"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginTop="10dp"
                         android:layout_gravity="center"
-                        android:adjustViewBounds="true"
-                        android:layout_marginBottom="20dp"
-                        android:visibility="gone"/>
+                        android:text="Vamos respirar?"
+                        android:textColor="@color/support_materials"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        app:borderColor="@color/support_materials_border"/>
 
-                    <com.google.android.exoplayer2.ui.StyledPlayerView
-                        android:id="@+id/video_view"
+                    <TextView
+                        android:id="@+id/description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="10dp"
+                        android:layout_gravity="center"
+                        android:text="Descrição"
+                        android:textColor="@color/support_materials"
+                        android:textSize="18sp"
+                        android:gravity="center"/>
+
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:show_buffering="when_playing"
-                        app:show_shuffle_button="true"
-                        android:layout_marginBottom="20dp"
-                        android:visibility="gone"/>
+                        android:gravity="center">
 
-                </FrameLayout>
+                        <ImageView
+                            android:id="@+id/image_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/content_icon"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:layout_marginBottom="20dp"
+                            android:visibility="gone"/>
 
-            </LinearLayout>
+                        <com.google.android.exoplayer2.ui.StyledPlayerView
+                            android:id="@+id/video_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:show_buffering="when_playing"
+                            app:show_shuffle_button="true"
+                            android:layout_marginBottom="20dp"
+                            android:visibility="gone"/>
 
-        </ScrollView>
+                    </FrameLayout>
 
-    </LinearLayout>
+                </LinearLayout>
 
+            </ScrollView>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

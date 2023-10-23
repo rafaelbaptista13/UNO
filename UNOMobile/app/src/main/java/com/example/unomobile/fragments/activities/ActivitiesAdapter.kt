@@ -1,12 +1,14 @@
 package com.example.unomobile.fragments.activities
 
 import android.content.Context
+import android.util.Log
 import com.example.unomobile.models.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unomobile.R
 import com.google.android.material.card.MaterialCardView
@@ -48,22 +50,43 @@ class ActivitiesAdapter(private val data: List<Activity>, val context: Context) 
         val currentItem = data[position]
         holder.activity_number.text = currentItem.order.toString() + "."
         holder.activity_title.text = currentItem.title
-
-        if (currentItem.activitytype.name == "Game") {
-            if (currentItem.game_activity!!.mode == "Identify") {
-                holder.activity_type.text = "Jogo - Identificar"
-            }
-            if (currentItem.game_activity.mode == "Play") {
-                holder.activity_type.text = "Jogo - Reproduzir"
-            }
-            if (currentItem.game_activity.mode == "Build") {
-                holder.activity_type.text = "Jogo - Construir"
-            }
-        } else {
-            holder.activity_type.text = context.resources.getString(
-                context.resources.getIdentifier(currentItem.activitytype.name, "string", context.packageName))
-        }
+        holder.activity_type.text = context.resources.getString(
+            context.resources.getIdentifier(currentItem.activitytype.name, "string", context.packageName))
         holder.activity_image.setImageResource(context.resources.getIdentifier(currentItem.activitytype.name.lowercase() + "_icon", "drawable", context.packageName))
+        var current_color = ContextCompat.getColor(context, R.color.primary_text)
+
+        when (currentItem.activitytype.name) {
+            "Media" -> {
+                if (currentItem.title == "Relaxamento Final") {
+                    current_color = ContextCompat.getColor(context, R.color.final_relax_activity)
+                } else {
+                    current_color = ContextCompat.getColor(context, R.color.content)
+                }
+            }
+            "Exercise" -> {
+                current_color = ContextCompat.getColor(context, R.color.exercise)
+            }
+            "Question" -> {
+                current_color = ContextCompat.getColor(context, R.color.question)
+                holder.activity_title.text = "Hora da questão!"
+            }
+            "Game" -> {
+                current_color = ContextCompat.getColor(context, R.color.game)
+                if (currentItem.game_activity!!.mode == "Identify") {
+                    holder.activity_type.text = "Jogo - Identificar"
+                }
+                if (currentItem.game_activity.mode == "Play") {
+                    holder.activity_type.text = "Jogo - Reproduzir"
+                }
+                if (currentItem.game_activity.mode == "Build") {
+                    holder.activity_type.text = "Jogo - Construir"
+                }
+            }
+        }
+
+        holder.activity_title.setTextColor(current_color)
+        holder.activity_type.setTextColor(current_color)
+        holder.activity_number.setTextColor(current_color)
 
         if (currentItem.completed == false) {
             holder.card.strokeWidth = 0

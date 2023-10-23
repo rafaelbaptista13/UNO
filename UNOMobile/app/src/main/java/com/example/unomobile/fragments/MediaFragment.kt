@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -94,12 +95,18 @@ class MediaFragment : Fragment() {
             return view
         }
 
-        val type_text = view.findViewById<TextView>(R.id.type)
+        val type_text = view.findViewById<com.example.unomobile.utils.BorderedTextView>(R.id.type)
         type_text.text = order.toString() + ". Conteúdo"
-        val title_text = view.findViewById<TextView>(R.id.title)
+        val title_text = view.findViewById<com.example.unomobile.utils.BorderedTextView>(R.id.title)
         title_text.text = title
         val description_text = view.findViewById<TextView>(R.id.description)
         description_text.text = description
+
+        if (title == "Relaxamento Final") {
+            type_text.setColor(ContextCompat.getColor(_context, R.color.final_relax_activity), ContextCompat.getColor(_context, R.color.final_relax_activity_border))
+            title_text.setColor(ContextCompat.getColor(_context, R.color.final_relax_activity), ContextCompat.getColor(_context, R.color.final_relax_activity_border))
+            description_text.setTextColor(ContextCompat.getColor(_context, R.color.final_relax_activity))
+        }
 
         Log.i("MediaFragment", order.toString())
         Log.i("MediaFragment", activity_id.toString())

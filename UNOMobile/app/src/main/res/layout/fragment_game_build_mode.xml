@@ -9,7 +9,7 @@
     tools:context=".fragments.GameBuildModeFragment"
     android:orientation="vertical">
 
-    <TextView
+    <com.example.unomobile.utils.BorderedTextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,9 +18,10 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="1. Jogo"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/game"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:borderColor="@color/game_border"/>
 
     <View
         android:id="@+id/line_break"
@@ -42,7 +43,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <com.example.unomobile.utils.BorderedTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -50,10 +51,11 @@
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center"
                 android:text="Vamos respirar?"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/game"
                 android:textSize="30sp"
                 android:textStyle="bold"
-                android:gravity="center"/>
+                android:gravity="center"
+                app:borderColor="@color/game_border"/>
 
             <TextView
                 android:id="@+id/description"
@@ -63,7 +65,7 @@
                 android:layout_marginVertical="10dp"
                 android:layout_gravity="center"
                 android:text="Descrição"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/game"
                 android:textSize="18sp"
                 android:gravity="center"/>
 
@@ -229,15 +231,16 @@
                 android:thumb="@drawable/rectangle_thumb"
                 />
 
-            <TextView
+            <com.example.unomobile.utils.BorderedTextView
                 android:id="@+id/seekBarValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
                 android:text="60 Bpm"
-                android:textSize="16sp"
-                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textColor="@color/game"
+                app:borderColor="@color/game_border"
                 />
 
             <androidx.appcompat.widget.AppCompatButton

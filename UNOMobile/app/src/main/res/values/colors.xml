@@ -25,4 +25,19 @@
     <color name="viola_string_3">#0000ff</color>   // Blue
     <color name="viola_string_4">#ff0000</color>   // Red
 
+    <color name="content">#0000ff</color>
+    <color name="content_border">#f4921a</color>
+    <color name="support_materials">#0000ff</color>
+    <color name="support_materials_border">#f4921a</color>
+    <color name="game">#f4921a</color>
+    <color name="game_border">#38bacb</color>
+    <color name="exercise">#f4921a</color>
+    <color name="exercise_border">#38bacb</color>
+    <color name="question">#0000ff</color>
+    <color name="question_border">#f4921a</color>
+    <color name="activity_groups">#1a73e9</color>
+    <color name="activity_groups_border">#f4921a</color>
+    <color name="activity_button_color">#f4921a</color>
+    <color name="final_relax_activity">#00b800</color>
+    <color name="final_relax_activity_border">#ffffff</color>
 </resources>

@@ -20,7 +20,7 @@
         android:layout_marginHorizontal="10dp"
         android:contentDescription="@string/app_logo" />
 
-    <TextView
+    <com.example.unomobile.utils.BorderedTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +30,8 @@
         android:textStyle="bold"
         android:textSize="30sp"
         android:text="@string/content_title"
-        android:textColor="@color/primary_text"/>
+        android:textColor="@color/content"
+        app:borderColor="@color/content_border"/>
 
     <View
         android:id="@+id/line_break"

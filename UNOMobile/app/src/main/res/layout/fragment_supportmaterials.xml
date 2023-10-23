@@ -19,7 +19,7 @@
         android:layout_marginTop="30dp"
         android:contentDescription="Back button" />
 
-    <TextView
+    <com.example.unomobile.utils.BorderedTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,9 +29,10 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:text="Materiais de apoio"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/support_materials"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:borderColor="@color/support_materials_border"/>
 
     <View
         android:id="@+id/line_break"

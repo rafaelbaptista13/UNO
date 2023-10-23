@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <com.example.unomobile.utils.BorderedTextView
             android:id="@+id/week_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -28,9 +28,10 @@
             app:layout_constraintRight_toRightOf="parent"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/activity_groups"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="10dp"
+            app:borderColor="@color/activity_groups_border"
             android:gravity="center"/>
 
         <View

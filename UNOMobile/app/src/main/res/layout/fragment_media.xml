@@ -9,7 +9,7 @@
     tools:context=".fragments.MediaFragment"
     android:orientation="vertical">
 
-    <TextView
+    <com.example.unomobile.utils.BorderedTextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,10 +17,11 @@
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:gravity="center"
+        android:textColor="@color/content"
         android:text="1. Conteúdo"
-        android:textColor="@color/primary_text"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:borderColor="@color/content_border" />
 
     <View
         android:id="@+id/line_break"
@@ -31,7 +32,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginHorizontal="50dp"/>
 
-    <TextView
+    <com.example.unomobile.utils.BorderedTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,10 +40,11 @@
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:text="Vamos respirar?"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/content"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:gravity="center"/>
+        android:gravity="center"
+        app:borderColor="@color/content_border"/>
 
     <TextView
         android:id="@+id/description"
@@ -52,7 +54,7 @@
         android:layout_marginVertical="10dp"
         android:layout_gravity="center"
         android:text="Descrição"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/content"
         android:textSize="18sp"
         android:gravity="center"/>
 

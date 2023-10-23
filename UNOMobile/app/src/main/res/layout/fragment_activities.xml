@@ -19,7 +19,7 @@
         android:layout_marginTop="30dp"
         android:contentDescription="Back button" />
 
-    <TextView
+    <com.example.unomobile.utils.BorderedTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,8 @@
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         android:text="Semana"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/activity_groups"
+        app:borderColor="@color/activity_groups_border"
         android:textSize="30sp"
         android:textStyle="bold" />
 
@@ -70,7 +71,7 @@
                     android:layout_marginHorizontal="4dp"
                     android:gravity="center"
                     android:text="Conteúdos"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/content"
                     android:textSize="14sp"
                     android:layout_weight="1"
                     android:visibility="gone"/>
@@ -82,7 +83,7 @@
                     android:layout_marginHorizontal="4dp"
                     android:gravity="center"
                     android:text="Exercícios"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/exercise"
                     android:textSize="14sp"
                     android:layout_weight="1"
                     android:visibility="gone"/>
@@ -93,8 +94,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4dp"
                     android:gravity="center"
-                    android:text="Questões"
-                    android:textColor="@color/primary_text"
+                    android:text="Perguntas"
+                    android:textColor="@color/question"
                     android:textSize="14sp"
                     android:layout_weight="1"
                     android:visibility="gone"/>
@@ -106,7 +107,7 @@
                     android:layout_marginHorizontal="4dp"
                     android:gravity="center"
                     android:text="Jogos"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/game"
                     android:textSize="14sp"
                     android:layout_weight="1"
                     android:visibility="gone"/>
