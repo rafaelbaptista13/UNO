@@ -38,6 +38,6 @@
     <color name="activity_groups">#1a73e9</color>
     <color name="activity_groups_border">#f4921a</color>
     <color name="activity_button_color">#f4921a</color>
-    <color name="final_relax_activity">#00b800</color>
-    <color name="final_relax_activity_border">#ffffff</color>
+    <color name="final_relax_activity">#00b761</color>
+    <color name="final_relax_activity_border">#f4921a</color>
 </resources>

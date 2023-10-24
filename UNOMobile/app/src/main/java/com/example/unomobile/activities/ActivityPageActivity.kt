@@ -1,5 +1,6 @@
 package com.example.unomobile.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +10,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat
 import com.example.unomobile.R
 import com.example.unomobile.fragments.*
 import com.example.unomobile.fragments.questions.QuestionFragment
 import com.example.unomobile.models.UserInfo
 import com.example.unomobile.network.Api
+import com.example.unomobile.utils.BorderedTextView
 import com.google.gson.Gson
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -31,6 +34,7 @@ class ActivityPageActivity : AppCompatActivity() {
     var activities_game_mode : Array<String>? = null
     var active_activity : Int = 0
     lateinit var activitygroup_name : String
+    lateinit var activityGroupNameTextView : BorderedTextView
     private var user: UserInfo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -202,7 +206,8 @@ class ActivityPageActivity : AppCompatActivity() {
         active_activity = bundle?.getInt("active_activity")!!
         activitygroup_name = bundle.getString("activitygroup_name")!!
 
-        findViewById<TextView>(R.id.activitygroup_name).text = activitygroup_name
+        activityGroupNameTextView = findViewById(R.id.activitygroup_name)
+        activityGroupNameTextView.text = activitygroup_name
 
         // Fix Buttons
         if (active_activity == activities_id!!.size - 1) {
@@ -254,6 +259,12 @@ class ActivityPageActivity : AppCompatActivity() {
     private fun launchMediaFragment() {
         val fragment = MediaFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
 
+        if (activities_title!![active_activity] == "Relaxamento Final") {
+            activityGroupNameTextView.setColor(ContextCompat.getColor(this, R.color.final_relax_activity), ContextCompat.getColor(this, R.color.final_relax_activity_border))
+        } else {
+            activityGroupNameTextView.setColor(ContextCompat.getColor(this, R.color.content), ContextCompat.getColor(this, R.color.content_border))
+        }
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
@@ -261,6 +272,8 @@ class ActivityPageActivity : AppCompatActivity() {
 
     private fun launchExerciseFragment() {
         val fragment = ExerciseFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        activityGroupNameTextView.setColor(ContextCompat.getColor(this, R.color.exercise), ContextCompat.getColor(this, R.color.exercise_border))
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
@@ -270,6 +283,8 @@ class ActivityPageActivity : AppCompatActivity() {
     private fun launchQuestionFragment() {
         val fragment = QuestionFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity])
 
+        activityGroupNameTextView.setColor(ContextCompat.getColor(this, R.color.question), ContextCompat.getColor(this, R.color.question_border))
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
@@ -277,6 +292,8 @@ class ActivityPageActivity : AppCompatActivity() {
 
     private fun launchGamePlayModeFragment() {
         val fragment = GamePlayModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        activityGroupNameTextView.setColor(ContextCompat.getColor(this, R.color.game), ContextCompat.getColor(this, R.color.game_border))
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
@@ -286,6 +303,8 @@ class ActivityPageActivity : AppCompatActivity() {
     private fun launchGameIdentifyModeFragment() {
         val fragment = GameIdentifyModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
 
+        activityGroupNameTextView.setColor(ContextCompat.getColor(this, R.color.game), ContextCompat.getColor(this, R.color.game_border))
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
@@ -293,6 +312,8 @@ class ActivityPageActivity : AppCompatActivity() {
 
     private fun launchGameBuildModeFragment() {
         val fragment = GameBuildModeFragment.newInstance(activities_id!![active_activity], activities_order!![active_activity], activities_title!![active_activity], activities_description!![active_activity])
+
+        activityGroupNameTextView.setColor(ContextCompat.getColor(this, R.color.game), ContextCompat.getColor(this, R.color.game_border))
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
